@@ -1420,7 +1420,7 @@ $(document).ready(function () {
     //DEBUG//
 
     //display current version
-    $(codeVersion).append("0.5");
+    //$(codeVersion).append("0.5");
 
     //display debug area with controls
     $("#displayDebug").click(function () {
