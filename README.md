@@ -1,4 +1,7 @@
+
 # SQLverine
+<img src="images/sqlVerine-logo.png" width="400px" />
+
 SQLverine ist ein einfacher online SQL Editor, der Schülerinnen und Schülern den Einstieg in das Thema Datenbanken und SQL Abfragen auf spielerische Weise ermöglicht.
 
 ### Demo
@@ -39,3 +42,8 @@ Dieses Werk, Bearbeitungen oder Übersetzungen und Werke, die auf diesem Werk be
 ### Datensparsamkeit 
 
 Erfolgt die Bereitstellung außerhalb einer öffentlichen Bildungseinrichtung oder einer Bildungseinrichtung in freier, nichtöffentlicher Trägerschaft, muss der Zugang dazu ohne Benutzerregistrierung, Erhebung von personenbezogenen Daten mit Ausnahme der technischen Verbindungsparameter oder einer Anforderung des Dokuments per Formular oder Mail (nötigenfalls durch Bereitstellung über einen weiteren Endpunkt) erfolgen.
+
+## Verwendete Libraries und Frameworks
+- [SQL.JS](https://sql.js.org/)
+- [jQuery](https://jquery.com/)
+- [Bootstrap](https://getbootstrap.com/)
