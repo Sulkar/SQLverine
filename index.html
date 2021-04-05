@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>Online SQL - Testcode</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/sql-editor.css">
+</head>
+
+<body>
+    <div class="container-fluid">
+
+        <!-- database handling -->
+        <div class="row">
+            <div class="col">
+                <span id="codeVersion" style="font-size: 1em; float: right;"> Version </span><br>
+                <span style="float: right; display:none;"><input id="displayDebug" type="checkbox"> <label
+                        for="displayDebug">debug</label></span>
+                <h2 id="headerSql"> SQL Editor</h2>
+
+                <div class="dbHandlingMenu">
+
+                    <select id="selDbChooser">
+                        <option value="init">Datenbank</option>
+                    </select>
+
+                    <button id="btnDbInfo" class="btnDbInfo d-none d-md-inline-block">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                            class="bi bi-info-square" viewBox="0 0 16 16">
+                            <path
+                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                            <path
+                                d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                        </svg>
+                    </button>
+                    <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip"
+                        data-placement="top" title="Upload Database">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                            class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
+                            <path
+                                d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z" />
+                            <path
+                                d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                        </svg>
+                    </label>
+                    <input id="fileDbUpload" type="file" />
+                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
+                        data-placement="top" title="Download Database">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                            class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                            <path
+                                d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
+                            <path
+                                d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                        </svg>
+                    </button>
+                    <button id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip"
+                        data-placement="top" title="New Database">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.3em"
+                            height="1.3em" fill="currentColor" viewBox="0,0,12,16">
+                            <g transform="translate(-294,-191.02041)">
+                                <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
+                                    fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                    stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
+                                    stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
+                                <path
+                                    d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z" />
+                                <path
+                                    d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z" />
+                            </g>
+                        </svg>
+                    </button>
+
+
+
+                    <!-- Hamburger Nav -->
+                    <button id="btnHamburgerNav" class="btnHamburgerNav d-md-none " data-toggle="tooltip"
+                        data-placement="top" title="Toggle Menu" data-bs-toggle="collapse"
+                        data-bs-target="#navbarDbOptions">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                            class="bi bi-list" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                        </svg>
+                    </button>
+
+                    <div class="collapse navbar-collapse hamburgerNav" id="navbarDbOptions">
+                        <div class="navbar-nav">
+                            <a class="nav-link btnDbInfoMobile" href="#" data-toggle="modal" data-bs-toggle="modal"
+                                data-bs-target="#dbInfoModal">
+                                Schema anzeigen
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                    class="bi bi-info-square" viewBox="0 0 16 16">
+                                    <path
+                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                    <path
+                                        d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                                </svg>
+                            </a>
+
+
+                            <a class="nav-link fileUpload" href="#">
+                                <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip" data-placement="top"
+                                    title="Upload Database">
+                                    Datenbank öffnen
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
+                                        fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z" />
+                                        <path
+                                            d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                    </svg>
+
+                                </label> </a>
+                            <a class="nav-link btnDbDownload" href="#">
+                                Datenbank speichern
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                    class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                    <path
+                                        d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
+                                    <path
+                                        d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                </svg>
+                            </a>
+                            <a class="nav-link btnDbNew" href="#">
+                                Neue Datenbank
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                    width="1.3em" height="1.3em" fill="currentColor" viewBox="0,0,12,16">
+                                    <g transform="translate(-294,-191.02041)">
+                                        <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
+                                            fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                            stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
+                                            stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
+                                        <path
+                                            d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z" />
+                                        <path
+                                            d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z" />
+                                    </g>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Hamburger Nav END -->
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+
+            <!-- code area -->
+            <div class="col-md">
+                <div class="row">
+                    <div class="codeArea editor">
+                        <pre><code></code></pre>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <!-- first row buttons main menu -->
+                        <div class="row buttonArea mainMenu">
+
+                            <!-- run button desktop -->
+                            <div class="col leftMenu d-none d-md-inline-block">
+                                <button class="btnRun">
+                                    <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
+                                data-bs-target="#resultModal">-->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
+                                        fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
+                                        <path
+                                            d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
+                                        <path
+                                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- run button mobile -->
+                            <div class="col leftMenu d-md-none">
+                                <button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal"
+                                    data-bs-target="#resultModal">
+                                    <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
+                                data-bs-target="#resultModal">-->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
+                                        fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
+                                        <path
+                                            d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
+                                        <path
+                                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="col centerMenu d-none d-md-inline-block">
+                                <button class="btnUndo ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
+                                        fill="currentColor" class="bi bi-arrow-90deg-left" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4z" />
+                                    </svg>
+                                </button>
+                                <button class="btnRedo ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
+                                        fill="currentColor" class="bi bi-arrow-90deg-right" viewBox="0 0 16 16">
+                                        <path fill-rule="evenodd"
+                                            d="M14.854 4.854a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 4H3.5A2.5 2.5 0 0 0 1 6.5v8a.5.5 0 0 0 1 0v-8A1.5 1.5 0 0 1 3.5 5h9.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4z" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <div class="col rightMenu">
+                                <button class="btnAdd codeButton" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
+                                        fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                        <path
+                                            d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                        <path
+                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                    </svg>
+                                </button>
+                                <button class="btnDelete codeButton" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
+                                        fill="currentColor" class="bi bi-backspace" viewBox="0 0 16 16">
+                                        <path
+                                            d="M5.83 5.146a.5.5 0 0 0 0 .708L7.975 8l-2.147 2.146a.5.5 0 0 0 .707.708l2.147-2.147 2.146 2.147a.5.5 0 0 0 .707-.708L9.39 8l2.146-2.146a.5.5 0 0 0-.707-.708L8.683 7.293 6.536 5.146a.5.5 0 0 0-.707 0z" />
+                                        <path
+                                            d="M13.683 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-7.08a2 2 0 0 1-1.519-.698L.241 8.65a1 1 0 0 1 0-1.302L5.084 1.7A2 2 0 0 1 6.603 1h7.08zm-7.08 1a1 1 0 0 0-.76.35L1 8l4.844 5.65a1 1 0 0 0 .759.35h7.08a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7.08z" />
+                                    </svg></button>
+                            </div>
+
+                        </div>
+
+                        <!-- button area for code components -->
+                        <div class="buttonArea codeComponents">
+
+                        </div>
+                        <div class="row codeComponentsScrolldots d-md-none">
+                            <span><a class="activeDot">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em"
+                                        fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                                        <circle cx="8" cy="8" r="8" />
+                                    </svg>
+                                </a>
+                                <a>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em"
+                                        fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                                        <circle cx="8" cy="8" r="8" />
+                                    </svg>
+                                </a>
+                                <a>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em"
+                                        fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16">
+                                        <circle cx="8" cy="8" r="8" />
+                                    </svg>
+                                </a></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- output area -->
+            <div class="outputArea col-md d-none d-md-block">
+
+            </div>
+
+        </div>
+
+
+        <div id="debug-area">
+            <h4 style="margin-top: 20px;">
+                Debug:
+            </h4>
+            <input id="checkDisplayAllCodeComponents" type="checkbox"> <label
+                for="checkDisplayAllCodeComponents">display
+                all
+                code components</label>
+            <p>
+                <button class="btnCode-copycodefrom">copy code FROM codeArea</button>
+                <button class="btnCode-copycodeto">copy code TO codeArea</button>
+                <button class="btnCode-getSqlString">get SQL string</button>
+                <button class="btnCode-execSql">exec SQL</button>
+            </p>
+            <p>
+                <button class="btnCode-parent">.parent()</button>
+                <button class="btnCode-closest1">.closest(".parent") </button>
+                <button class="btnCode-closest2">.closest(".inputFields") </button>
+                <button class="btnCode-find1">.find(".parent")</button>
+                <button class="btnCode-remove">remove</button>
+            </p>
+
+
+            <textarea id="jquery-code" name="jquery-code" rows="2" style="width: 100%;"></textarea>
+
+            <div id="debug">
+
+            </div>
+        </div>
+    </div>
+
+    <!--- Modal SQL Schema -->
+    <div class="modal fade" id="dbInfoModal" tabindex="-1" aria-labelledby="dbInfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">SQL-Schema</h5>
+                    <button type="button" class="btn-close dbInfoModal" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="container">
+                        <div class="schemaArea dbInfoModal">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close dbInfoModal"
+                        data-bs-dismiss="modal">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal SQL Result -->
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title resultModal" id="resultModalLabel">SQL-Output</h5>
+                    <button type="button" class="btn-close resultModal" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="container">
+                        <div class="row">
+                            <div class="col resultModal">
+                                <h2>SQL</h2>
+                                <div class="codeArea resultModal">
+                                    <pre><code></code></pre>
+                                </div>
+                                <h2>Ergebnis</h2>
+                                <div class="resultArea resultModal">
+                                    ddd
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close resultModal"
+                        data-bs-dismiss="modal">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+        </script>
+
+    <script src="dist/sql-wasm.js"></script>
+
+    <script type="text/javascript" src="js/sql-editor.js"></script>
+
+
+</body>
+
+</html>
