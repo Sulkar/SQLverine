@@ -14,8 +14,6 @@ $(document).ready(function () {
     DATABASE_ARRAY.push(createDatabaseObject("unsereSchule.db", null, "server"));
     var CSS_COLOR_ARRAY = ["coral", "tomato", "orange", "gold", "palegreen", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
 
-    var NEW_LAYOUT_1 = true;
-
     //////////
     // INIT //
 
@@ -46,7 +44,7 @@ $(document).ready(function () {
 
         // zeigt das Datenbankschema an
         var tempTables = getSqlTables();
-        if (NEW_LAYOUT_1) $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+        $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
 
         //debug:
         $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -603,7 +601,7 @@ $(document).ready(function () {
 
             // zeigt das Datenbankschema an
             var tempTables = getSqlTables();
-            if (NEW_LAYOUT_1) $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+            $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
         }
         // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
         else if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server") {
@@ -617,15 +615,14 @@ $(document).ready(function () {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                if (NEW_LAYOUT_1) $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+                $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
 
             }, function (error) { console.log(error) });
         }
     });
 
     // Datenbankdatei wurde zum Upload ausgewählt
-    $(".fileDbUpload").on('click', function () {
-
+    $("#fileDbUpload").on('change', function () {        
         var uploadedFile = this.files[0];
 
         var fileReader = new FileReader();
@@ -645,7 +642,7 @@ $(document).ready(function () {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                if (NEW_LAYOUT_1) $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+                $(".outputArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
 
                 //debug:
                 $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -1402,7 +1399,7 @@ $(document).ready(function () {
 
             //erstellt eine Tabelle mit den Ergebnissen
             $(".resultArea.resultModal").html("");
-            if (NEW_LAYOUT_1) $(".outputArea").html("<h4>SQL Output</h4><p>Hallo...</p>");
+            $(".outputArea").html("<h4>SQL-Output</h4>");
             for (var i = 0; i < result.length; i++) {
                 if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[i].columns, result[i].values));
                 else if (type == "desktop") $(".outputArea").append("" + createTableSql(result[i].columns, result[i].values) + "");
@@ -1420,7 +1417,7 @@ $(document).ready(function () {
     //DEBUG//
 
     //display current version
-    $(codeVersion).append("0.5");
+    //$(codeVersion).append("0.5");
 
     //display debug area with controls
     $("#displayDebug").click(function () {
