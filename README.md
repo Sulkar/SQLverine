@@ -7,7 +7,7 @@ SQLverine ist ein einfacher online SQL Editor, der Schülerinnen und Schülern d
 ## Idee 
 Im bayrischen LehrplanPLUS der Mittelschulen für das Fach Informatik dreht es sich in der 10. Jahrgangsstufe überwiegend um Datenbanken. Dabei sollen die Schüler*innen auch lernen Datenbankabfragen mit SQL zuerstellen. Im Prinzip würde hierzu ein einfacher Texteditor reichen, um mit dem Programmieren zu beginnen. Die Erfahrung zeigt aber, dass immer, wenn Schüler*innen Text zum Erstellen eines Programms schreiben müssen, Syntaxfehler ein großes Problem darstellen. Diese zu finden führt bei Lehrkräften und Schüler*innen schnell zu einer hohen Frustration. Die eigentliche Logik beim Erstellen einer Abfrage mit SQL rückt in den Hintergrund.
 
-![bildSql](/images/bildSql.png | width=400)
+<img src="images/bildSql.png" width="400px" />
 
 Um im Stil von Scratch mit der Programmierung von SQL Abfragen fortfahren zu können, haben Richard Scheglmann und Benjamin Vötterle recherchiert. Bei unserer Recherche haben wir als fertige Umgebung eigentlich nur [SQL Snap](https://snapextensions.uni-goettingen.de/sqlsnap.html) gefunden, welches wir nicht gerade ansprechend fanden. Gerade das Datenbankhandling dürfte die ein oder andere Lehrkraft hier vor größere Herausforderungen stellen.
 
