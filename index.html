@@ -17,7 +17,8 @@
         <!-- database handling -->
         <div class="row">
             <div class="col">
-                <span id="" style="font-size: 1em; float: right;"><a href="https://github.com/Sulkar/SQLverine">GitHub</a> </span><br>
+                <span id="" style="font-size: 1em; float: right;"><a
+                        href="https://github.com/Sulkar/SQLverine">GitHub</a> </span><br>
                 <span style="float: right; display:none;"><input id="displayDebug" type="checkbox"> <label
                         for="displayDebug">debug</label></span>
                 <h2 id="headerSql">
@@ -185,34 +186,29 @@
                         <!-- first row buttons main menu -->
                         <div class="row buttonArea mainMenu">
 
-                            <!-- run button desktop -->
-                            <div class="col leftMenu d-none d-md-inline-block">
-                                <button class="btnRun">
-                                    <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
-                                data-bs-target="#resultModal">-->
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
-                                        fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
+
+                            <div class="col leftMenu">
+
+                                <button class="btnDelete codeButton" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
+                                        fill="currentColor" class="bi bi-backspace" viewBox="0 0 16 16">
                                         <path
-                                            d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
+                                            d="M5.83 5.146a.5.5 0 0 0 0 .708L7.975 8l-2.147 2.146a.5.5 0 0 0 .707.708l2.147-2.147 2.146 2.147a.5.5 0 0 0 .707-.708L9.39 8l2.146-2.146a.5.5 0 0 0-.707-.708L8.683 7.293 6.536 5.146a.5.5 0 0 0-.707 0z" />
                                         <path
-                                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                            d="M13.683 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-7.08a2 2 0 0 1-1.519-.698L.241 8.65a1 1 0 0 1 0-1.302L5.084 1.7A2 2 0 0 1 6.603 1h7.08zm-7.08 1a1 1 0 0 0-.76.35L1 8l4.844 5.65a1 1 0 0 0 .759.35h7.08a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7.08z" />
+                                    </svg></button>
+                                <button class="btnAdd codeButton" style="display: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
+                                        fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                                        <path
+                                            d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                        <path
+                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                                     </svg>
                                 </button>
                             </div>
-                            <!-- run button mobile -->
-                            <div class="col leftMenu d-md-none">
-                                <button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#resultModal">
-                                    <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
-                                data-bs-target="#resultModal">-->
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
-                                        fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
-                                        <path
-                                            d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
-                                        <path
-                                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
-                                    </svg>
-                                </button>
-                            </div>
+
+
 
                             <div class="col centerMenu d-none d-md-inline-block">
                                 <button style="display:none;" class="btnUndo ">
@@ -231,24 +227,33 @@
                                 </button>
                             </div>
 
-                            <div class="col rightMenu">
-                                <button class="btnAdd codeButton" style="display: none;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
-                                        fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                            <!-- run button desktop -->
+                            <div class="col rightMenu d-none d-md-inline-block">
+                                <button class="btnRun">
+                                    <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
+                            data-bs-target="#resultModal">-->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
+                                        fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
                                         <path
-                                            d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                            d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
                                         <path
-                                            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
+                                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
                                     </svg>
                                 </button>
-                                <button class="btnDelete codeButton" style="display: none;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em"
-                                        fill="currentColor" class="bi bi-backspace" viewBox="0 0 16 16">
+                            </div>
+                            <!-- run button mobile -->
+                            <div class="col rightMenu d-md-none">
+                                <button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#resultModal">
+                                    <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
+                            data-bs-target="#resultModal">-->
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
+                                        fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16">
                                         <path
-                                            d="M5.83 5.146a.5.5 0 0 0 0 .708L7.975 8l-2.147 2.146a.5.5 0 0 0 .707.708l2.147-2.147 2.146 2.147a.5.5 0 0 0 .707-.708L9.39 8l2.146-2.146a.5.5 0 0 0-.707-.708L8.683 7.293 6.536 5.146a.5.5 0 0 0-.707 0z" />
+                                            d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
                                         <path
-                                            d="M13.683 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-7.08a2 2 0 0 1-1.519-.698L.241 8.65a1 1 0 0 1 0-1.302L5.084 1.7A2 2 0 0 1 6.603 1h7.08zm-7.08 1a1 1 0 0 0-.76.35L1 8l4.844 5.65a1 1 0 0 0 .759.35h7.08a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7.08z" />
-                                    </svg></button>
+                                            d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+                                    </svg>
+                                </button>
                             </div>
 
                         </div>
