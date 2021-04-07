@@ -43,18 +43,7 @@ h1 {
     overflow: auto;
 }
 
-table {
-    width: auto;
-    margin: auto;
-    border: 1px solid black;
-    border-collapse: collapse;
-    margin-bottom: 10px;
-}
 
-th,
-td {
-    border: 1px solid #777;
-}
 
 footer {
     font-size: .8em;
@@ -473,10 +462,18 @@ div.tab-pane.active {
     border: 2px solid red;
 }
 
+.schemaTable td,
+.schemaTable th{
+    /*border-color: lightgrey;*/
+}
 .schemaTable td:first-child {
     padding-left: 0.8em;
 }
 
 .schemaTable th {
     padding-left: 0.8em;
+}
+
+.tableSql{
+    /*border-color: lightgrey;*/
 }

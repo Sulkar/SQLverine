@@ -788,7 +788,7 @@ $(document).ready(function () {
                     indexesToDisplayArray = indexesToDisplayArray.map(Number);
                 }
 
-                htmlTableInfo += "<table class='table schemaTable' style='max-width: 20em;'>";
+                htmlTableInfo += "<table class='table table-bordered schemaTable' style='max-width: 20em;'>";
                 htmlTableInfo += "<thead>";
 
                 if (indexesToDisplay == null) {
@@ -866,7 +866,7 @@ $(document).ready(function () {
     //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
     function createTableSql(columns, values) {
 
-        var newTable = "<div class='table-responsive'><table class='table tableSql' style=''>";
+        var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
         newTable += "<thead>";
         columns.forEach((column) => {
             newTable += "<th scope='col'>" + column + "</th>";
