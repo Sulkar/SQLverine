@@ -287,9 +287,29 @@
             </div>
 
             <!-- output area -->
-            <div class="outputArea col-md d-none d-md-block">
-
+            <div class=" col-md d-none d-md-block">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
+                        <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema" type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
+                        <button class="nav-link" id="nav-result-tab" data-bs-toggle="tab" data-bs-target="#nav-result" type="button" role="tab" aria-controls="nav-result" aria-selected="false">Ergebnis</button>
+                        <button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission" type="button" role="tab" aria-controls="nav-mission" aria-selected="false">Aufgabe</button>
+                        <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab" data-bs-target="#nav-help" type="button" role="tab" aria-controls="nav-help" aria-selected="false">Hilfe</button>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-info-tab"></div>
+                    <div class="tab-pane fade" id="nav-schema" role="tabpanel" aria-labelledby="nav-schema-tab">
+                        <div class="schemaArea"></div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-result" role="tabpanel" aria-labelledby="nav-result-tab">
+                        <div class="outputArea"></div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-result-tab">...</div>
+                    <div class="tab-pane fade" id="nav-help" role="tabpanel" aria-labelledby="nav-result-tab">...</div>
+                </div>
             </div>
+
 
         </div>
 
