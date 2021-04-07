@@ -448,3 +448,10 @@ pre span.codeline span:first {
     border: 2px solid red;
 }
 
+
+.schemaTable td:first-child{
+  padding-left: 0.8em;
+}
+.schemaTable th{
+    padding-left: 0.8em;
+}
