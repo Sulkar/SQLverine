@@ -47,126 +47,7 @@
                     </svg> SQLverine
                 </h2>
 
-                <div class="dbHandlingMenu">
 
-                    <select id="selDbChooser">
-                        <option value="init">Datenbank</option>
-                    </select>
-
-                    <button id="btnDbInfo" class="btnDbInfo d-none d-md-inline-block">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                            class="bi bi-info-square" viewBox="0 0 16 16">
-                            <path
-                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                            <path
-                                d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                        </svg>
-                    </button>
-                    <!-- button file Upload -->
-                    <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Upload Database">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                            class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
-                            <path
-                                d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z" />
-                            <path
-                                d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                        </svg>
-                    </label>
-                    <input id="fileDbUpload" type="file" />
-
-                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                            class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
-                            <path
-                                d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
-                            <path
-                                d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                        </svg>
-                    </button>
-                    <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="New Database">
-                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.3em"
-                            height="1.3em" fill="currentColor" viewBox="0,0,12,16">
-                            <g transform="translate(-294,-191.02041)">
-                                <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
-                                    fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
-                                    stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
-                                    stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
-                                <path
-                                    d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z" />
-                                <path
-                                    d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z" />
-                            </g>
-                        </svg>
-                    </button>
-
-
-
-                    <!-- Hamburger Nav -->
-                    <button id="btnHamburgerNav" class="btnHamburgerNav d-md-none " data-toggle="tooltip" data-placement="top" title="Toggle Menu" data-bs-toggle="collapse" data-bs-target="#navbarDbOptions">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                            class="bi bi-list" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
-                        </svg>
-                    </button>
-
-                    <div class="collapse navbar-collapse hamburgerNav" id="navbarDbOptions">
-                        <div class="navbar-nav">
-                            <a class="nav-link btnDbInfoMobile" href="#" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#dbInfoModal">
-                                Schema anzeigen
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                                    class="bi bi-info-square" viewBox="0 0 16 16">
-                                    <path
-                                        d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                                    <path
-                                        d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-                                </svg>
-                            </a>
-
-
-                            <a class="nav-link fileUpload" href="#">
-                                <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip" data-placement="top" title="Upload Database">
-                                    Datenbank öffnen
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
-                                        fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
-                                        <path
-                                            d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z" />
-                                        <path
-                                            d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                                    </svg>
-
-                                </label></a>
-                            <a class="nav-link btnDbDownload" href="#">
-                                Datenbank speichern
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                                    class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
-                                    <path
-                                        d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
-                                    <path
-                                        d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
-                                </svg>
-                            </a>
-                            <a class="nav-link btnDbNew" href="#">
-                                Neue Datenbank
-                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                                    width="1.3em" height="1.3em" fill="currentColor" viewBox="0,0,12,16">
-                                    <g transform="translate(-294,-191.02041)">
-                                        <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
-                                            fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
-                                            stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
-                                            stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
-                                        <path
-                                            d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z" />
-                                        <path
-                                            d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z" />
-                                    </g>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
-                    <!-- Hamburger Nav END -->
-
-                </div>
             </div>
         </div>
 
@@ -174,8 +55,132 @@
         <div class="row">
 
             <!-- code area -->
-            <div class="col-md">
+            <div class="col-md leftArea">
+
+
                 <div class="row">
+
+                    <div class="dbHandlingMenu">
+
+                        <select id="selDbChooser">
+                            <option value="init">Datenbank</option>
+                        </select>
+
+                        <button id="btnDbInfo" class="btnDbInfo d-none d-md-inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                class="bi bi-info-square" viewBox="0 0 16 16">
+                                <path
+                                    d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                <path
+                                    d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                            </svg>
+                        </button>
+                        <!-- button file Upload -->
+                        <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Upload Database">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
+                                <path
+                                    d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z" />
+                                <path
+                                    d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                            </svg>
+                        </label>
+                        <input id="fileDbUpload" type="file" />
+
+                        <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                <path
+                                    d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
+                                <path
+                                    d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                            </svg>
+                        </button>
+                        <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="New Database">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.3em"
+                                height="1.3em" fill="currentColor" viewBox="0,0,12,16">
+                                <g transform="translate(-294,-191.02041)">
+                                    <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
+                                        fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                        stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
+                                        stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
+                                    <path
+                                        d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z" />
+                                    <path
+                                        d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z" />
+                                </g>
+                            </svg>
+                        </button>
+
+
+
+                        <!-- Hamburger Nav -->
+                        <button id="btnHamburgerNav" class="btnHamburgerNav d-md-none " data-toggle="tooltip" data-placement="top" title="Toggle Menu" data-bs-toggle="collapse" data-bs-target="#navbarDbOptions">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                class="bi bi-list" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M2.5 11.5A.5.5 0 0 1 3 11h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4A.5.5 0 0 1 3 3h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+                            </svg>
+                        </button>
+
+                        <div class="collapse navbar-collapse hamburgerNav" id="navbarDbOptions">
+                            <div class="navbar-nav">
+                                <a class="nav-link btnDbInfoMobile" href="#" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#dbInfoModal">
+                                    Schema anzeigen
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                        class="bi bi-info-square" viewBox="0 0 16 16">
+                                        <path
+                                            d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                                        <path
+                                            d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+                                    </svg>
+                                </a>
+
+
+                                <a class="nav-link fileUpload" href="#">
+                                    <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip" data-placement="top" title="Upload Database">
+                                        Datenbank öffnen
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
+                                            fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
+                                            <path
+                                                d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z" />
+                                            <path
+                                                d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                        </svg>
+    
+                                    </label></a>
+                                <a class="nav-link btnDbDownload" href="#">
+                                    Datenbank speichern
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                                        class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
+                                        <path
+                                            d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
+                                    </svg>
+                                </a>
+                                <a class="nav-link btnDbNew" href="#">
+                                    Neue Datenbank
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                        width="1.3em" height="1.3em" fill="currentColor" viewBox="0,0,12,16">
+                                        <g transform="translate(-294,-191.02041)">
+                                            <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
+                                                fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                                stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
+                                                stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
+                                            <path
+                                                d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z" />
+                                            <path
+                                                d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Hamburger Nav END -->
+
+                    </div>
+
                     <div class="codeArea editor">
                         <pre><code></code></pre>
                     </div>
@@ -287,7 +292,7 @@
             </div>
 
             <!-- output area -->
-            <div class=" col-md d-none d-md-block">
+            <div class=" col-md d-none d-md-block rightArea">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
@@ -300,7 +305,11 @@
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-info-tab"></div>
                     <div class="tab-pane fade" id="nav-schema" role="tabpanel" aria-labelledby="nav-schema-tab">
-                        <div class="schemaArea"></div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="schemaArea"></div>
+                            </div>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="nav-result" role="tabpanel" aria-labelledby="nav-result-tab">
                         <div class="outputArea"></div>

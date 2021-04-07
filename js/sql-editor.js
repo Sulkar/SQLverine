@@ -44,7 +44,7 @@ $(document).ready(function() {
 
         // zeigt das Datenbankschema an
         var tempTables = getSqlTables();
-        $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+        $(".schemaArea").html(createTableInfo(tempTables, "1,2") + "</div>");
 
         //debug:
         $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -601,7 +601,7 @@ $(document).ready(function() {
 
             // zeigt das Datenbankschema an
             var tempTables = getSqlTables();
-            $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+            $(".schemaArea").html(createTableInfo(tempTables, "1,2") + "</div>");
         }
         // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
         else if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server") {
@@ -615,7 +615,7 @@ $(document).ready(function() {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+                $(".schemaArea").html(createTableInfo(tempTables, "1,2") + "</div>");
 
             }, function(error) { console.log(error) });
         }
@@ -642,7 +642,7 @@ $(document).ready(function() {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+                $(".schemaArea").html(createTableInfo(tempTables, "1,2") + "</div>");
 
                 //debug:
                 $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -674,7 +674,7 @@ $(document).ready(function() {
     // Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
     $(".btnDbInfo").click(function() {
         var tempTables = getSqlTables();
-        $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+        $(".schemaArea").html("<h2>Datenbank Schema</h2>" + createTableInfo(tempTables, "1,2") + "</div>");
     });
     $(".btnDbInfoMobile").click(function() {
         var tempTables = getSqlTables();
