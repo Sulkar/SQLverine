@@ -19,17 +19,13 @@
             {
                 "codeComponentClass": ".btnSQLDelete",
                 "codeComponentType": "button"
-            }           
+            }
         ]
     },
     {
         "selectedSQLElement": "SELECT",
         "level": 1,
         "visibleMainControls": [
-            {
-                "codeComponentClass": ".btnAdd",
-                "codeComponentType": "button"
-            },
             {
                 "codeComponentClass": ".btnDelete",
                 "codeComponentType": "button"
@@ -73,7 +69,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             },
             {
@@ -93,7 +89,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -149,7 +145,7 @@
                 "codeComponentType": "button"
             },
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -201,7 +197,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             },
             {
@@ -257,7 +253,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             },
             {
@@ -395,7 +391,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -494,7 +490,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -521,7 +517,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             },
             {
@@ -581,7 +577,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -629,7 +625,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -661,7 +657,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -745,7 +741,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]
@@ -817,7 +813,7 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selField",
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]

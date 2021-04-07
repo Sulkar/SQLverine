@@ -446,8 +446,8 @@ $(document).ready(function () {
             var tempSelectField = this;
             var returnObject = {};
             // wich select is triggering?
-            // -> selField, selTable
-            if ($(tempSelectField).hasClass("selField") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators")) {
+            // -> selColumn, selTable
+            if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators")) {
 
                 if (CURRENT_SELECTED_ELEMENT.hasClass("extended") && CURRENT_SELECTED_ELEMENT.hasClass("comma")) { //Feld erweitert ,___
                     returnObject = addSelectValue(tempSelectField);
@@ -476,8 +476,8 @@ $(document).ready(function () {
                 setSelection(NEXT_ELEMENT_NR, false);
             }
         }
-        // aktualisiert alle .selField <select>
-        updateSelectCodeComponents(false);
+        // aktualisiert alle .selColumn <select>
+        updateSelectCodeComponents();
         //reset select option
         $(this)[0].selectedIndex = 0;
     });
@@ -535,8 +535,8 @@ $(document).ready(function () {
     // Button: Delete Element
     $('.btnDelete').click(function () {
         deleteElement(CURRENT_SELECTED_ELEMENT);
-        // aktualisiert alle .selField <select>
-        updateSelectCodeComponents(false);
+        // aktualisiert alle .selColumn <select>
+        updateSelectCodeComponents();
     });
 
     // on Click Element
@@ -956,7 +956,7 @@ $(document).ready(function () {
     }
 
     //function: fügt der buttonArea aktuell notwendige codeComponents hinzu
-    function createCodeComponent(codeComponent) {
+    function createCodeComponent(codeComponent, option) {
         switch (codeComponent) {
             case "zeilenumbruch":
                 $(".buttonArea.codeComponents").append('<br>');
@@ -979,9 +979,14 @@ $(document).ready(function () {
             case ".btnJoin":
                 $(".buttonArea.codeComponents").append('<button class="btnJoin synSQL sqlJoin codeButton">JOIN ___ ON ___ ___ ___</button>');
                 break;
-            case ".selField":
-                //selField selects werden mit aktuellen Daten der ausgewählten Tabellen befüllt
-                updateSelectCodeComponents(true);
+            case ".selColumn":
+                var selColumn = "<select class='selColumn synColumns " + option + " codeSelect'>";
+                selColumn += "<option value='0' disabled selected hidden>Spalten " + option + "</option>";
+                selColumn += "<option value='*'>*</option>";
+                selColumn += "</select>";
+                var selColumn = $.parseHTML(selColumn);
+                $(".buttonArea.codeComponents").append(selColumn);
+                fillSelectionFields(option, selColumn);
                 break;
             case ".selTable":
                 $(".buttonArea.codeComponents").append('<select class="selTable synTables codeSelect"><option value="0" disabled selected hidden>Tabelle wählen</option></select>');
@@ -1127,11 +1132,11 @@ $(document).ready(function () {
     }
 
     //function: erstellt neue select elemente basierend auf den gewählten Tabellen in der code area
-    function updateSelectCodeComponents(createSelectFields) {
+    function updateSelectCodeComponents() {
         //check all used tables in code area
         updateUsedTables();
         //entfernt alle .inputField die ein Feld einer gelöscht Tabelle haben
-        $(".codeArea.editor .selField").each(function () {
+        $(".codeArea.editor .selColumn").each(function () {
             var isTableActive = false;
             USED_TABLES.forEach(element => {
                 if ($(this).hasClass(element)) {
@@ -1148,22 +1153,9 @@ $(document).ready(function () {
                 deleteElement($(this));
             }
         });
-
-        if (createSelectFields) {
-            //erstellt neue <select> Elemente für die Felder der einzelnen aktiven Tabellen
-            USED_TABLES.forEach(element => {
-                var selectCodeComponent = "<select class='selField synColumns " + element + " codeSelect'>";
-                selectCodeComponent += "<option value='0' disabled selected hidden>Spalten " + element + "</option>";
-                selectCodeComponent += "<option value='*'>*</option>";
-                selectCodeComponent += "</select>";
-                var selectedCodeComponentObject = $.parseHTML(selectCodeComponent);
-                $(".buttonArea.codeComponents").append(selectedCodeComponentObject);
-                fillSelectionFields(element, selectedCodeComponentObject);
-            });
-        }
     }
 
-    //function: befüllt die .selField Element mit Feldern der genutzten Datenbanken
+    //function: befüllt die .selColumn Element mit Feldern der genutzten Datenbanken
     function fillSelectionFields(tableName, selectFields) {
         var tempTableFields = getSqlTableFields(tableName);
         tempTableFields.forEach(element => {
@@ -1368,9 +1360,6 @@ $(document).ready(function () {
     //function: loops through JSON Data and shows Elements based on selected SQL Element
     function updateActiveCodeView() {
 
-
-
-
         if (!isCheckboxChecked("#checkDisplayAllCodeComponents")) {
             //reset add und delete Button
             $(".buttonArea.mainMenu .btnAdd").hide();
@@ -1388,8 +1377,29 @@ $(document).ready(function () {
 
                     element.visibleCodeComponents.forEach(element => {
 
-                        createCodeComponent(element.codeComponentClass);
-                        componentCounter++;
+                        //.selColumns werden in Abhängigkeit der USED_TABLES erstellt
+                        if (element.codeComponentClass == ".selColumn") {
+                            updateUsedTables();
+                            USED_TABLES.forEach(elementTable => {
+                                createCodeComponent(element.codeComponentClass, elementTable);
+                                componentCounter++;
+                                //Zeilenumbruch nach x Elementen einfügen
+                                if (componentCounter >= Math.ceil(maxComponents / maxZeilen)) {
+                                    createCodeComponent("zeilenumbruch", null);
+                                    componentCounter = 0;
+                                    maxComponents--;
+                                }
+                            });
+                        } else {
+                            createCodeComponent(element.codeComponentClass, null);
+                            componentCounter++;
+                            //Zeilenumbruch nach x Elementen einfügen
+                            if (componentCounter >= Math.ceil(maxComponents / maxZeilen)) {
+                                createCodeComponent("zeilenumbruch", null);
+                                componentCounter = 0;
+                                maxComponents--;
+                            }
+                        }
 
                         //wenn ein input Feld angezeigt wird:
                         if (element.codeComponentType == "input") {
@@ -1405,14 +1415,6 @@ $(document).ready(function () {
                             }
                         }
 
-                        //Zeilenumbruch nach x Elementen einfügen
-                        if (componentCounter >= Math.ceil(maxComponents / maxZeilen)) {
-                            createCodeComponent("zeilenumbruch");
-                            componentCounter = 0;
-                            maxComponents--;
-                        }
-
-
                     });
 
                     //Main Controls: btnRun, btnAdd, btnDelete, ...
@@ -1423,9 +1425,9 @@ $(document).ready(function () {
                 }
             });
         } else {
-            var allCodeComponents = [".btnSelect", ".btnWhere", ".btnOrder", ".btnLimit", ".btnGroup", ".btnJoin", ".selField", ".selTable", ".selAggregate", ".btnAND", ".btnOR", ".btnLeftBracket", ".btnRightBracket", ".selOperators", ".inputValue", ".btnAsc", ".btnDesc", ".btnHaving"];
+            var allCodeComponents = [".btnSelect", ".btnWhere", ".btnOrder", ".btnLimit", ".btnGroup", ".btnJoin", ".selColumn", ".selTable", ".selAggregate", ".btnAND", ".btnOR", ".btnLeftBracket", ".btnRightBracket", ".selOperators", ".inputValue", ".btnAsc", ".btnDesc", ".btnHaving"];
             allCodeComponents.forEach(element => {
-                createCodeComponent(element);
+                createCodeComponent(element, null);
             });
         }
         initScrollDots();
@@ -1506,9 +1508,6 @@ $(document).ready(function () {
             };
 
         }
-
-
-
     }
 
 
