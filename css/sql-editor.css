@@ -43,8 +43,6 @@ h1 {
     overflow: auto;
 }
 
-
-
 footer {
     font-size: .8em;
     color: #222;
@@ -117,7 +115,7 @@ div.col.centerMenu {
 .dbHandlingMenu select {
     background-image: url("data:image/svg+xml;utf8,<svg fill='slategrey' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
     border-bottom: 0.15em solid slategrey;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: slategrey;
 }
 
@@ -144,7 +142,7 @@ div.col.centerMenu {
     border-bottom: 0.15em solid slategrey;
     background-color: #fff;
     color: slategrey;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
 }
 
 .dbHandlingMenu .hamburgerNav button.btnDbInfo,
@@ -463,9 +461,10 @@ div.tab-pane.active {
 }
 
 .schemaTable td,
-.schemaTable th{
+.schemaTable th {
     /*border-color: lightgrey;*/
 }
+
 .schemaTable td:first-child {
     padding-left: 0.8em;
 }
@@ -474,6 +473,6 @@ div.tab-pane.active {
     padding-left: 0.8em;
 }
 
-.tableSql{
+.tableSql {
     /*border-color: lightgrey;*/
 }
