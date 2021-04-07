@@ -44,7 +44,8 @@ $(document).ready(function () {
 
         // zeigt das Datenbankschema an
         var tempTables = getSqlTables();
-        $(".schemaArea").html("<h4>Datenbank Schema TEST </h4>" + createTableInfo(tempTables, "1,2"));
+
+        $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
 
         //debug:
         $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -601,7 +602,7 @@ $(document).ready(function () {
 
             // zeigt das Datenbankschema an
             var tempTables = getSqlTables();
-            $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
+            $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
         }
         // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
         else if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server") {
@@ -615,7 +616,7 @@ $(document).ready(function () {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
+                $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
 
             }, function (error) { console.log(error) });
         }
@@ -642,7 +643,7 @@ $(document).ready(function () {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
+                $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
 
                 //debug:
                 $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -674,7 +675,7 @@ $(document).ready(function () {
     // Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
     $(".btnDbInfo").click(function () {
         var tempTables = getSqlTables();
-        $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
+        $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
     });
     $(".btnDbInfoMobile").click(function () {
         var tempTables = getSqlTables();
@@ -1485,7 +1486,7 @@ $(document).ready(function () {
 
             //erstellt eine Tabelle mit den Ergebnissen
             $(".resultArea.resultModal").html("");
-            $(".outputArea").html("<h4>SQL-Output</h4>");
+            $(".outputArea").html("");
             for (var i = 0; i < result.length; i++) {
                 if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[i].columns, result[i].values));
                 else if (type == "desktop") {

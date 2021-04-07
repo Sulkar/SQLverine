@@ -404,10 +404,25 @@ pre span.codeline span:first {
 
 div.tab-pane.active {
     background-color: #fff;
+    ;
+}
+
+.rightArea button.nav-link {
+    font-size: 1.1em;
+    color: slategrey;
+}
+
+.rightArea .tab-content {
+    padding-top: 0.6em;
+}
+
+.rightArea .tab-content h2 {
+    color: slategrey;
 }
 
 .codeComponentsScrolldots {
     text-align: center;
+    color: slategrey;
 }
 
 .codeComponentsScrolldots a:not([href]) {
