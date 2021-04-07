@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     //global variables
     var NR = 0;
@@ -33,7 +33,7 @@ $(document).ready(function() {
     }
 
     // START - erste Datenbank wird geladen und die View wird angepasst
-    init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function(initObject) {
+    init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function (initObject) {
         CURRENT_SQL_DATABASE = initObject[CURRENT_DATABASE_INDEX];
         ACTIVE_CODE_VIEW_DATA = initObject[1];
 
@@ -44,12 +44,12 @@ $(document).ready(function() {
 
         // zeigt das Datenbankschema an
         var tempTables = getSqlTables();
-        $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+        $(".schemaArea").html("<h4>Datenbank Schema TEST </h4>" + createTableInfo(tempTables, "1,2"));
 
         //debug:
         $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
 
-    }, function(error) { console.log(error) });
+    }, function (error) { console.log(error) });
 
     ////////////
     //   UI   //
@@ -74,7 +74,7 @@ $(document).ready(function() {
     // EVENTS //
 
     // Scrollfortschritt als Dots anzeigen
-    $(".buttonArea.codeComponents").on('scroll', function() {
+    $(".buttonArea.codeComponents").on('scroll', function () {
         var maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
         var dotCount = Math.floor($(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
 
@@ -89,7 +89,7 @@ $(document).ready(function() {
 
 
     // Scrolldots bei Klick an Position springen lassen
-    $(".codeComponentsScrolldots").on('click', 'a', function() {
+    $(".codeComponentsScrolldots").on('click', 'a', function () {
         var dotCountBefore = $(this).prevAll().length;
         var dotCountAfter = $(this).nextAll().length;
         var maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
@@ -106,7 +106,7 @@ $(document).ready(function() {
     });
 
     // Button: SELECT ___ FROM ___
-    $(".buttonArea.codeComponents").on('click', '.btnSelect', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnSelect', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         CURRENT_SELECTED_ELEMENT = undefined;
         var elementSELECT_FROM = "<span class='codeline'>";
@@ -128,7 +128,7 @@ $(document).ready(function() {
     });
 
     // Button: WHERE ___ ___ ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnWhere', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnWhere', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementWHERE = "<span class='codeline'>";
         elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
@@ -155,7 +155,7 @@ $(document).ready(function() {
     });
 
     // Button: JOIN ___ ON ___ ___ ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnJoin', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnJoin', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementJOIN = "<span class='codeline'>";
         elementJOIN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='JOIN'>JOIN";
@@ -187,7 +187,7 @@ $(document).ready(function() {
     });
 
     //Button: AND
-    $(".buttonArea.codeComponents").on('click', '.btnAND', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnAND', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
         var elementWhereAND = "";
@@ -212,7 +212,7 @@ $(document).ready(function() {
     });
 
     //Button: OR
-    $(".buttonArea.codeComponents").on('click', '.btnOR', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnOR', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
         var elementWhereOR = "";
@@ -237,7 +237,7 @@ $(document).ready(function() {
     });
 
     //Button: LeftBracket
-    $(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
             CURRENT_SELECTED_ELEMENT.before("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='LEFTBRACKET'> ( </span>");
@@ -245,7 +245,7 @@ $(document).ready(function() {
         }
     });
     //Button: RightBracket
-    $(".buttonArea.codeComponents").on('click', '.btnRightBracket', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnRightBracket', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
             CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='RIGHTBRACKET'> ) </span>");
@@ -254,7 +254,7 @@ $(document).ready(function() {
     });
 
     // Button: ORDER BY ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnOrder', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnOrder', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementORDER = "";
         elementORDER += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ORDER'>";
@@ -272,7 +272,7 @@ $(document).ready(function() {
     });
 
     //Button: ASC
-    $(".buttonArea.codeComponents").on('click', '.btnAsc', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnAsc', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementOrderAsc = "";
         elementOrderAsc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ASC'>";
@@ -287,7 +287,7 @@ $(document).ready(function() {
     });
 
     //Button: DESC
-    $(".buttonArea.codeComponents").on('click', '.btnDesc', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnDesc', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementOrderDesc = "";
         elementOrderDesc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DESC'>";
@@ -302,7 +302,7 @@ $(document).ready(function() {
     });
 
     // Button: LIMIT ___ = [offset,] row_count
-    $(".buttonArea.codeComponents").on('click', '.btnLimit', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnLimit', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementLIMIT = "";
         elementLIMIT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='LIMIT'>";
@@ -320,7 +320,7 @@ $(document).ready(function() {
     });
 
     // Button: GROUP BY ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnGroup', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnGroup', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementGROUP = "";
         elementGROUP += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='GROUP'>";
@@ -338,7 +338,7 @@ $(document).ready(function() {
     });
 
     // Button: HAVING ___ ___ ___ = like WHERE but can handle Aggregate functions
-    $(".buttonArea.codeComponents").on('click', '.btnHaving', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnHaving', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementHAVING = "";
         elementHAVING += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='HAVING'>";
@@ -362,7 +362,7 @@ $(document).ready(function() {
     });
 
     // Button: DELETE FROM ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementDELETE_FROM = "<span class='codeline'>";
         elementDELETE_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DELETE_FROM'>";
@@ -379,7 +379,7 @@ $(document).ready(function() {
     });
 
     // Button: UPDATE ___ SET ___ = ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnUpdate', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnUpdate', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementUPDATE = "<span class='codeline'>";
         elementUPDATE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='UPDATE'>UPDATE";
@@ -407,7 +407,7 @@ $(document).ready(function() {
     });
 
     // Button: INSERT INTO ___ (___) VALUES (___) 
-    $(".buttonArea.codeComponents").on('click', '.btnInsert', function() {
+    $(".buttonArea.codeComponents").on('click', '.btnInsert', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementINSERT = "<span class='codeline'>";
         elementINSERT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='INSERT'>INSERT INTO";
@@ -440,7 +440,7 @@ $(document).ready(function() {
     });
 
     // Select: add dbField, dbTable, Aggregatsfunktion
-    $('.buttonArea.codeComponents').on('change', '.codeSelect', function() {
+    $('.buttonArea.codeComponents').on('change', '.codeSelect', function () {
         if (CURRENT_SELECTED_ELEMENT != undefined) {
             var tempSelectField = this;
             var returnObject = {};
@@ -482,7 +482,7 @@ $(document).ready(function() {
     });
 
     //Button: Add Element "inputField"
-    $(".btnAdd").click(function() {
+    $(".btnAdd").click(function () {
         var dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
 
         if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
@@ -532,14 +532,14 @@ $(document).ready(function() {
     });
 
     // Button: Delete Element
-    $('.btnDelete').click(function() {
+    $('.btnDelete').click(function () {
         deleteElement(CURRENT_SELECTED_ELEMENT);
         // aktualisiert alle .selField <select>
         updateSelectCodeComponents(false);
     });
 
     // on Click Element
-    $('.codeArea.editor').on('click', 'span', function(event) {
+    $('.codeArea.editor').on('click', 'span', function (event) {
         event.stopPropagation();
         //
         if ($(this).data("goto-element") == "next") {
@@ -553,14 +553,14 @@ $(document).ready(function() {
     });
 
     // on Click CodeArea - deselct
-    $('body').on('click', '.codeArea.editor', function(event) {
+    $('body').on('click', '.codeArea.editor', function (event) {
         event.stopPropagation();
         removeSelection(false);
         checkCodeAreaSQLElements();
     });
 
     // Input: add text to Selected Element span
-    $(".buttonArea.codeComponents").on('keyup', '.codeInput', function(e) {
+    $(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
         if (CURRENT_SELECTED_ELEMENT != undefined) {
             var tempValue = $(this).val();
             if (tempValue != "") {
@@ -588,7 +588,7 @@ $(document).ready(function() {
     });
 
     // Select: Datenbank wird ausgewählt
-    $('#selDbChooser').on('change', function() {
+    $('#selDbChooser').on('change', function () {
         $(".codeArea pre code").html("");
 
         CURRENT_SELECTED_SQL_ELEMENT = "START";
@@ -601,11 +601,11 @@ $(document).ready(function() {
 
             // zeigt das Datenbankschema an
             var tempTables = getSqlTables();
-            $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+            $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
         }
         // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
         else if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server") {
-            init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function(initObject) {
+            init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function (initObject) {
                 CURRENT_SQL_DATABASE = initObject[0];
                 ACTIVE_CODE_VIEW_DATA = initObject[1];
 
@@ -615,19 +615,19 @@ $(document).ready(function() {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
 
-            }, function(error) { console.log(error) });
+            }, function (error) { console.log(error) });
         }
     });
 
     // Datenbankdatei wurde zum Upload ausgewählt
-    $("#fileDbUpload").on('change', function() {
+    $("#fileDbUpload").on('change', function () {
         var uploadedFile = this.files[0];
 
         var fileReader = new FileReader();
-        fileReader.onload = function() {
-            init(fileReader.result).then(function(initObject) {
+        fileReader.onload = function () {
+            init(fileReader.result).then(function (initObject) {
                 CURRENT_SQL_DATABASE = initObject[0];
                 ACTIVE_CODE_VIEW_DATA = initObject[1];
 
@@ -642,19 +642,19 @@ $(document).ready(function() {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
-                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+                $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
 
                 //debug:
                 $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
 
-            }, function(error) { console.log(error) });
+            }, function (error) { console.log(error) });
         }
         fileReader.readAsArrayBuffer(uploadedFile);
 
     });
 
     //Button: lädt die aktuell ausgewählte Datenbank herunter
-    $(".btnDbDownload").click(function() {
+    $(".btnDbDownload").click(function () {
         var binaryArray = CURRENT_SQL_DATABASE.export();
 
         var blob = new Blob([binaryArray]);
@@ -662,8 +662,8 @@ $(document).ready(function() {
         document.body.appendChild(a);
         a.href = window.URL.createObjectURL(blob);
         a.download = DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name;
-        a.onclick = function() {
-            setTimeout(function() {
+        a.onclick = function () {
+            setTimeout(function () {
                 window.URL.revokeObjectURL(a.href);
             }, 1500);
         };
@@ -672,40 +672,40 @@ $(document).ready(function() {
     });
 
     // Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
-    $(".btnDbInfo").click(function() {
+    $(".btnDbInfo").click(function () {
         var tempTables = getSqlTables();
-        $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2") + "</div>");
+        $(".schemaArea").html("<h4>Datenbank Schema</h4>" + createTableInfo(tempTables, "1,2"));
     });
-    $(".btnDbInfoMobile").click(function() {
+    $(".btnDbInfoMobile").click(function () {
         var tempTables = getSqlTables();
-        $(".schemaArea.dbInfoModal").html(createTableInfo(tempTables, "1,2") + "</div>");
+        $(".schemaArea.dbInfoModal").html(createTableInfo(tempTables, "1,2"));
 
     });
 
     // Button: close modal (x - schließen)
-    $(".btn-close.dbInfoModal").click(function() {
+    $(".btn-close.dbInfoModal").click(function () {
         //$(".codeArea.resultModal pre code").html("");
     });
-    $(".btn.btn-secondary.close.dbInfoModal").click(function() {
+    $(".btn.btn-secondary.close.dbInfoModal").click(function () {
         //$(".codeArea.resultModal pre code").html("");
     });
 
     // Button: run sql command - desktop
-    $(".btnRun").click(function() {
+    $(".btnRun").click(function () {
         execSqlCommand(null, "desktop");
     });
     // Button: run sql command - mobile 
-    $(".btnRunMobile").click(function() {
+    $(".btnRunMobile").click(function () {
 
         var tempCode = $(".codeArea.editor pre code").html().trim();
         $(".codeArea.resultModal pre code").html(tempCode);
         execSqlCommand(null, "mobile");
     });
     // Button: close modal (x - schließen)
-    $(".btn-close.resultModal").click(function() {
+    $(".btn-close.resultModal").click(function () {
         $(".codeArea.resultModal pre code").html("");
     });
-    $(".btn.btn-secondary.close.resultModal").click(function() {
+    $(".btn.btn-secondary.close.resultModal").click(function () {
         $(".codeArea.resultModal pre code").html("");
     });
 
@@ -734,7 +734,7 @@ $(document).ready(function() {
                     if (newColumnObject.name == columnWithForeignKey) { //Informationen werden nur ergänzt, wenn es sich um die richtige Spalte handelt
                         newColumnObject.columnSelf = columnWithForeignKey;
                         var regexForeignKeyColumnTarget = element.split("REFERENCES")[1].match(/\((.*?)\)/); //sucht nach ( ) 
-                        var regexForeignKeyTableTarget = element.split("REFERENCES")[1].match(/^(.*?)\(/);
+                        var regexForeignKeyTableTarget = element.split("REFERENCES")[1].match(/^(.*?)\(/); //sucht von vorne bis zur ersten (
                         if (regexForeignKeyColumnTarget != null) {
                             newColumnObject.columnTarget = regexForeignKeyColumnTarget[1].replaceAll(/"|[ ]/g, "");
                         }
@@ -1026,7 +1026,7 @@ $(document).ready(function() {
                 $(".buttonArea.codeComponents").append('<button class="btnInsert synSQL sqlInsert">INSERT INTO ___ (___) VALUES (___)</button>');
                 break;
             default:
-                //log("no component found")
+            //log("no component found")
         }
     }
 
@@ -1034,14 +1034,14 @@ $(document).ready(function() {
     function findElementBySqlData(elements, attributeValue, position) {
         var tempElement;
         if (position == "first") {
-            $(elements).each(function() {
+            $(elements).each(function () {
                 tempElement = this;
                 if ($(tempElement).data("sql-element") == attributeValue) {
                     return false; //found element -> stop loop
                 }
             });
         } else if (position == "last") {
-            $(elements.get().reverse()).each(function() {
+            $(elements.get().reverse()).each(function () {
                 tempElement = this;
                 if ($(tempElement).data("sql-element") == attributeValue) {
                     return false; //found element -> stop loop
@@ -1091,7 +1091,7 @@ $(document).ready(function() {
         }
 
         // deletes all empty <span class="codeline">
-        $(".codeline").each(function() {
+        $(".codeline").each(function () {
             if ($(this).children().length == 0) $(this).remove();
         });
     }
@@ -1118,7 +1118,7 @@ $(document).ready(function() {
     //function: get all used db tables in code area
     function updateUsedTables() {
         USED_TABLES = [];
-        $(".codeArea.editor .selTable").each(function() {
+        $(".codeArea.editor .selTable").each(function () {
             if (!USED_TABLES.includes($(this).html())) {
                 USED_TABLES.push($(this).html());
             }
@@ -1130,7 +1130,7 @@ $(document).ready(function() {
         //check all used tables in code area
         updateUsedTables();
         //entfernt alle .inputField die ein Feld einer gelöscht Tabelle haben
-        $(".codeArea.editor .selField").each(function() {
+        $(".codeArea.editor .selField").each(function () {
             var isTableActive = false;
             USED_TABLES.forEach(element => {
                 if ($(this).hasClass(element)) {
@@ -1444,7 +1444,7 @@ $(document).ready(function() {
     //function: get all SQL Elements in CodeArea
     function getCodeAreaSQLElements() {
         var codeAreaElements = [];
-        $('.codeArea.editor').children(".parent").each(function() {
+        $('.codeArea.editor').children(".parent").each(function () {
             var tempSqlElement = $(this).data("sql-element");
             codeAreaElements.push(tempSqlElement);
         });
@@ -1518,7 +1518,7 @@ $(document).ready(function() {
     //$(codeVersion).append("0.5");
 
     //display debug area with controls
-    $("#displayDebug").click(function() {
+    $("#displayDebug").click(function () {
         if (!isCheckboxChecked("#displayDebug")) {
             $("#debug-area").hide();
         } else {
@@ -1532,42 +1532,42 @@ $(document).ready(function() {
         if (tempValue != undefined) console.log("-> " + tempValue);
     }
     //Debug jquery-code textarea
-    $(".btnCode-parent").click(function() {
+    $(".btnCode-parent").click(function () {
         CURRENT_SELECTED_ELEMENT.parent().addClass("debug");
     });
-    $(".btnCode-closest1").click(function() {
+    $(".btnCode-closest1").click(function () {
         CURRENT_SELECTED_ELEMENT.closest(".parent").addClass("debug");
     });
-    $(".btnCode-closest2").click(function() {
+    $(".btnCode-closest2").click(function () {
         CURRENT_SELECTED_ELEMENT.closest(".inputFields").addClass("debug");
     });
-    $(".btnCode-find1").click(function() {
+    $(".btnCode-find1").click(function () {
         CURRENT_SELECTED_ELEMENT.find(".parent").addClass("debug");
     });
-    $(".btnCode-copycodeto").click(function() {
+    $(".btnCode-copycodeto").click(function () {
         var copyCode = $("#jquery-code").val();
         $(".codeArea.editor pre code").html(copyCode);
     });
-    $(".btnCode-copycodefrom").click(function() {
+    $(".btnCode-copycodefrom").click(function () {
         var tempCode = $(".codeArea.editor pre code").html().trim();
         $("#jquery-code").html(tempCode);
         saveToLocalStorage("tempSqlCommand", tempCode);
     });
-    $(".btnCode-getSqlString").click(function() {
+    $(".btnCode-getSqlString").click(function () {
         var tempCode = $(".codeArea.editor pre code").clone();
         tempCode.find(".codeline").prepend("<span>&nbsp;</span>");
         $("#jquery-code").html(tempCode.text().trim());
     });
-    $(".btnCode-execSql").click(function() {
+    $(".btnCode-execSql").click(function () {
         var tempSqlCommand = $("#jquery-code").val();
         execSqlCommand(tempSqlCommand, "desktop");
         $("#exampleModal").modal('toggle');
     });
-    $(".btnCode-remove").click(function() {
+    $(".btnCode-remove").click(function () {
         $("div").removeClass("debug");
         $("[class^='codeElement_']").removeClass("debug");
     });
-    $("#checkDisplayAllCodeComponents").click(function() {
+    $("#checkDisplayAllCodeComponents").click(function () {
         updateActiveCodeView();
     });
 
