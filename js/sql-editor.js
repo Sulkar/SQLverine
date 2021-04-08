@@ -10,8 +10,7 @@ $(document).ready(function () {
     var CURRENT_SQL_DATABASE; //aktuell geladene DB
     var DATABASE_ARRAY = [];
     var CURRENT_DATABASE_INDEX = 0;
-    DATABASE_ARRAY.push(createDatabaseObject("mitarbeiterDB.db", null, "server"));
-    DATABASE_ARRAY.push(createDatabaseObject("unsereSchule.db", null, "server"));
+    DATABASE_ARRAY.push(createDatabaseObject("Grundschule.db", null, "server"));
     var CSS_COLOR_ARRAY = ["coral", "tomato", "orange", "gold", "palegreen", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
 
     //////////
