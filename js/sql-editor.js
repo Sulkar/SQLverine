@@ -13,6 +13,42 @@ $(document).ready(function () {
     DATABASE_ARRAY.push(createDatabaseObject("Grundschule.db", null, "server"));
     var CSS_COLOR_ARRAY = ["coral", "tomato", "orange", "gold", "palegreen", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
 
+    // TESTS
+    var QUESTION_ARRAY = [];
+    var SOLUTION_ALL_ARRAY = [];
+    var CURRENT_QUESTION_ID = 1;
+
+    function createTasks() {
+        var task = {};
+        task.id = 1;
+        task.question = "Suche alle Schüler, die im Jahr 2013 geboren wurden.";
+        task.answer = "2013-07-25|2013-10-25|2013-09-08|2013-06-26|2013-01-17";
+        QUESTION_ARRAY.push(task);
+
+        //zeigt Aufgabe an
+        $(".tab-content #nav-mission").html(task.question);
+    }
+
+    function checkAnswer(taskId) {
+
+        QUESTION_ARRAY.forEach(task => {
+            if (task.id == taskId) {
+                var currentAnswers = task.answer.split("|");
+                var checkSum = currentAnswers.length;
+                var currentCheckSum = 0;
+                //check solution
+                SOLUTION_ALL_ARRAY.forEach(solution => {
+                    currentAnswers.forEach(answer => {
+                        if (solution == answer) {
+                            currentCheckSum++;
+                        }
+                    });
+                });
+                if (checkSum == currentCheckSum) alert("super won");
+            }
+        });
+    }
+
     //////////
     // INIT //
 
@@ -45,6 +81,7 @@ $(document).ready(function () {
         var tempTables = getSqlTables();
 
         $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+        createTasks();
 
         //debug:
         $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -695,6 +732,7 @@ $(document).ready(function () {
     // Button: run sql command - desktop
     $(".btnRun").click(function () {
         execSqlCommand(null, "desktop");
+        checkAnswer(CURRENT_QUESTION_ID);
     });
     // Button: run sql command - mobile 
     $(".btnRunMobile").click(function () {
@@ -722,7 +760,6 @@ $(document).ready(function () {
         var currentTableColumns = getSqlTableFields(tableName);
         var currentTableCreateStatement = CURRENT_SQL_DATABASE.exec("SELECT sql FROM sqlite_master WHERE name = '" + tableName + "'")[0].values[0][0];
 
-        log(currentTableColumns);
         currentTableColumns.forEach(column => { //id, name, vorname, klasse_id, ...
             var foreignKeyfound = false;
             var newColumnObject = {};
@@ -783,7 +820,6 @@ $(document).ready(function () {
             //ForeignKey Informationen der Tabelle je Spalte wird abgerufen
             var tableForeignKeyInformationArray = getTableForeignKeyInformation(table);
 
-            //log(tableForeignKeyInformationArray)
             //erstellt eine Tabelle mit dem Datenbankschema
             for (var i = 0; i < currentTableData.length; i++) {
 
@@ -870,6 +906,8 @@ $(document).ready(function () {
     //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
     function createTableSql(columns, values) {
 
+        SOLUTION_ALL_ARRAY = [];
+
         var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
         newTable += "<thead>";
         columns.forEach((column) => {
@@ -881,6 +919,8 @@ $(document).ready(function () {
         values.forEach((value) => {
             newTable += "<tr>";
             value.forEach((element) => {
+                //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
+                SOLUTION_ALL_ARRAY.push(element);
                 if (element.length > 200) {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {
