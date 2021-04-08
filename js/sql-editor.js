@@ -16,6 +16,7 @@ $(document).ready(function () {
     // TESTS
     var QUESTION_ARRAY = [];
     var SOLUTION_ALL_ARRAY = [];
+    var SOLUTION_ROW_COUNTER = 0;
     var CURRENT_QUESTION_ID = 1;
 
     function createTasks() {
@@ -44,7 +45,7 @@ $(document).ready(function () {
                         }
                     });
                 });
-                if (checkSum == currentCheckSum) alert("super won");
+                if (checkSum == currentCheckSum && SOLUTION_ROW_COUNTER == currentCheckSum) alert("Super, du hast die Aufgabe gelöst.");
             }
         });
     }
@@ -907,6 +908,7 @@ $(document).ready(function () {
     function createTableSql(columns, values) {
 
         SOLUTION_ALL_ARRAY = [];
+        SOLUTION_ROW_COUNTER = 0;
 
         var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
         newTable += "<thead>";
@@ -918,6 +920,7 @@ $(document).ready(function () {
         newTable += "<tbody>";
         values.forEach((value) => {
             newTable += "<tr>";
+            SOLUTION_ROW_COUNTER++;
             value.forEach((element) => {
                 //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
                 SOLUTION_ALL_ARRAY.push(element);
