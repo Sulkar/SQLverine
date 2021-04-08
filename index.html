@@ -7,7 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <title>SQLverine</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="icons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="icons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="icons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="icons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="icons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="icons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16x16.png">
+    <link rel="manifest" href="icons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" href="css/sql-editor.css">
 </head>
 
@@ -22,7 +42,8 @@
                 <span style="float: right; display:none;"><input id="displayDebug" type="checkbox"> <label
                         for="displayDebug">debug</label></span>
                 <h2 id="headerSql">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2em" viewBox="0,0,436.36684,267.67784">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        width="2em" viewBox="0,0,436.36684,267.67784">
                         <g transform="translate(-81.81658,-66.37462)">
                             <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero"
                                 stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
@@ -76,7 +97,8 @@
                             </svg>
                         </button>
                         <!-- button file Upload -->
-                        <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Upload Database">
+                        <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip"
+                            data-placement="top" title="Upload Database">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
                                 class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
                                 <path
@@ -87,7 +109,8 @@
                         </label>
                         <input id="fileDbUpload" type="file" />
 
-                        <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
+                        <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
+                            data-placement="top" title="Download Database">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
                                 class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                                 <path
@@ -96,9 +119,10 @@
                                     d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
                             </svg>
                         </button>
-                        <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="New Database">
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.3em"
-                                height="1.3em" fill="currentColor" viewBox="0,0,12,16">
+                        <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block"
+                            data-toggle="tooltip" data-placement="top" title="New Database">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                width="1.3em" height="1.3em" fill="currentColor" viewBox="0,0,12,16">
                                 <g transform="translate(-294,-191.02041)">
                                     <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
                                         fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
@@ -115,7 +139,9 @@
 
 
                         <!-- Hamburger Nav -->
-                        <button id="btnHamburgerNav" class="btnHamburgerNav d-md-none " data-toggle="tooltip" data-placement="top" title="Toggle Menu" data-bs-toggle="collapse" data-bs-target="#navbarDbOptions">
+                        <button id="btnHamburgerNav" class="btnHamburgerNav d-md-none " data-toggle="tooltip"
+                            data-placement="top" title="Toggle Menu" data-bs-toggle="collapse"
+                            data-bs-target="#navbarDbOptions">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
                                 class="bi bi-list" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
@@ -125,10 +151,11 @@
 
                         <div class="collapse navbar-collapse hamburgerNav" id="navbarDbOptions">
                             <div class="navbar-nav">
-                                <a class="nav-link btnDbInfoMobile" href="#" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#dbInfoModal">
+                                <a class="nav-link btnDbInfoMobile" href="#" data-toggle="modal" data-bs-toggle="modal"
+                                    data-bs-target="#dbInfoModal">
                                     Schema anzeigen
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                                        class="bi bi-info-square" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
+                                        fill="currentColor" class="bi bi-info-square" viewBox="0 0 16 16">
                                         <path
                                             d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
                                         <path
@@ -138,7 +165,8 @@
 
 
                                 <a class="nav-link fileUpload" href="#">
-                                    <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip" data-placement="top" title="Upload Database">
+                                    <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip"
+                                        data-placement="top" title="Upload Database">
                                         Datenbank öffnen
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
                                             fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
@@ -147,12 +175,12 @@
                                             <path
                                                 d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
                                         </svg>
-    
+
                                     </label></a>
                                 <a class="nav-link btnDbDownload" href="#">
                                     Datenbank speichern
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
-                                        class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
+                                        fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                                         <path
                                             d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z" />
                                         <path
@@ -248,7 +276,8 @@
                             </div>
                             <!-- run button mobile -->
                             <div class="col rightMenu d-md-none">
-                                <button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#resultModal">
+                                <button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal"
+                                    data-bs-target="#resultModal">
                                     <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
                             data-bs-target="#resultModal">-->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
@@ -295,15 +324,22 @@
             <div class=" col-md d-none d-md-block rightArea">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
-                        <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema" type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
-                        <button class="nav-link" id="nav-result-tab" data-bs-toggle="tab" data-bs-target="#nav-result" type="button" role="tab" aria-controls="nav-result" aria-selected="false">Ergebnis</button>
-                        <button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission" type="button" role="tab" aria-controls="nav-mission" aria-selected="false">Aufgabe</button>
-                        <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab" data-bs-target="#nav-help" type="button" role="tab" aria-controls="nav-help" aria-selected="false">Hilfe</button>
+                        <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info"
+                            aria-selected="true">Info</button>
+                        <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema"
+                            type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
+                        <button class="nav-link" id="nav-result-tab" data-bs-toggle="tab" data-bs-target="#nav-result"
+                            type="button" role="tab" aria-controls="nav-result" aria-selected="false">Ergebnis</button>
+                        <button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
+                            type="button" role="tab" aria-controls="nav-mission" aria-selected="false">Aufgabe</button>
+                        <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab" data-bs-target="#nav-help"
+                            type="button" role="tab" aria-controls="nav-help" aria-selected="false">Hilfe</button>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-info-tab"></div>
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-info-tab">
+                    </div>
                     <div class="tab-pane fade" id="nav-schema" role="tabpanel" aria-labelledby="nav-schema-tab">
                         <div class="row">
                             <div class="col">
@@ -314,7 +350,8 @@
                     <div class="tab-pane fade" id="nav-result" role="tabpanel" aria-labelledby="nav-result-tab">
                         <div class="outputArea"></div>
                     </div>
-                    <div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-result-tab">...</div>
+                    <div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-result-tab">...
+                    </div>
                     <div class="tab-pane fade" id="nav-help" role="tabpanel" aria-labelledby="nav-result-tab">...</div>
                 </div>
             </div>
@@ -327,7 +364,8 @@
             <h4 style="margin-top: 20px;">
                 Debug:
             </h4>
-            <input id="checkDisplayAllCodeComponents" type="checkbox"> <label for="checkDisplayAllCodeComponents">display
+            <input id="checkDisplayAllCodeComponents" type="checkbox"> <label
+                for="checkDisplayAllCodeComponents">display
                 all
                 code components</label>
             <p>
@@ -359,7 +397,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Schema</h5>
-                    <button type="button" class="btn-close dbInfoModal" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close dbInfoModal" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
@@ -370,7 +409,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close dbInfoModal" data-bs-dismiss="modal">Schließen</button>
+                    <button type="button" class="btn btn-secondary close dbInfoModal"
+                        data-bs-dismiss="modal">Schließen</button>
                 </div>
             </div>
         </div>
@@ -382,27 +422,29 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title resultModal" id="resultModalLabel">Ergebnis</h5>
-                    <button type="button" class="btn-close resultModal" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close resultModal" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
                     <div class="container">
                         <div class="row">
                             <div class="col resultModal">
-                                
+
                                 <div class="codeArea resultModal" style="margin-bottom:0.5em;">
                                     <pre><code></code></pre>
                                 </div>
-                                
+
                                 <div class="resultArea resultModal">
-                                    
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close resultModal" data-bs-dismiss="modal">Schließen</button>
+                    <button type="button" class="btn btn-secondary close resultModal"
+                        data-bs-dismiss="modal">Schließen</button>
                 </div>
             </div>
         </div>
@@ -412,8 +454,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+        </script>
 
     <script src="dist/sql-wasm.js"></script>
 
