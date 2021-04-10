@@ -44,6 +44,7 @@ Dieses Werk, Bearbeitungen oder Übersetzungen und Werke, die auf diesem Werk be
 Erfolgt die Bereitstellung außerhalb einer öffentlichen Bildungseinrichtung oder einer Bildungseinrichtung in freier, nichtöffentlicher Trägerschaft, muss der Zugang dazu ohne Benutzerregistrierung, Erhebung von personenbezogenen Daten mit Ausnahme der technischen Verbindungsparameter oder einer Anforderung des Dokuments per Formular oder Mail (nötigenfalls durch Bereitstellung über einen weiteren Endpunkt) erfolgen.
 
 ## Verwendete Libraries und Frameworks
+- [SQLverine authoring tool](https://github.com/Sulkar/SQLverine-authoring-tool)
 - [SQL.JS](https://sql.js.org/)
 - [jQuery](https://jquery.com/)
 - [Bootstrap](https://getbootstrap.com/)
