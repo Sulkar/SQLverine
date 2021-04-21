@@ -12,6 +12,7 @@ $(document).ready(function () {
     var DATABASE_ARRAY = [];
     var CURRENT_EXERCISE_ID;
     var CURRENT_EXERCISE;
+
     var CURRENT_DATABASE_INDEX = 0;
     DATABASE_ARRAY.push(createDatabaseObject("Grundschule.db", null, "server"));
     var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
@@ -19,9 +20,6 @@ $(document).ready(function () {
     // TESTS
     var SOLUTION_ALL_ARRAY = [];
     var SOLUTION_ROW_COUNTER = 0;
-    var CURRENT_QUESTION_ID = 1;
-
-
 
     //////////
     // INIT //
@@ -63,7 +61,6 @@ $(document).ready(function () {
             CURRENT_EXERCISE_ID = 1;
             CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
             updateExercise();
-
         }
 
         //debug:
@@ -88,30 +85,32 @@ $(document).ready(function () {
 
         }
     }
-    function checkAnswer() {
-
-        //let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-        let currentExercise = {
-            antworten: "Vogl"
-        }
-
-        let currentAnswers = currentExercise.antworten.split("|"); // Vogl(Lehrer.nachname)|Medien
-        let checkSum = currentAnswers.length;
-        let currentCheckSum = 0;
+    function checkAnswer(answerInput) {
+        let solutionRows = CURRENT_EXERCISE.answerObject.rows;
         //check solution
-        SOLUTION_ALL_ARRAY.forEach(solution => {
-            currentAnswers.forEach(answer => {
-                if (solution == answer) {
-                    currentCheckSum++;
-                }
-            });
-        });
-        if (checkSum == currentCheckSum && SOLUTION_ROW_COUNTER == currentCheckSum) {
+        // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
+        // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
+        // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
+        if (solutionRows == SOLUTION_ROW_COUNTER && solutionRows <= SOLUTION_ALL_ARRAY.length && !answerInput) {
             CURRENT_EXERCISE.geloest = true;
             $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
             updateExercise();
         }
+        //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
+        if (answerInput) {
+            $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        }
     }
+
+    $(".outputArea").on("click", "#btnInputCheckExercise", function () {
+        if (SOLUTION_ALL_ARRAY.includes($("#input-check").val())) {
+            CURRENT_EXERCISE.geloest = true;
+            $("#outputInfo").html("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+            updateExercise();
+        } else {
+            $("#outputInfo").html("<p style='color:red;'>Leider falsch! Probiere es nochmal!</p>");
+        }
+    });
 
     $(".outputArea").on("click", "#btnExerciseSuccess", function () {
         let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
@@ -690,6 +689,8 @@ $(document).ready(function () {
         // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
         else if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server") {
             init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function (initObject) {
+
+                CURRENT_VERINE_DATABASE = new VerineDatabase(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name, initObject[0], "server");
                 CURRENT_SQL_DATABASE = initObject[0];
                 ACTIVE_CODE_VIEW_DATA = initObject[1];
 
@@ -699,7 +700,15 @@ $(document).ready(function () {
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
+
                 $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+                let exercises = CURRENT_VERINE_DATABASE.getExercises();
+                if (exercises.length > 0) {
+                    CURRENT_EXERCISE_ID = 1;
+                    CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+                    updateExercise();
+                }
 
             }, function (error) { console.log(error) });
         }
@@ -712,21 +721,33 @@ $(document).ready(function () {
         var fileReader = new FileReader();
         fileReader.onload = function () {
             init(fileReader.result).then(function (initObject) {
+
+                var uploadedFileName = buildDatabaseName(uploadedFile.name, null);
+
+                CURRENT_VERINE_DATABASE = new VerineDatabase(uploadedFileName, initObject[0], "local");
                 CURRENT_SQL_DATABASE = initObject[0];
                 ACTIVE_CODE_VIEW_DATA = initObject[1];
 
-                var uploadedFileName = buildDatabaseName(uploadedFile.name, null);
                 DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_SQL_DATABASE, "local"));
                 CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
                 updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
                 $(".codeArea pre code").html("");
                 CURRENT_SELECTED_SQL_ELEMENT = "START";
+
                 updateActiveCodeView();
 
                 // zeigt das Datenbankschema an
                 var tempTables = getSqlTables();
+
                 $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+                let exercises = CURRENT_VERINE_DATABASE.getExercises();
+                if (exercises.length > 0) {
+                    CURRENT_EXERCISE_ID = 1;
+                    CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+                    updateExercise();
+                }
 
                 //debug:
                 $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -777,7 +798,7 @@ $(document).ready(function () {
     // Button: run sql command - desktop
     $(".btnRun").click(function () {
         execSqlCommand(null, "desktop");
-        checkAnswer(CURRENT_QUESTION_ID);
+        checkAnswer(CURRENT_EXERCISE.answerObject.input);
     });
     // Button: run sql command - mobile 
     $(".btnRunMobile").click(function () {
@@ -947,6 +968,38 @@ $(document).ready(function () {
 
 
 
+    function checkElement(value, column) {
+
+        CURRENT_EXERCISE.answerObject.exerciseSolutionArray.forEach(solution => {
+            //ist vale im LösungsString
+            if (solution.loesungString == value) {
+                //ist eine Tabelle im Antwortobjekt definiert ?
+                if (solution.table != undefined) {
+                    //checkt ob der aktuelle Wert in der Tabelle des Antwortobjekt ist
+                    if (USED_TABLES.includes(solution.table)) {
+                        if (solution.column != undefined) {
+                            if (solution.column == column) {
+                                SOLUTION_ALL_ARRAY.push(String(value));
+                            }
+                        } else {
+                            SOLUTION_ALL_ARRAY.push(String(value));
+                        }
+                    }
+                }
+                //keine Tabelle nötig
+                else {
+                    //ist der aktuelle Wert in der richtigen Spalte?
+                    if (solution.column != undefined) {
+                        if (solution.column == column) {
+                            SOLUTION_ALL_ARRAY.push(String(value));
+                        }
+                    } else {
+                        SOLUTION_ALL_ARRAY.push(String(value));
+                    }
+                }
+            }
+        });
+    }
 
     //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
     function createTableSql(columns, values) {
@@ -965,9 +1018,9 @@ $(document).ready(function () {
         values.forEach((value) => {
             newTable += "<tr>";
             SOLUTION_ROW_COUNTER++;
-            value.forEach((element) => {
+            value.forEach((element, indexColumn) => {
                 //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
-                SOLUTION_ALL_ARRAY.push(element);
+                checkElement(element, columns[indexColumn]);
                 if (element.length > 200) {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {

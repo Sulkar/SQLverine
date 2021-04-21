@@ -145,11 +145,53 @@ class VerineDatabase {
                 exerciseObject.beschreibung = exercise[3];
                 exerciseObject.informationen = exercise[4];
                 exerciseObject.antworten = exercise[5];
+                exerciseObject.answerObject = this.getExerciseAnswerObject(exerciseObject.antworten);
                 exerciseObject.feedback = exercise[6];
                 exerciseObject.geloest = false;
             }
         });
         return exerciseObject;
+    }
+
+    getExerciseAnswerObject(exerciseAnswerString) {
+
+        let answerObject = {};
+        answerObject.exerciseSolutionArray = [];
+
+        //&input
+        if (exerciseAnswerString.search(/&input/) != -1) answerObject.input = true;
+        else answerObject.input = false;
+
+        //&rows=
+        if (exerciseAnswerString.search(/&rows=(\d+)/) != -1) answerObject.rows = parseInt(exerciseAnswerString.match(/&rows=(\d+)/)[1]);
+        else answerObject.rows = 0;
+
+        exerciseAnswerString.split("|").forEach(solution => {
+
+            let exerciseSolution = {};
+            //loesungString = String vor () und &
+            exerciseSolution.loesungString = solution.match(/([\d\wöäüÄÖÜß \-]+)(\(+|&+|$)/);
+            if (exerciseSolution.loesungString != null) exerciseSolution.loesungString = exerciseSolution.loesungString[1];
+
+            //Werte in Klammern (table.column)
+            var tableColumn = solution.match(/\((.+)\)/);
+            if (tableColumn != null) {
+                exerciseSolution.table = tableColumn[1].split(".")[0];
+                exerciseSolution.column = tableColumn[1].split(".")[1];
+            } else {
+                exerciseSolution.table = undefined;
+                exerciseSolution.column = undefined;
+            }
+
+            answerObject.exerciseSolutionArray.push(exerciseSolution);
+        });
+
+
+
+
+        console.log(answerObject);
+
+        return answerObject;
     }
 
     addExercise(newExercise, currentExcersiseId) {
