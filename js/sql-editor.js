@@ -8,47 +8,20 @@ $(document).ready(function () {
     var ACTIVE_CODE_VIEW_DATA; // JSON Data holder
     var USED_TABLES = []; // listet alle genutzten Tabellen einer DB auf, um SELECTs entsprechend zu befüllen
     var CURRENT_SQL_DATABASE; //aktuell geladene DB
+    var CURRENT_VERINE_DATABASE;
     var DATABASE_ARRAY = [];
+    var CURRENT_EXERCISE_ID;
+    var CURRENT_EXERCISE;
     var CURRENT_DATABASE_INDEX = 0;
     DATABASE_ARRAY.push(createDatabaseObject("Grundschule.db", null, "server"));
-    var CSS_COLOR_ARRAY = ["coral", "tomato", "orange", "gold", "palegreen", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
+    var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
 
     // TESTS
-    var QUESTION_ARRAY = [];
     var SOLUTION_ALL_ARRAY = [];
     var SOLUTION_ROW_COUNTER = 0;
     var CURRENT_QUESTION_ID = 1;
 
-    function createTasks() {
-        var task = {};
-        task.id = 1;
-        task.question = "Suche alle Schüler, die im Jahr 2013 geboren wurden.";
-        task.answer = "2013-07-25|2013-10-25|2013-09-08|2013-06-26|2013-01-17";
-        QUESTION_ARRAY.push(task);
 
-        //zeigt Aufgabe an
-        $(".tab-content #nav-mission").html(task.question);
-    }
-
-    function checkAnswer(taskId) {
-
-        QUESTION_ARRAY.forEach(task => {
-            if (task.id == taskId) {
-                var currentAnswers = task.answer.split("|");
-                var checkSum = currentAnswers.length;
-                var currentCheckSum = 0;
-                //check solution
-                SOLUTION_ALL_ARRAY.forEach(solution => {
-                    currentAnswers.forEach(answer => {
-                        if (solution == answer) {
-                            currentCheckSum++;
-                        }
-                    });
-                });
-                if (checkSum == currentCheckSum && SOLUTION_ROW_COUNTER == currentCheckSum) alert("Super, du hast die Aufgabe gelöst.");
-            }
-        });
-    }
 
     //////////
     // INIT //
@@ -70,7 +43,8 @@ $(document).ready(function () {
 
     // START - erste Datenbank wird geladen und die View wird angepasst
     init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function (initObject) {
-        CURRENT_SQL_DATABASE = initObject[CURRENT_DATABASE_INDEX];
+        CURRENT_VERINE_DATABASE = new VerineDatabase("Grundschule.db", initObject[0], "server");
+        CURRENT_SQL_DATABASE = initObject[0];
         ACTIVE_CODE_VIEW_DATA = initObject[1];
 
         DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database = CURRENT_SQL_DATABASE;
@@ -82,12 +56,76 @@ $(document).ready(function () {
         var tempTables = getSqlTables();
 
         $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
-        createTasks();
+        //createTasks();
+
+        let exercises = CURRENT_VERINE_DATABASE.getExercises();
+        if (exercises.length > 0) {
+            CURRENT_EXERCISE_ID = 1;
+            CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+            updateExercise();
+
+        }
 
         //debug:
         $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
 
     }, function (error) { console.log(error) });
+
+
+    function updateExercise() {
+        let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
+        let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
+
+        $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
+        $(".tab-content .exercise-content").html("");
+        $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.titel));
+        $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.beschreibung));
+        $(".tab-content .exercise-content").append("Debug - Antworten: " + he.decode(CURRENT_EXERCISE.antworten));
+
+        if (CURRENT_EXERCISE.geloest) {
+            $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.feedback));
+            $(".tab-content .exercise-content").append("<div class='text-center'><button id='btnNextExercise' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
+
+        }
+    }
+    function checkAnswer() {
+
+        //let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+        let currentExercise = {
+            antworten: "Vogl"
+        }
+
+        let currentAnswers = currentExercise.antworten.split("|"); // Vogl(Lehrer.nachname)|Medien
+        let checkSum = currentAnswers.length;
+        let currentCheckSum = 0;
+        //check solution
+        SOLUTION_ALL_ARRAY.forEach(solution => {
+            currentAnswers.forEach(answer => {
+                if (solution == answer) {
+                    currentCheckSum++;
+                }
+            });
+        });
+        if (checkSum == currentCheckSum && SOLUTION_ROW_COUNTER == currentCheckSum) {
+            CURRENT_EXERCISE.geloest = true;
+            $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+            updateExercise();
+        }
+    }
+
+    $(".outputArea").on("click", "#btnExerciseSuccess", function () {
+        let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
+        tab.show();
+    });
+
+    $(".tab-content #nav-mission").on("click", "#btnNextExercise", function () {
+        CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getNextExercise(CURRENT_EXERCISE_ID);
+        if (CURRENT_EXERCISE_ID != null) {
+            CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+            updateExercise();
+        }
+
+    });
 
     ////////////
     //   UI   //
@@ -125,6 +163,12 @@ $(document).ready(function () {
         $(".codeComponentsScrolldots a").removeClass("activeDot");
         $(".codeComponentsScrolldots a").eq(scrollIndex).addClass("activeDot");
 
+    });
+
+    //Button ist im Infotab und navigiert den Nutzer zum Aufgabentab
+    $("#btnGotoExerciseTab").on('click', function () {
+        let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
+        tab.show();
     });
 
 
@@ -1573,11 +1617,7 @@ $(document).ready(function () {
         }
     });
 
-    //function log
-    function log(info, tempValue) {
-        console.log(info);
-        if (tempValue != undefined) console.log("-> " + tempValue);
-    }
+
     //Debug jquery-code textarea
     $(".btnCode-parent").click(function () {
         CURRENT_SELECTED_ELEMENT.parent().addClass("debug");

@@ -99,7 +99,8 @@
                         </button>
                         -->
                         <!-- button file Upload -->
-                        <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Upload Database">
+                        <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip"
+                            data-placement="top" title="Upload Database">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                                 class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
                                 <path
@@ -110,7 +111,8 @@
                         </label>
                         <input id="fileDbUpload" type="file" />
 
-                        <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
+                        <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
+                            data-placement="top" title="Download Database">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                                 class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                                 <path
@@ -119,9 +121,10 @@
                                     d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
                             </svg>
                         </button>
-                        <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="New Database">
-                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.1em"
-                                height="1.1em" fill="currentColor" viewBox="0,0,12,16">
+                        <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block"
+                            data-toggle="tooltip" data-placement="top" title="New Database">
+                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                                width="1.1em" height="1.1em" fill="currentColor" viewBox="0,0,12,16">
                                 <g transform="translate(-294,-191.02041)">
                                     <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
                                         fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
@@ -319,26 +322,51 @@
                 </div>
             </div>
 
-            <!-- output area -->
+            <!-- Navigation Tabs -->
             <div class=" col-md d-none d-md-block rightArea">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <!-- Info Tab -->
                         <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info"
                             aria-selected="true">Info</button>
-                        <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema"
-                            type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
+
+                        <!-- Ergebnis Tab -->
                         <button class="nav-link" id="nav-result-tab" data-bs-toggle="tab" data-bs-target="#nav-result"
                             type="button" role="tab" aria-controls="nav-result" aria-selected="false">Ergebnis</button>
+
+                        <!-- Aufgabe Tab -->
                         <button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
-                            type="button" role="tab" aria-controls="nav-mission" aria-selected="false">Aufgabe</button>
+                            type="button" role="tab" aria-controls="nav-mission" aria-selected="false"
+                            style="">Aufgabe</button>
+
+                        <!-- Schema Tab -->
+                        <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema"
+                            type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
+
+                        <!-- Hilfe Tab -->
                         <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab" data-bs-target="#nav-help"
-                            type="button" role="tab" aria-controls="nav-help" aria-selected="false">Hilfe</button>
+                            type="button" role="tab" aria-controls="nav-help" aria-selected="false"
+                            style="display: none;">Hilfe</button>
                     </div>
                 </nav>
+
+                <!-- Tab Modals -->
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-info-tab">
+                    <!-- Info Tab -->
+                    <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
+                        <h3>Willkommen bei SQLverine</h3>
+                        <p>SQLverine ist ein einfacher online SQL Editor für SQLite Datenbanken, der Schülerinnen und
+                            Schülern den Einstieg in das Thema Datenbanken und SQL Abfragen auf spielerische Weise
+                            ermöglicht.</p>
+                        <p>Auf der linken Seite kannst du mit Hilfe der Codeblöcke verschiedene SQL Abfragen testen oder
+                            du startest mit einer einfachen Aufgabe:</p>
+                        <div class="text-center"><button id="btnGotoExerciseTab" class=" btn btn-outline-success "
+                                data-toggle="tooltip" data-placement="top">
+                                zur Aufgabe
+                            </button></div>
                     </div>
+                    <!-- Schema Tab -->
                     <div class="tab-pane fade" id="nav-schema" role="tabpanel" aria-labelledby="nav-schema-tab">
                         <div class="row">
                             <div class="col">
@@ -346,11 +374,22 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Ergebnis Tab -->
                     <div class="tab-pane fade" id="nav-result" role="tabpanel" aria-labelledby="nav-result-tab">
                         <div class="outputArea"></div>
+
                     </div>
-                    <div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-result-tab">...
+                    <!-- Aufgabe Tab -->
+                    <div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-result-tab">
+                        <div class="progress">
+                            <div class="progress-bar" id="progress-bar-exercise" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="exercise-content">
+
+                        </div>
                     </div>
+                    <!-- Hilfe Tab -->
                     <div class="tab-pane fade" id="nav-help" role="tabpanel" aria-labelledby="nav-result-tab">...</div>
                 </div>
             </div>
@@ -457,8 +496,11 @@
         integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
         </script>
 
+    <script type="text/javascript" src="js/he.js"></script>
+
     <script src="dist/sql-wasm.js"></script>
 
+    <script type="text/javascript" src="js/VerineDatabase.js"></script>
     <script type="text/javascript" src="js/sql-editor.js"></script>
 
 
