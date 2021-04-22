@@ -185,13 +185,17 @@ class VerineDatabase {
 
             answerObject.exerciseSolutionArray.push(exerciseSolution);
         });
-
-
-
-
-        console.log(answerObject);
-
         return answerObject;
+    }
+
+    isInExerciseSolutionArray(exerciseSolutionArray, solutionToTest) {
+        let solutionFound = false;
+        exerciseSolutionArray.forEach(solution => {
+            if (solution.loesungString == solutionToTest){
+                solutionFound = true;
+            } 
+        });
+        return solutionFound;
     }
 
     addExercise(newExercise, currentExcersiseId) {

@@ -13,6 +13,7 @@ $(document).ready(function () {
     var CURRENT_EXERCISE_ID;
     var CURRENT_EXERCISE;
 
+
     var CURRENT_DATABASE_INDEX = 0;
     DATABASE_ARRAY.push(createDatabaseObject("Grundschule.db", null, "server"));
     var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
@@ -78,39 +79,49 @@ $(document).ready(function () {
         $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.titel));
         $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.beschreibung));
         $(".tab-content .exercise-content").append("Debug - Antworten: " + he.decode(CURRENT_EXERCISE.antworten));
+        $(".exercise-output").html("");
 
         if (CURRENT_EXERCISE.geloest) {
-            $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.feedback));
-            $(".tab-content .exercise-content").append("<div class='text-center'><button id='btnNextExercise' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
+            $(".tab-content .exercise-output").append(he.decode(CURRENT_EXERCISE.feedback));
+            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
+        } else if (CURRENT_EXERCISE.answerObject.input) {
+            $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
         }
+
     }
     function checkAnswer(answerInput) {
         let solutionRows = CURRENT_EXERCISE.answerObject.rows;
+        let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;
         //check solution
         // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
         // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
         // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
-        if (solutionRows == SOLUTION_ROW_COUNTER && solutionRows <= SOLUTION_ALL_ARRAY.length && !answerInput) {
+        if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
             CURRENT_EXERCISE.geloest = true;
             $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+
             updateExercise();
         }
         //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
-        if (answerInput) {
-            $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        else if (answerInput) {
+            $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
         }
     }
 
-    $(".outputArea").on("click", "#btnInputCheckExercise", function () {
-        if (SOLUTION_ALL_ARRAY.includes($("#input-check").val())) {
+    $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
+        //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
+        if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".input-check").val())) {
             CURRENT_EXERCISE.geloest = true;
-            $("#outputInfo").html("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+            if ($(".tab-pane.active").attr("id") != "nav-mission") {
+                $("#outputInfo").html("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+            }
             updateExercise();
         } else {
             $("#outputInfo").html("<p style='color:red;'>Leider falsch! Probiere es nochmal!</p>");
         }
     });
+
 
     $(".outputArea").on("click", "#btnExerciseSuccess", function () {
         let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
