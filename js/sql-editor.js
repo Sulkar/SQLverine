@@ -84,11 +84,13 @@ $(document).ready(function () {
 
         if (CURRENT_EXERCISE.geloest) {
             $(".tab-content .exercise-output").append(he.decode(CURRENT_EXERCISE.feedback));
-            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
+            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
         } else if (CURRENT_EXERCISE.answerObject.input) {
-            console.log("inn")
             $(".tab-content .exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        }//next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
+        else if (CURRENT_EXERCISE.answerObject.next) { 
+            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
         }
 
     }
@@ -99,6 +101,7 @@ $(document).ready(function () {
         // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
         // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
         // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
+        console.log(SOLUTION_ROW_COUNTER + " " + SOLUTION_ALL_ARRAY);
         if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
             CURRENT_EXERCISE.geloest = true;
             $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
@@ -109,6 +112,7 @@ $(document).ready(function () {
         else if (answerInput) {
             $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
         }
+        
     }
 
     $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
@@ -124,19 +128,22 @@ $(document).ready(function () {
         }
     });
 
+    $(".outputArea").on("click", "#btnExerciseNext", function () {
+        let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
+        tab.show();
+    });
 
     $(".outputArea").on("click", "#btnExerciseSuccess", function () {
         let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
         tab.show();
     });
 
-    $(".tab-content #nav-mission").on("click", "#btnNextExercise", function () {
+    $(".tab-content #nav-mission").on("click", ".btnNextExercise", function () {
         CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getNextExercise(CURRENT_EXERCISE_ID);
         if (CURRENT_EXERCISE_ID != null) {
             CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
             updateExercise();
         }
-
     });
 
     ////////////
@@ -992,10 +999,10 @@ $(document).ready(function () {
                     if (USED_TABLES.includes(solution.table)) {
                         if (solution.column != undefined) {
                             if (solution.column == column) {
-                                SOLUTION_ALL_ARRAY.push(String(value));
+                                if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                             }
                         } else {
-                            SOLUTION_ALL_ARRAY.push(String(value));
+                            if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                         }
                     }
                 }
@@ -1004,10 +1011,10 @@ $(document).ready(function () {
                     //ist der aktuelle Wert in der richtigen Spalte?
                     if (solution.column != undefined) {
                         if (solution.column == column) {
-                            SOLUTION_ALL_ARRAY.push(String(value));
+                            if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                         }
                     } else {
-                        SOLUTION_ALL_ARRAY.push(String(value));
+                        if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                     }
                 }
             }

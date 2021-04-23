@@ -158,6 +158,11 @@ class VerineDatabase {
         let answerObject = {};
         answerObject.exerciseSolutionArray = [];
 
+        //&next
+        //&input
+        if (exerciseAnswerString.search(/&next/) != -1) answerObject.next = true;
+        else answerObject.next = false;
+
         //&input
         if (exerciseAnswerString.search(/&input/) != -1) answerObject.input = true;
         else answerObject.input = false;
