@@ -75,18 +75,20 @@ $(document).ready(function () {
         let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
 
         $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
-        $(".tab-content .exercise-content").html("");
-        $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.titel));
-        $(".tab-content .exercise-content").append(he.decode(CURRENT_EXERCISE.beschreibung));
-        $(".tab-content .exercise-content").append("Debug - Antworten: " + he.decode(CURRENT_EXERCISE.antworten));
-        $(".exercise-output").html("");
+        $(".tab-content .exercise-content #exercise-title").html(he.decode(CURRENT_EXERCISE.titel));
+        $(".tab-content .exercise-content #exercise-description").html(he.decode(CURRENT_EXERCISE.beschreibung));
+        $(".tab-content .exercise-content #exercise-meta").html(he.decode(CURRENT_EXERCISE.informationen));
+        //Antworten werden im Log angezeigt -> fürs Testen
+        console.log("Antworten: " + he.decode(CURRENT_EXERCISE.antworten));
+        $(".tab-content .exercise-output").html("");
 
         if (CURRENT_EXERCISE.geloest) {
             $(".tab-content .exercise-output").append(he.decode(CURRENT_EXERCISE.feedback));
             $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
         } else if (CURRENT_EXERCISE.answerObject.input) {
-            $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+            console.log("inn")
+            $(".tab-content .exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
         }
 
     }
