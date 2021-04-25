@@ -75,32 +75,32 @@ $(document).ready(function () {
         let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
 
         $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
-        $(".tab-content .exercise-content #exercise-title").html(he.decode(CURRENT_EXERCISE.titel));
+        $(".tab-content .exercise-content #exercise-title").html(CURRENT_EXERCISE.titel);
         //Beschreibung
-        if (removeEmptyTags(he.decode(CURRENT_EXERCISE.beschreibung)) != "") {
+        if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
             $(".exercise-description").show();
-            $(".tab-content .exercise-content #exercise-description").html(he.decode(CURRENT_EXERCISE.beschreibung));
+            $(".tab-content .exercise-content #exercise-description").html(CURRENT_EXERCISE.beschreibung);
         }
         else $(".exercise-description").hide();
         //Aufgabenstellung
-        if (removeEmptyTags(he.decode(CURRENT_EXERCISE.aufgabenstellung)) != "") {
+        if (removeEmptyTags(CURRENT_EXERCISE.aufgabenstellung) != "") {
             $(".exercise-task").show();
-            $(".tab-content .exercise-content #exercise-task").html(he.decode(CURRENT_EXERCISE.aufgabenstellung));
+            $(".tab-content .exercise-content #exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
         }
         else $(".exercise-task").hide();
         //Aufgabenstellung
-        if (removeEmptyTags(he.decode(CURRENT_EXERCISE.informationen)) != "") {
+        if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
             $(".exercise-meta").show();
-            $(".tab-content .exercise-content #exercise-meta").html(he.decode(CURRENT_EXERCISE.informationen));
+            $(".tab-content .exercise-content #exercise-meta").html(CURRENT_EXERCISE.informationen);
         }
         else $(".exercise-meta").hide();
         
         //Antworten werden im Log angezeigt -> fürs Testen
-        console.log("Antworten: " + he.decode(CURRENT_EXERCISE.antworten));
+        console.log("Antworten: " + CURRENT_EXERCISE.antworten);
         $(".tab-content .exercise-output").html("");
 
         if (CURRENT_EXERCISE.geloest == 1) {
-            $(".tab-content .exercise-output").append(he.decode(CURRENT_EXERCISE.feedback));
+            $(".tab-content .exercise-output").append(CURRENT_EXERCISE.feedback);
             $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
         } else if (CURRENT_EXERCISE.answerObject.input) {
