@@ -119,10 +119,13 @@ class VerineDatabase {
 
     getTables() {
         let tableNamesArray = [];
-        let tableData = this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
-        tableData.forEach(data => {
-            tableNamesArray.push(data[0]);
-        });
+        let ececuteSQL = this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'");
+        if (ececuteSQL.length > 0) {
+            let tableData = ececuteSQL[0].values;
+            tableData.forEach(data => {
+                tableNamesArray.push(data[0]);
+            });
+        }
         return tableNamesArray;
     }
 
@@ -143,11 +146,12 @@ class VerineDatabase {
                 exerciseObject.reihenfolge = exercise[1];
                 exerciseObject.titel = exercise[2];
                 exerciseObject.beschreibung = exercise[3];
-                exerciseObject.informationen = exercise[4];
-                exerciseObject.antworten = exercise[5];
+                exerciseObject.aufgabenstellung = exercise[4]; //
+                exerciseObject.informationen = exercise[5];
+                exerciseObject.antworten = exercise[6];
                 exerciseObject.answerObject = this.getExerciseAnswerObject(exerciseObject.antworten);
-                exerciseObject.feedback = exercise[6];
-                exerciseObject.geloest = false;
+                exerciseObject.feedback = exercise[7];
+                exerciseObject.geloest = exercise[8]; //
             }
         });
         return exerciseObject;
@@ -159,7 +163,6 @@ class VerineDatabase {
         answerObject.exerciseSolutionArray = [];
 
         //&next
-        //&input
         if (exerciseAnswerString.search(/&next/) != -1) answerObject.next = true;
         else answerObject.next = false;
 
@@ -190,6 +193,7 @@ class VerineDatabase {
 
             answerObject.exerciseSolutionArray.push(exerciseSolution);
         });
+
         return answerObject;
     }
 
@@ -202,12 +206,13 @@ class VerineDatabase {
         });
         return solutionFound;
     }
-
+    
     addExercise(newExercise, currentExcersiseId) {
         let errorLogArray = [];
+        this.exerciseTable = this.getExerciseTable();
         //INSERT INTO pokemon(name, nr, größe, gewicht) VALUES("Pikachu", 3, 34, 4)
-        let exerciseValues = '"' + newExercise.titel + '", "' + newExercise.reihenfolge + '", "' + newExercise.beschreibung + '", "' + newExercise.informationen + '", "' + newExercise.antworten + '", "' + newExercise.feedback + '"';
-        let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, informationen, antworten, feedback) VALUES (' + exerciseValues + ');';
+        let exerciseValues = '"' + newExercise.titel + '", ' + parseInt(newExercise.reihenfolge) + ', "' + newExercise.beschreibung + '", "'+ newExercise.aufgabenstellung + '", "' + newExercise.informationen + '", "' + newExercise.antworten + '", "' + newExercise.feedback + '",' + newExercise.geloest;
+        let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, aufgabenstellung, informationen, antworten, feedback, geloest) VALUES (' + exerciseValues + ');';
         try {
             this.database.exec(addExerciseQuery);
         } catch (err) {

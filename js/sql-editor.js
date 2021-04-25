@@ -76,24 +76,46 @@ $(document).ready(function () {
 
         $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
         $(".tab-content .exercise-content #exercise-title").html(he.decode(CURRENT_EXERCISE.titel));
-        $(".tab-content .exercise-content #exercise-description").html(he.decode(CURRENT_EXERCISE.beschreibung));
-        $(".tab-content .exercise-content #exercise-meta").html(he.decode(CURRENT_EXERCISE.informationen));
+        //Beschreibung
+        if (removeEmptyTags(he.decode(CURRENT_EXERCISE.beschreibung)) != "") {
+            $(".exercise-description").show();
+            $(".tab-content .exercise-content #exercise-description").html(he.decode(CURRENT_EXERCISE.beschreibung));
+        }
+        else $(".exercise-description").hide();
+        //Aufgabenstellung
+        if (removeEmptyTags(he.decode(CURRENT_EXERCISE.aufgabenstellung)) != "") {
+            $(".exercise-task").show();
+            $(".tab-content .exercise-content #exercise-task").html(he.decode(CURRENT_EXERCISE.aufgabenstellung));
+        }
+        else $(".exercise-task").hide();
+        //Aufgabenstellung
+        if (removeEmptyTags(he.decode(CURRENT_EXERCISE.informationen)) != "") {
+            $(".exercise-meta").show();
+            $(".tab-content .exercise-content #exercise-meta").html(he.decode(CURRENT_EXERCISE.informationen));
+        }
+        else $(".exercise-meta").hide();
+        
         //Antworten werden im Log angezeigt -> fürs Testen
         console.log("Antworten: " + he.decode(CURRENT_EXERCISE.antworten));
         $(".tab-content .exercise-output").html("");
 
-        if (CURRENT_EXERCISE.geloest) {
+        if (CURRENT_EXERCISE.geloest == 1) {
             $(".tab-content .exercise-output").append(he.decode(CURRENT_EXERCISE.feedback));
             $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
         } else if (CURRENT_EXERCISE.answerObject.input) {
             $(".tab-content .exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
         }//next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
-        else if (CURRENT_EXERCISE.answerObject.next) { 
+        else if (CURRENT_EXERCISE.answerObject.next) {
             $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
         }
 
     }
+
+    function removeEmptyTags(stringToTest) {
+        return stringToTest.replaceAll(/[<p>|<br>|</p>|\s]/g, "");
+    }
+
     function checkAnswer(answerInput) {
         let solutionRows = CURRENT_EXERCISE.answerObject.rows;
         let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;
@@ -103,7 +125,7 @@ $(document).ready(function () {
         // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
         console.log(SOLUTION_ROW_COUNTER + " " + SOLUTION_ALL_ARRAY);
         if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
-            CURRENT_EXERCISE.geloest = true;
+            CURRENT_EXERCISE.geloest = 1;
             $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
 
             updateExercise();
@@ -112,13 +134,13 @@ $(document).ready(function () {
         else if (answerInput) {
             $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
         }
-        
+
     }
 
     $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
         //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
         if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".input-check").val())) {
-            CURRENT_EXERCISE.geloest = true;
+            CURRENT_EXERCISE.geloest = 1;
             if ($(".tab-pane.active").attr("id") != "nav-mission") {
                 $("#outputInfo").html("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
             }
@@ -999,10 +1021,10 @@ $(document).ready(function () {
                     if (USED_TABLES.includes(solution.table)) {
                         if (solution.column != undefined) {
                             if (solution.column == column) {
-                                if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                                if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                             }
                         } else {
-                            if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                            if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                         }
                     }
                 }
@@ -1011,10 +1033,10 @@ $(document).ready(function () {
                     //ist der aktuelle Wert in der richtigen Spalte?
                     if (solution.column != undefined) {
                         if (solution.column == column) {
-                            if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                            if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                         }
                     } else {
-                        if(!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                        if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
                     }
                 }
             }

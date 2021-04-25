@@ -382,22 +382,28 @@
                     <!-- Aufgabe Tab -->
                     <div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-result-tab">
                         <div class="progress">
-                            <div class="progress-bar" id="progress-bar-exercise" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar" id="progress-bar-exercise" role="progressbar" aria-valuemin="0"
+                                aria-valuemax="100">
                             </div>
                         </div>
-                        <div class="exercise-content">
+                        <div class="exercise-content" style="margin-top: 1em;">
                             <h2 id="exercise-title">Überschrift</h2>
                             <div class="exerciseDescription">
-                                <div id="exercise-description">
-                                    
+                                <div class="exercise-description" id="exercise-description">
                                 </div>
-                                
-                                <div class="card border-success col-sm-10">
+
+                                <div class="card border-warning col-sm-10 exercise-task">
+                                    <div class="card-header">Aufgabe</div>
+                                    <div class="card-body text-dark" id="exercise-task">
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="card border-success col-sm-10 exercise-meta">
                                     <div class="card-header">Hilfreiche Informationen</div>
                                     <div class="card-body text-dark" id="exercise-meta">
                                     </div>
                                 </div>
-    
+
                             </div>
                         </div>
                         <div class="exercise-output" style="margin-top: 5px;">
