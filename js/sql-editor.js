@@ -55,7 +55,6 @@ $(document).ready(function () {
         var tempTables = getSqlTables();
 
         $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
-        //createTasks();
 
         let exercises = CURRENT_VERINE_DATABASE.getExercises();
         if (exercises.length > 0) {
@@ -88,13 +87,13 @@ $(document).ready(function () {
             $(".tab-content .exercise-content #exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
         }
         else $(".exercise-task").hide();
-        //Aufgabenstellung
+        //Informationen
         if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
             $(".exercise-meta").show();
             $(".tab-content .exercise-content #exercise-meta").html(CURRENT_EXERCISE.informationen);
         }
         else $(".exercise-meta").hide();
-        
+
         //Antworten werden im Log angezeigt -> fürs Testen
         console.log("Antworten: " + CURRENT_EXERCISE.antworten);
         $(".tab-content .exercise-output").html("");
@@ -903,6 +902,7 @@ $(document).ready(function () {
         return tableForeignKeyInformationArray;
 
     }
+
     //function: Erstellt eine Tabelle mit den Informationen der Tabellen einer SQL Datenbank
     function createTableInfo(tables, indexesToDisplay) {
 
@@ -912,83 +912,84 @@ $(document).ready(function () {
         var tableColorArray = [];
 
         tables.forEach(table => {
+            if (table != "verine_exercises") {
+                var tableColor = CSS_COLOR_ARRAY[tableCounter % CSS_COLOR_ARRAY.length];
 
-            var tableColor = CSS_COLOR_ARRAY[tableCounter % CSS_COLOR_ARRAY.length];
-
-            if (tableCounter % 3 == 0) {
-                htmlTableInfo += "</div><div class='row'>";
-            } else if (tableCounter == 1) {
-                htmlTableInfo += "<div class='row'>";
-            }
-
-            var currentTableData = CURRENT_SQL_DATABASE.exec("PRAGMA table_info(" + table + ")");
-
-            htmlTableInfo += "<div class='col-sm'>";
-
-            //ForeignKey Informationen der Tabelle je Spalte wird abgerufen
-            var tableForeignKeyInformationArray = getTableForeignKeyInformation(table);
-
-            //erstellt eine Tabelle mit dem Datenbankschema
-            for (var i = 0; i < currentTableData.length; i++) {
-
-                if (indexesToDisplay != null) {
-                    indexesToDisplayArray = indexesToDisplay.split(",");
-                    indexesToDisplayArray = indexesToDisplayArray.map(Number);
+                if (tableCounter % 3 == 0) {
+                    htmlTableInfo += "</div><div class='row'>";
+                } else if (tableCounter == 1) {
+                    htmlTableInfo += "<div class='row'>";
                 }
 
-                htmlTableInfo += "<table class='table table-bordered schemaTable' style='max-width: 20em;'>";
-                htmlTableInfo += "<thead>";
+                var currentTableData = CURRENT_SQL_DATABASE.exec("PRAGMA table_info(" + table + ")");
 
-                if (indexesToDisplay == null) {
-                    htmlTableInfo += "<tr><th colspan='" + currentTableData[i].columns.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
-                } else {
-                    htmlTableInfo += "<tr><th colspan='" + indexesToDisplayArray.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
-                }
+                htmlTableInfo += "<div class='col-sm'>";
 
-                //speichert den Tabellennamen und die gewählte Farbe, um "foreignKeys" zu referenzieren
-                var newTableColor = {};
-                newTableColor.tableName = table;
-                newTableColor.tableColor = tableColor;
-                tableColorArray.push(newTableColor);
+                //ForeignKey Informationen der Tabelle je Spalte wird abgerufen
+                var tableForeignKeyInformationArray = getTableForeignKeyInformation(table);
 
-                htmlTableInfo += "</thead>";
-                htmlTableInfo += "<tbody>";
-                currentTableData[i].values.forEach((value) => {
-                    htmlTableInfo += "<tr>";
-                    value.forEach((element, index2) => {
+                //erstellt eine Tabelle mit dem Datenbankschema
+                for (var i = 0; i < currentTableData.length; i++) {
+
+                    if (indexesToDisplay != null) {
+                        indexesToDisplayArray = indexesToDisplay.split(",");
+                        indexesToDisplayArray = indexesToDisplayArray.map(Number);
+                    }
+
+                    htmlTableInfo += "<table class='table table-bordered schemaTable' style='max-width: 20em;'>";
+                    htmlTableInfo += "<thead>";
+
+                    if (indexesToDisplay == null) {
+                        htmlTableInfo += "<tr><th colspan='" + currentTableData[i].columns.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
+                    } else {
+                        htmlTableInfo += "<tr><th colspan='" + indexesToDisplayArray.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
+                    }
+
+                    //speichert den Tabellennamen und die gewählte Farbe, um "foreignKeys" zu referenzieren
+                    var newTableColor = {};
+                    newTableColor.tableName = table;
+                    newTableColor.tableColor = tableColor;
+                    tableColorArray.push(newTableColor);
+
+                    htmlTableInfo += "</thead>";
+                    htmlTableInfo += "<tbody>";
+                    currentTableData[i].values.forEach((value) => {
+                        htmlTableInfo += "<tr>";
+                        value.forEach((element, index2) => {
 
 
-                        //sucht nach "foreign Keys" (z.B.: mitarbeiter_id -> tabellenname + _id) und aktualisiert die Einträge im tableForeignKeyInformationArray                    
-                        if (element != null) {
-                            var foundForeignKeyReference = element.toString().match(/\_id|\_ID/g);
-                            if (foundForeignKeyReference != null) {
-                                tableForeignKeyInformationArray.forEach(column => {
-                                    if (column.name == element && column.tableTarget == null) {
-                                        column.columnSelf = element;
-                                        column.tableSelf = table[0];
-                                        column.columnTarget = foundForeignKeyReference.toString().replace("_", "");
-                                        column.tableTarget = element.toString().replace(/\_id|\_ID/g, "");
-                                    }
-                                });
+                            //sucht nach "foreign Keys" (z.B.: mitarbeiter_id -> tabellenname + _id) und aktualisiert die Einträge im tableForeignKeyInformationArray                    
+                            if (element != null) {
+                                var foundForeignKeyReference = element.toString().match(/\_id|\_ID/g);
+                                if (foundForeignKeyReference != null) {
+                                    tableForeignKeyInformationArray.forEach(column => {
+                                        if (column.name == element && column.tableTarget == null) {
+                                            column.columnSelf = element;
+                                            column.tableSelf = table[0];
+                                            column.columnTarget = foundForeignKeyReference.toString().replace("_", "");
+                                            column.tableTarget = element.toString().replace(/\_id|\_ID/g, "");
+                                        }
+                                    });
+                                }
                             }
-                        }
 
-                        if (indexesToDisplay == null) {
-                            htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
-                        } else if (indexesToDisplayArray.includes(index2)) {
-                            htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
-                        }
+                            if (indexesToDisplay == null) {
+                                htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
+                            } else if (indexesToDisplayArray.includes(index2)) {
+                                htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
+                            }
+                        });
+                        htmlTableInfo += "</tr>";
                     });
-                    htmlTableInfo += "</tr>";
-                });
-                htmlTableInfo += "</tbody>";
-                htmlTableInfo += "</table>"
-            }
-            htmlTableInfo += "</div>";
+                    htmlTableInfo += "</tbody>";
+                    htmlTableInfo += "</table>"
+                }
+                htmlTableInfo += "</div>";
 
-            tableCounter++;
-            //Foreign Key Informationen der Tabelle wird dem Foreign Key Database Array hinzugefügt.
-            databaseForeignKeyInformationArray.push(tableForeignKeyInformationArray);
+                tableCounter++;
+                //Foreign Key Informationen der Tabelle wird dem Foreign Key Database Array hinzugefügt.
+                databaseForeignKeyInformationArray.push(tableForeignKeyInformationArray);
+            }
         });
 
         //kennzeichne ForeignKey Verbindungen farblich TODO
@@ -1298,7 +1299,9 @@ $(document).ready(function () {
         clearSelectionOptions(".buttonArea .selTable");
         var databaseTables = getSqlTables();
         for (var i = 0; i < databaseTables.length; i++) {
-            $(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
+            if (databaseTables[i] != "verine_exercises") {
+                $(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
+            }
         }
     }
 
