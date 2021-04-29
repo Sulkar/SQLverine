@@ -5,7 +5,8 @@
 SQLverine ist ein einfacher online SQL Editor für SQLite Datenbanken, der Schülerinnen und Schülern den Einstieg in das Thema Datenbanken und SQL Abfragen auf spielerische Weise ermöglicht.
 
 ### Demo
-[SQLverine - SQL Editor](https://sulkar.github.io/SQLverine/)
+:mag_right: [SQLverine - SQL Editor](https://sulkar.github.io/SQLverine/)
+
 
 ## Idee 
 Im bayrischen LehrplanPLUS der Mittelschulen für das Fach Informatik dreht es sich in der 10. Jahrgangsstufe überwiegend um Datenbanken. Dabei sollen die Schüler*innen auch lernen Datenbankabfragen mit SQL zuerstellen. Im Prinzip würde hierzu ein einfacher Texteditor reichen, um mit dem Programmieren zu beginnen. Die Erfahrung zeigt aber, dass immer, wenn Schüler*innen Text zum Erstellen eines Programms schreiben müssen, Syntaxfehler ein großes Problem darstellen. Diese zu finden führt bei Lehrkräften und Schüler*innen schnell zu einer hohen Frustration. Die eigentliche Logik beim Erstellen einer Abfrage mit SQL rückt in den Hintergrund.
@@ -44,7 +45,8 @@ Dieses Werk, Bearbeitungen oder Übersetzungen und Werke, die auf diesem Werk be
 Erfolgt die Bereitstellung außerhalb einer öffentlichen Bildungseinrichtung oder einer Bildungseinrichtung in freier, nichtöffentlicher Trägerschaft, muss der Zugang dazu ohne Benutzerregistrierung, Erhebung von personenbezogenen Daten mit Ausnahme der technischen Verbindungsparameter oder einer Anforderung des Dokuments per Formular oder Mail (nötigenfalls durch Bereitstellung über einen weiteren Endpunkt) erfolgen.
 
 ## Verwendete Libraries und Frameworks
-- [SQLverine authoring tool](https://github.com/Sulkar/SQLverine-authoring-tool)
+- :pencil2: [SQLverine authoring tool](https://github.com/Sulkar/SQLverine-authoring-tool)
+- :open_book: [SQLite Dokumentation](https://github.com/Sulkar/sqlite-dokumentation/)
 - [SQL.JS](https://sql.js.org/)
 - [jQuery](https://jquery.com/)
 - [Bootstrap](https://getbootstrap.com/)
