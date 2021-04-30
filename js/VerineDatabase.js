@@ -11,8 +11,10 @@ class VerineDatabase {
         this.columns = undefined;
         this.values = undefined;
 
-        this.exerciseTable = this.getExerciseTable();
-        this.exerciseOrder = this.getExerciseOrder();
+        if (this.database != null) {
+            this.exerciseTable = this.getExerciseTable();
+            this.exerciseOrder = this.getExerciseOrder();
+        }
 
         this.updateValues = []; //[sql_id, Spalte, Wert]
         this.insertValues = []; //[auto, Spalte1, Spalte2, ...]
@@ -25,6 +27,18 @@ class VerineDatabase {
         result.query = undefined;
         try {
             result.query = this.database.exec(sqlCode)[0];
+            return result;
+        } catch (err) {
+            result.error = err;
+            return result;
+        }
+    }
+    runSqlCodeDirect(sqlCode) {
+        let result = {};
+        result.error = undefined;
+        result.query = undefined;
+        try {
+            result.query = this.database.exec(sqlCode);
             return result;
         } catch (err) {
             result.error = err;
@@ -200,18 +214,18 @@ class VerineDatabase {
     isInExerciseSolutionArray(exerciseSolutionArray, solutionToTest) {
         let solutionFound = false;
         exerciseSolutionArray.forEach(solution => {
-            if (solution.loesungString == solutionToTest){
+            if (solution.loesungString == solutionToTest) {
                 solutionFound = true;
-            } 
+            }
         });
         return solutionFound;
     }
-    
+
     addExercise(newExercise, currentExcersiseId) {
         let errorLogArray = [];
         this.exerciseTable = this.getExerciseTable();
         //INSERT INTO pokemon(name, nr, größe, gewicht) VALUES("Pikachu", 3, 34, 4)
-        let exerciseValues = '"' + newExercise.titel + '", ' + parseInt(newExercise.reihenfolge) + ', "' + newExercise.beschreibung + '", "'+ newExercise.aufgabenstellung + '", "' + newExercise.informationen + '", "' + newExercise.antworten + '", "' + newExercise.feedback + '",' + newExercise.geloest;
+        let exerciseValues = '"' + newExercise.titel + '", ' + parseInt(newExercise.reihenfolge) + ', "' + newExercise.beschreibung + '", "' + newExercise.aufgabenstellung + '", "' + newExercise.informationen + '", "' + newExercise.antworten + '", "' + newExercise.feedback + '",' + newExercise.geloest;
         let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, aufgabenstellung, informationen, antworten, feedback, geloest) VALUES (' + exerciseValues + ');';
         try {
             this.database.exec(addExerciseQuery);

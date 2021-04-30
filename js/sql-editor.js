@@ -15,15 +15,65 @@ $(document).ready(function () {
 
 
     var CURRENT_DATABASE_INDEX = 0;
-    DATABASE_ARRAY.push(createDatabaseObject("Grundschule.db", null, "server"));
+    DATABASE_ARRAY.push(new VerineDatabase("Grundschule.db", null, "server"));
+    DATABASE_ARRAY.push(new VerineDatabase("SchuleInfo.db", null, "server"));
     var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
 
-    // TESTS
+    // für Übungen zum Überprüfen der Eingaben
     var SOLUTION_ALL_ARRAY = [];
     var SOLUTION_ROW_COUNTER = 0;
 
+
+    //function: sucht nach Parametern in der URL, wenn gefunden wird zur DB gewechselt und Code geladen
+    function handleUrlParameters() {
+        //Verarbeitet URL Parameter
+        const urlQueryString = window.location.search;
+        const urlParams = new URLSearchParams(urlQueryString);
+        const urlDb = urlParams.get('db');
+        const urlCode = urlParams.get('code');
+        try {
+            if (urlDb != null && urlDb != "") {
+                loadDbFromServer(urlDb);
+            } else {
+                loadDbFromServer("Grundschule.db");
+            }
+            if (urlCode != null && urlCode != "") {
+                //befüllt die Code Area mit Code aus der URL
+                $(".codeArea pre code").html(unescape(urlCode));
+            }
+
+        } catch (err) {
+            loadDbFromServer("Grundschule.db");
+        };
+    }
+
+    // START //
+    handleUrlParameters();
+
+
+
+    //Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
+    $("#btnCreateUrl").click(function () {
+        let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
+        let urlDatabase = CURRENT_VERINE_DATABASE.name;
+        let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
+        let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&code=" + urlCode;
+        $("#universal-modal").modal('toggle');
+        $("#universal-modal .modal-title").html("Link zum aktuellen Code:");
+        $("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
+        $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
+    });
+    $("#universal-modal").on('click', '#btnCopyLink', function () {
+        var copyUrl = document.getElementById("inputCreateUrl");
+        copyUrl.select();
+        copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
+        //kopiert den selektierten Text in die Zwischenablage
+        document.execCommand("copy");
+    });
+
     //////////
     // INIT //
+
 
     //function: Datenbank und JSON für active code view werden geladen
     async function init(dataPromise) {
@@ -39,35 +89,6 @@ $(document).ready(function () {
 
         return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
     }
-
-    // START - erste Datenbank wird geladen und die View wird angepasst
-    init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function (initObject) {
-        CURRENT_VERINE_DATABASE = new VerineDatabase("Grundschule.db", initObject[0], "server");
-        CURRENT_SQL_DATABASE = initObject[0];
-        ACTIVE_CODE_VIEW_DATA = initObject[1];
-
-        DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database = CURRENT_SQL_DATABASE;
-
-        updateDbChooser();
-        updateActiveCodeView();
-
-        // zeigt das Datenbankschema an
-        var tempTables = getSqlTables();
-
-        $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
-
-        let exercises = CURRENT_VERINE_DATABASE.getExercises();
-        if (exercises.length > 0) {
-            CURRENT_EXERCISE_ID = 1;
-            CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-            updateExercise();
-        }
-
-        //debug:
-        $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
-
-    }, function (error) { console.log(error) });
-
 
     function updateExercise() {
         let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
@@ -122,7 +143,6 @@ $(document).ready(function () {
         // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
         // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
         // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
-        console.log(SOLUTION_ROW_COUNTER + " " + SOLUTION_ALL_ARRAY);
         if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
             CURRENT_EXERCISE.geloest = 1;
             $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
@@ -720,40 +740,75 @@ $(document).ready(function () {
 
         // 1) Datenbank exisitiert und wurde bereits eingelesen
         if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database != null) {
-            CURRENT_SQL_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database;
+            CURRENT_VERINE_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX];
+
+            updateDbChooser(CURRENT_VERINE_DATABASE.name);
             updateActiveCodeView();
 
             // zeigt das Datenbankschema an
             var tempTables = getSqlTables();
             $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+            let exercises = CURRENT_VERINE_DATABASE.getExercises();
+            if (exercises.length > 0) {
+                //$("#nav-mission").show();
+                $("#nav-mission-tab").show();
+                CURRENT_EXERCISE_ID = 1;
+                CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+                updateExercise();
+            } else {
+                //$("#nav-mission").hide();
+                $("#nav-mission-tab").hide();
+            }
+
+            //wechselt zum Info Tab
+            let someTabTriggerEl = document.querySelector('#nav-info-tab')
+            let tab = new bootstrap.Tab(someTabTriggerEl)
+            tab.show()
         }
         // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
-        else if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server") {
-            init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function (initObject) {
-
-                CURRENT_VERINE_DATABASE = new VerineDatabase(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name, initObject[0], "server");
-                CURRENT_SQL_DATABASE = initObject[0];
-                ACTIVE_CODE_VIEW_DATA = initObject[1];
-
-                DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database = CURRENT_SQL_DATABASE;
-
-                updateActiveCodeView();
-
-                // zeigt das Datenbankschema an
-                var tempTables = getSqlTables();
-
-                $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
-
-                let exercises = CURRENT_VERINE_DATABASE.getExercises();
-                if (exercises.length > 0) {
-                    CURRENT_EXERCISE_ID = 1;
-                    CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-                    updateExercise();
-                }
-
-            }, function (error) { console.log(error) });
+        else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
+            loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
         }
     });
+
+    function loadDbFromServer(dbName) {
+
+        init(fetch("data/" + dbName).then(res => res.arrayBuffer())).then(function (initObject) {
+
+            CURRENT_VERINE_DATABASE = new VerineDatabase(dbName, initObject[0], "server");
+            ACTIVE_CODE_VIEW_DATA = initObject[1];
+            CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(this.value);
+
+            DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = dbName;
+
+            updateDbChooser(CURRENT_VERINE_DATABASE.name);
+            updateActiveCodeView();
+
+            // zeigt das Datenbankschema an
+            var tempTables = getSqlTables();
+
+            $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+            let exercises = CURRENT_VERINE_DATABASE.getExercises();
+            if (exercises.length > 0) {
+                //$("#nav-mission").show();
+                $("#nav-mission-tab").show();
+                CURRENT_EXERCISE_ID = 1;
+                CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+                updateExercise();
+            } else {
+                //$("#nav-mission").hide();
+                $("#nav-mission-tab").hide();
+            }
+
+            //wechselt zum Info Tab
+            let someTabTriggerEl = document.querySelector('#nav-info-tab')
+            let tab = new bootstrap.Tab(someTabTriggerEl)
+            tab.show()
+
+        }, function (error) { console.log(error) });
+    }
 
     // Datenbankdatei wurde zum Upload ausgewählt
     $("#fileDbUpload").on('change', function () {
@@ -766,10 +821,10 @@ $(document).ready(function () {
                 var uploadedFileName = buildDatabaseName(uploadedFile.name, null);
 
                 CURRENT_VERINE_DATABASE = new VerineDatabase(uploadedFileName, initObject[0], "local");
-                CURRENT_SQL_DATABASE = initObject[0];
+                //CURRENT_SQL_DATABASE = initObject[0];
                 ACTIVE_CODE_VIEW_DATA = initObject[1];
 
-                DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_SQL_DATABASE, "local"));
+                DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_VERINE_DATABASE, "local"));
                 CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
                 updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
@@ -785,10 +840,20 @@ $(document).ready(function () {
 
                 let exercises = CURRENT_VERINE_DATABASE.getExercises();
                 if (exercises.length > 0) {
+                    //$("#nav-mission").show();
+                    $("#nav-mission-tab").show();
                     CURRENT_EXERCISE_ID = 1;
                     CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
                     updateExercise();
+                } else {
+                    //$("#nav-mission").hide();
+                    $("#nav-mission-tab").hide();
                 }
+
+                //wechselt zum Info Tab
+                let someTabTriggerEl = document.querySelector('#nav-info-tab')
+                let tab = new bootstrap.Tab(someTabTriggerEl)
+                tab.show()
 
                 //debug:
                 $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
@@ -801,7 +866,7 @@ $(document).ready(function () {
 
     //Button: lädt die aktuell ausgewählte Datenbank herunter
     $(".btnDbDownload").click(function () {
-        var binaryArray = CURRENT_SQL_DATABASE.export();
+        var binaryArray = CURRENT_VERINE_DATABASE.database.export();
 
         var blob = new Blob([binaryArray]);
         var a = document.createElement("a");
@@ -865,7 +930,7 @@ $(document).ready(function () {
 
         var tableForeignKeyInformationArray = [];
         var currentTableColumns = getSqlTableFields(tableName);
-        var currentTableCreateStatement = CURRENT_SQL_DATABASE.exec("SELECT sql FROM sqlite_master WHERE name = '" + tableName + "'")[0].values[0][0];
+        var currentTableCreateStatement = CURRENT_VERINE_DATABASE.database.exec("SELECT sql FROM sqlite_master WHERE name = '" + tableName + "'")[0].values[0][0];
 
         currentTableColumns.forEach(column => { //id, name, vorname, klasse_id, ...
             var foreignKeyfound = false;
@@ -921,7 +986,7 @@ $(document).ready(function () {
                     htmlTableInfo += "<div class='row'>";
                 }
 
-                var currentTableData = CURRENT_SQL_DATABASE.exec("PRAGMA table_info(" + table + ")");
+                var currentTableData = CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + table + ")");
 
                 htmlTableInfo += "<div class='col-sm'>";
 
@@ -992,7 +1057,7 @@ $(document).ready(function () {
             }
         });
 
-        //kennzeichne ForeignKey Verbindungen farblich TODO
+        //kennzeichne ForeignKey Verbindungen farblich
         databaseForeignKeyInformationArray.forEach(tableForeignKeyInformationArray => {
             tableForeignKeyInformationArray.forEach(tableColumn => {
                 tableColorArray.forEach(tableColor => {
@@ -1654,11 +1719,11 @@ $(document).ready(function () {
 
     //SQLite functions:
     function getSqlTables() {
-        return CURRENT_SQL_DATABASE.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
+        return CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
     }
 
     function getSqlTableFields(tempTableName) {
-        return CURRENT_SQL_DATABASE.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
+        return CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
     }
 
     //function: run sql command, type = desktop or mobile
@@ -1673,20 +1738,21 @@ $(document).ready(function () {
         }
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
-            var result = CURRENT_SQL_DATABASE.exec(tempSqlCommand);
+            var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
 
             //erstellt eine Tabelle mit den Ergebnissen
             $(".resultArea.resultModal").html("");
             $(".outputArea").html("");
             for (var i = 0; i < result.length; i++) {
-                if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[i].columns, result[i].values));
+                if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[0].columns, result[0].values));
                 else if (type == "desktop") {
-                    $(".outputArea").append("" + createTableSql(result[i].columns, result[i].values) + "")
+                    $(".outputArea").append("" + createTableSql(result[0].columns, result[0].values) + "")
                     var someTabTriggerEl = document.querySelector('#nav-result-tab')
                     var tab = new bootstrap.Tab(someTabTriggerEl)
                     tab.show()
                 };
             }
+            console.log(result)
         } catch (err) {
             if (type == "mobile") $(".resultArea.resultModal").html(err.message);
             else if (type == "desktop") {
