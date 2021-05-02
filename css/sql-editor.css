@@ -448,6 +448,12 @@ div.tab-pane.active {
     overflow-y: scroll;
 }
 
+#exercise-feedback{
+    display: none;
+}
+#exercise-feedback h3{
+    color: forestgreen;
+}
 .exercise-header {
     color: goldenrod;
 }

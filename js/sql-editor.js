@@ -119,8 +119,11 @@ $(document).ready(function () {
         console.log("Antworten: " + CURRENT_EXERCISE.antworten);
         $(".tab-content .exercise-output").html("");
 
+        $(".tab-content #exercise-feedback").hide();
         if (CURRENT_EXERCISE.geloest == 1) {
-            $(".tab-content .exercise-output").append(CURRENT_EXERCISE.feedback);
+            
+            $(".tab-content #exercise-feedback").show();
+            $(".tab-content #exercise-feedback div").html(CURRENT_EXERCISE.feedback);
             $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
         } else if (CURRENT_EXERCISE.answerObject.input) {
