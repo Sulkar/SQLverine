@@ -448,8 +448,17 @@ div.tab-pane.active {
     overflow-y: scroll;
 }
 
+.exercise-header {
+    color: goldenrod;
+}
+
+.progress-bar {
+    background-color: steelblue;
+}
+
 .accordion-button:not(.collapsed) {
     color: steelblue;
+    background-color: #fff;
 }
 
 .accordion-button:not(.collapsed)::after {
