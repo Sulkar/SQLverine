@@ -448,6 +448,14 @@ div.tab-pane.active {
     overflow-y: scroll;
 }
 
+.accordion-button:not(.collapsed) {
+    color: steelblue;
+}
+
+.accordion-button:not(.collapsed)::after {
+    color: steelblue;
+}
+
 
 /* Hide scrollbar for Chrome, Safari and Opera */
 
