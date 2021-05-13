@@ -7,7 +7,6 @@ $(document).ready(function () {
     var CURRENT_SELECTED_SQL_ELEMENT = "START";
     var ACTIVE_CODE_VIEW_DATA; // JSON Data holder
     var USED_TABLES = []; // listet alle genutzten Tabellen einer DB auf, um SELECTs entsprechend zu befüllen
-    var CURRENT_SQL_DATABASE; //aktuell geladene DB
     var CURRENT_VERINE_DATABASE;
     var DATABASE_ARRAY = [];
     var CURRENT_EXERCISE_ID;
@@ -24,140 +23,13 @@ $(document).ready(function () {
     var SOLUTION_ROW_COUNTER = 0;
 
 
-    //function: sucht nach Parametern in der URL, wenn gefunden wird zur DB gewechselt und Code geladen
-    function handleUrlParameters() {
-        //Verarbeitet URL Parameter
-        const urlQueryString = window.location.search;
-        const urlParams = new URLSearchParams(urlQueryString);
-        const urlDb = urlParams.get('db');
-        const urlCode = urlParams.get('code');
-        try {
-            if (urlDb != null && urlDb != "") {
-                loadDbFromServer(urlDb);
-            } else {
-                loadDbFromServer("Grundschule.db");
-            }
-            if (urlCode != null && urlCode != "") {
-                //befüllt die Code Area mit Code aus der URL
-                $(".codeArea pre code").html(unescape(urlCode));
-            }
-
-        } catch (err) {
-            loadDbFromServer("Grundschule.db");
-        };
-    }
-
-    // START //
+    //////////
+    // INIT //
     handleUrlParameters();
 
 
-
-    //Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
-    $("#btnCreateUrl").click(function () {
-        let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
-        let urlDatabase = CURRENT_VERINE_DATABASE.name;
-        let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
-        let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&code=" + urlCode;
-        $("#universal-modal").modal('toggle');
-        $("#universal-modal .modal-title").html("Link zum aktuellen Code:");
-        $("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
-        $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
-    });
-    $("#universal-modal").on('click', '#btnCopyLink', function () {
-        var copyUrl = document.getElementById("inputCreateUrl");
-        copyUrl.select();
-        copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
-        //kopiert den selektierten Text in die Zwischenablage
-        document.execCommand("copy");
-    });
-
-    //////////
-    // INIT //
-
-
-    //function: Datenbank und JSON für active code view werden geladen
-    async function init(dataPromise) {
-        //fetch Database
-        const sqlPromise = initSqlJs({
-            locateFile: file => `dist/${file}`
-        });
-        //fetch active code view json
-        const activeCodeViewPromise = fetch("data/activeCodeViewData.json");
-        const [sql, bufferedDatabase, activeCodeView] = await Promise.all([sqlPromise, dataPromise, activeCodeViewPromise]);
-        SQL = sql;
-        const jsonData = await activeCodeView.json();
-
-        return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
-    }
-
-    function updateExercise() {
-        let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
-        let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
-
-        $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
-        $(".tab-content .exercise-content #exercise-title").html(CURRENT_EXERCISE.titel);
-        //Beschreibung
-        if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
-            $(".exercise-description").show();
-            $(".tab-content .exercise-content #exercise-description").html(CURRENT_EXERCISE.beschreibung);
-        }
-        else $(".exercise-description").hide();
-        //Aufgabenstellung
-        if (removeEmptyTags(CURRENT_EXERCISE.aufgabenstellung) != "") {
-            $(".exercise-task").show();
-            $(".tab-content .exercise-content #exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
-        }
-        else $(".exercise-task").hide();
-        //Informationen
-        if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
-            $(".exercise-meta").show();
-            $(".tab-content .exercise-content #exercise-meta").html(CURRENT_EXERCISE.informationen);
-        }
-        else $(".exercise-meta").hide();
-
-        //Antworten werden im Log angezeigt -> fürs Testen
-        console.log("Antworten: " + CURRENT_EXERCISE.antworten);
-        $(".tab-content .exercise-output").html("");
-
-        $(".tab-content #exercise-feedback").hide();
-        if (CURRENT_EXERCISE.geloest == 1) {
-            
-            $(".tab-content #exercise-feedback").show();
-            $(".tab-content #exercise-feedback div").html(CURRENT_EXERCISE.feedback);
-            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
-
-        } else if (CURRENT_EXERCISE.answerObject.input) {
-            $(".tab-content .exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
-        }//next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
-        else if (CURRENT_EXERCISE.answerObject.next) {
-            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
-        }
-
-    }
-
-    function removeEmptyTags(stringToTest) {
-        return stringToTest.replaceAll(/[<p>|<br>|</p>|\s]/g, "");
-    }
-
-    function checkAnswer(answerInput) {
-        let solutionRows = CURRENT_EXERCISE.answerObject.rows;
-        let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;
-        //check solution
-        // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
-        // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
-        // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
-        if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
-            CURRENT_EXERCISE.geloest = 1;
-            $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
-
-            updateExercise();
-        }
-        //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
-        else if (answerInput) {
-            $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
-        }
-
-    }
+    ////////////
+    // EVENTS //
 
     $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
         //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
@@ -190,29 +62,24 @@ $(document).ready(function () {
         }
     });
 
-    ////////////
-    //   UI   //
-    function initScrollDots() {
-
-
-        var dotCount = Math.ceil($(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
-        $(".codeComponentsScrolldots span").html("");
-        if (dotCount > 1) {
-            for (let index = 0; index < dotCount; index++) {
-                if (index == 0) {
-                    $(".codeComponentsScrolldots span").append('<a class="activeDot"><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
-                } else {
-                    $(".codeComponentsScrolldots span").append('<a><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
-                }
-
-            }
-        }
-
-    };
-
-
-    ////////////
-    // EVENTS //
+    //Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
+    $("#btnCreateUrl").click(function () {
+        let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
+        let urlDatabase = CURRENT_VERINE_DATABASE.name;
+        let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
+        let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&code=" + urlCode;
+        $("#universal-modal").modal('toggle');
+        $("#universal-modal .modal-title").html("Link zum aktuellen Code:");
+        $("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
+        $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
+    });
+    $("#universal-modal").on('click', '#btnCopyLink', function () {
+        var copyUrl = document.getElementById("inputCreateUrl");
+        copyUrl.select();
+        copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
+        //kopiert den selektierten Text in die Zwischenablage
+        document.execCommand("copy");
+    });
 
     // Scrollfortschritt als Dots anzeigen
     $(".buttonArea.codeComponents").on('scroll', function () {
@@ -773,45 +640,7 @@ $(document).ready(function () {
         else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
             loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
         }
-    });
-
-    function loadDbFromServer(dbName) {
-
-        init(fetch("data/" + dbName).then(res => res.arrayBuffer())).then(function (initObject) {
-
-            CURRENT_VERINE_DATABASE = new VerineDatabase(dbName, initObject[0], "server");
-            ACTIVE_CODE_VIEW_DATA = initObject[1];
-            CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(this.value);
-
-            DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = dbName;
-
-            updateDbChooser(CURRENT_VERINE_DATABASE.name);
-            updateActiveCodeView();
-
-            // zeigt das Datenbankschema an
-            var tempTables = getSqlTables();
-
-            $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
-
-            let exercises = CURRENT_VERINE_DATABASE.getExercises();
-            if (exercises.length > 0) {
-                //$("#nav-mission").show();
-                $("#nav-mission-tab").show();
-                CURRENT_EXERCISE_ID = 1;
-                CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-                updateExercise();
-            } else {
-                //$("#nav-mission").hide();
-                $("#nav-mission-tab").hide();
-            }
-
-            //wechselt zum Info Tab
-            let someTabTriggerEl = document.querySelector('#nav-info-tab')
-            let tab = new bootstrap.Tab(someTabTriggerEl)
-            tab.show()
-
-        }, function (error) { console.log(error) });
-    }
+    });    
 
     // Datenbankdatei wurde zum Upload ausgewählt
     $("#fileDbUpload").on('change', function () {
@@ -824,7 +653,6 @@ $(document).ready(function () {
                 var uploadedFileName = buildDatabaseName(uploadedFile.name, null);
 
                 CURRENT_VERINE_DATABASE = new VerineDatabase(uploadedFileName, initObject[0], "local");
-                //CURRENT_SQL_DATABASE = initObject[0];
                 ACTIVE_CODE_VIEW_DATA = initObject[1];
 
                 DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_VERINE_DATABASE, "local"));
@@ -843,13 +671,11 @@ $(document).ready(function () {
 
                 let exercises = CURRENT_VERINE_DATABASE.getExercises();
                 if (exercises.length > 0) {
-                    //$("#nav-mission").show();
                     $("#nav-mission-tab").show();
                     CURRENT_EXERCISE_ID = 1;
                     CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
                     updateExercise();
                 } else {
-                    //$("#nav-mission").hide();
                     $("#nav-mission-tab").hide();
                 }
 
@@ -882,7 +708,6 @@ $(document).ready(function () {
             }, 1500);
         };
         a.click();
-
     });
 
     // Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
@@ -927,6 +752,166 @@ $(document).ready(function () {
 
     ///////////////
     // FUNCTIONS //
+
+    //function: Datenbank und JSON für active code view werden geladen
+    async function init(dataPromise) {
+        //fetch Database
+        const sqlPromise = initSqlJs({
+            locateFile: file => `dist/${file}`
+        });
+        //fetch active code view json
+        const activeCodeViewPromise = fetch("data/activeCodeViewData.json");
+        const [sql, bufferedDatabase, activeCodeView] = await Promise.all([sqlPromise, dataPromise, activeCodeViewPromise]);
+        SQL = sql;
+        const jsonData = await activeCodeView.json();
+
+        return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
+    }
+
+    //function: Aktualisierung der Übungen und der Progressbar
+    function updateExercise() {
+        let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
+        let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
+
+        $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
+        $(".tab-content .exercise-content #exercise-title").html(CURRENT_EXERCISE.titel);
+        //Beschreibung
+        if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
+            $(".exercise-description").show();
+            $(".tab-content .exercise-content #exercise-description").html(CURRENT_EXERCISE.beschreibung);
+        }
+        else $(".exercise-description").hide();
+        //Aufgabenstellung
+        if (removeEmptyTags(CURRENT_EXERCISE.aufgabenstellung) != "") {
+            $(".exercise-task").show();
+            $(".tab-content .exercise-content #exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
+        }
+        else $(".exercise-task").hide();
+        //Informationen
+        if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
+            $(".exercise-meta").show();
+            $(".tab-content .exercise-content #exercise-meta").html(CURRENT_EXERCISE.informationen);
+        }
+        else $(".exercise-meta").hide();
+
+        //Antworten werden im Log angezeigt -> fürs Testen
+        console.log("Antworten: " + CURRENT_EXERCISE.antworten);
+        $(".tab-content .exercise-output").html("");
+
+        $(".tab-content #exercise-feedback").hide();
+        if (CURRENT_EXERCISE.geloest == 1) {
+            
+            $(".tab-content #exercise-feedback").show();
+            $(".tab-content #exercise-feedback div").html(CURRENT_EXERCISE.feedback);
+            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
+
+        } else if (CURRENT_EXERCISE.answerObject.input) {
+            $(".tab-content .exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        }//next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
+        else if (CURRENT_EXERCISE.answerObject.next) {
+            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
+        }
+    }
+
+    //function: entfernt Tags aus Daten von der Datenbank, um zu prüfen ob ein Inhalt vorhanden ist.
+    function removeEmptyTags(stringToTest) {
+        return stringToTest.replaceAll(/[<p>|<br>|</p>|\s]/g, "");
+    }
+
+    //function: Überprüft ob die Antwort richtig ist
+    function checkAnswer(answerInput) {
+        let solutionRows = CURRENT_EXERCISE.answerObject.rows;
+        let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;
+        //check solution
+        // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
+        // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
+        // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
+        if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
+            CURRENT_EXERCISE.geloest = 1;
+            $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+
+            updateExercise();
+        }
+        //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
+        else if (answerInput) {
+            $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        }
+
+    }
+
+    //function: In der mobilen Ansicht werden Dots anstelle einer horizontalen Scrollbar für die CodeComponents angezeigt.
+    function initScrollDots() {
+        var dotCount = Math.ceil($(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
+        $(".codeComponentsScrolldots span").html("");
+        if (dotCount > 1) {
+            for (let index = 0; index < dotCount; index++) {
+                if (index == 0) {
+                    $(".codeComponentsScrolldots span").append('<a class="activeDot"><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
+                } else {
+                    $(".codeComponentsScrolldots span").append('<a><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
+                }
+            }
+        }
+    };
+
+    //function: lädt eine DB vom Server
+    function loadDbFromServer(dbName) {
+        init(fetch("data/" + dbName).then(res => res.arrayBuffer())).then(function (initObject) {
+            CURRENT_VERINE_DATABASE = new VerineDatabase(dbName, initObject[0], "server");
+            ACTIVE_CODE_VIEW_DATA = initObject[1];
+            CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(this.value);
+            DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = dbName;
+
+            updateDbChooser(CURRENT_VERINE_DATABASE.name);
+            updateActiveCodeView();
+
+            // zeigt das Datenbankschema an
+            var tempTables = getSqlTables();
+
+            $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+            let exercises = CURRENT_VERINE_DATABASE.getExercises();
+            if (exercises.length > 0) {
+                //$("#nav-mission").show();
+                $("#nav-mission-tab").show();
+                CURRENT_EXERCISE_ID = 1;
+                CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+                updateExercise();
+            } else {
+                //$("#nav-mission").hide();
+                $("#nav-mission-tab").hide();
+            }
+
+            //wechselt zum Info Tab
+            let someTabTriggerEl = document.querySelector('#nav-info-tab')
+            let tab = new bootstrap.Tab(someTabTriggerEl)
+            tab.show()
+
+        }, function (error) { console.log(error) });
+    }
+
+    //function: sucht nach Parametern in der URL, wenn gefunden wird zur DB gewechselt und Code geladen
+    function handleUrlParameters() {
+        //Verarbeitet URL Parameter
+        const urlQueryString = window.location.search;
+        const urlParams = new URLSearchParams(urlQueryString);
+        const urlDb = urlParams.get('db');
+        const urlCode = urlParams.get('code');
+        try {
+            if (urlDb != null && urlDb != "") {
+                loadDbFromServer(urlDb);
+            } else {
+                loadDbFromServer("Grundschule.db");
+            }
+            if (urlCode != null && urlCode != "") {
+                //befüllt die Code Area mit Code aus der URL
+                $(".codeArea pre code").html(unescape(urlCode));
+            }
+
+        } catch (err) {
+            loadDbFromServer("Grundschule.db");
+        };
+    }
 
     //function: parst anhand des SQL CREATE Befehls die Foreign Keys 
     function getTableForeignKeyInformation(tableName) {
