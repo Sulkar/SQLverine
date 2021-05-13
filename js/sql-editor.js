@@ -315,7 +315,7 @@ $(document).ready(function () {
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
-    // Button: LIMIT ___ = [offset,] row_count
+    // Button: LIMIT ___ 
     $(".buttonArea.codeComponents").on('click', '.btnLimit', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementLIMIT = "";
@@ -330,6 +330,24 @@ $(document).ready(function () {
         elementLIMIT += "</span>";
 
         CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementLIMIT);
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+
+    // Button: OFFSET ___ 
+    $(".buttonArea.codeComponents").on('click', '.btnOffset', function () {
+        var classesFromCodeComponent = getClassesFromElementAsString(this);
+        var elementOFFSET = "";
+        elementOFFSET += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OFFSET'>";
+        NR++;
+        elementOFFSET += addLeerzeichen();
+        elementOFFSET += "OFFSET";
+        elementOFFSET += addLeerzeichen();
+        elementOFFSET += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='OFFSET_1' >___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementOFFSET += "</span>";
+
+        CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOFFSET);
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
@@ -640,7 +658,7 @@ $(document).ready(function () {
         else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
             loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
         }
-    });    
+    });
 
     // Datenbankdatei wurde zum Upload ausgewählt
     $("#fileDbUpload").on('change', function () {
@@ -800,7 +818,7 @@ $(document).ready(function () {
 
         $(".tab-content #exercise-feedback").hide();
         if (CURRENT_EXERCISE.geloest == 1) {
-            
+
             $(".tab-content #exercise-feedback").show();
             $(".tab-content #exercise-feedback div").html(CURRENT_EXERCISE.feedback);
             $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
@@ -1212,6 +1230,9 @@ $(document).ready(function () {
                 break;
             case ".btnLimit":
                 $(".buttonArea.codeComponents").append('<button class="btnLimit synSQL sqlOrder codeButton">LIMIT ___</button>');
+                break;
+            case ".btnOffset":
+                $(".buttonArea.codeComponents").append('<button class="btnOffset synSQL sqlOrder codeButton">OFFSET ___</button>');
                 break;
             case ".btnGroup":
                 $(".buttonArea.codeComponents").append('<button class="btnGroup synSQL sqlGroup codeButton">GROUP BY ___</button>');

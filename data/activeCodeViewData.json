@@ -437,10 +437,46 @@
                 "codeComponentType": "button"
             }
         ],
-        "visibleCodeComponents": []
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".btnOffset",
+                "codeComponentType": "button"
+            }
+        ]
     },
     {
         "selectedSQLElement": "LIMIT_1",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "OFFSET",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": []
+    },
+    {
+        "selectedSQLElement": "OFFSET_1",
         "level": 1,
         "visibleMainControls": [
             {
