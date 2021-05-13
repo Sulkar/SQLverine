@@ -139,6 +139,8 @@ class VerineDatabase {
             tableData.forEach(data => {
                 tableNamesArray.push(data[0]);
             });
+        } else {
+            this.activeTable = undefined;
         }
         return tableNamesArray;
     }
@@ -148,7 +150,8 @@ class VerineDatabase {
         if (databaseTables.includes("verine_exercises")) {
             return "verine_exercises";
         } else {
-            return undefined;
+            this.exerciseTable = undefined;
+            return this.exerciseTable;
         }
     }
 
@@ -288,8 +291,13 @@ class VerineDatabase {
     }
 
     getExercises() {
+        this.exerciseTable = this.getExerciseTable();
         if (this.exerciseTable != undefined) {
-            return this.database.exec("SELECT * FROM " + this.exerciseTable + ";")[0].values;
+            try {
+                return this.database.exec("SELECT * FROM " + this.exerciseTable + ";")[0].values;
+            } catch (err) {
+                return [];
+            }
         } else {
             return [];
         }
@@ -358,12 +366,12 @@ class VerineDatabase {
         else return undefined;
     }
 
-    createInsertQuery() {
+    createInsertQuery(insertPrimaryKey = false) {
         let insertQuery = "";
         //INSERT INTO pokemon(name, nr, größe, gewicht) VALUES("Pikachu", 3, 34, 4)
         let tableNamesString = "";
         this.columns.forEach(column => {
-            if (!column.type.split("|").includes("PRIMARY KEY")) {
+            if (insertPrimaryKey || !column.type.split("|").includes("PRIMARY KEY")) {
                 if (tableNamesString == "") tableNamesString += column.name;
                 else tableNamesString += ", " + column.name;
             }
