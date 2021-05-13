@@ -372,10 +372,9 @@ $(document).ready(function () {
     // Button: HAVING ___ ___ ___ = like WHERE but can handle Aggregate functions
     $(".buttonArea.codeComponents").on('click', '.btnHaving', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
-        var elementHAVING = "";
+        var elementHAVING = "<span class='codeline'>";
         elementHAVING += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='HAVING'>";
         NR++;
-        elementHAVING += addLeerzeichen();
         elementHAVING += "HAVING";
         elementHAVING += addLeerzeichen();
         elementHAVING += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='HAVING_1' data-next-element='" + (NR + 2) + "'>___</span>";
@@ -389,7 +388,12 @@ $(document).ready(function () {
         NR++;
         elementHAVING += "</span>";
 
-        CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementHAVING);
+        if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+            CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementHAVING);
+        } else {
+            CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementHAVING);
+        }
+
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
@@ -1747,21 +1751,47 @@ $(document).ready(function () {
         }
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
-            var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
-
-            //erstellt eine Tabelle mit den Ergebnissen
+            //löscht alte Ausgabe
             $(".resultArea.resultModal").html("");
             $(".outputArea").html("");
+
+            var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+            //wurde ein delete, insert, update Befehl ausgeführt?
+            let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
+            if (modifiedRows > 0) {
+                let deleteInfo = tempSqlCommand.match(/(DELETE FROM)\s(\b[A-Za-züäö]+\b)/);
+                let updateInfo = tempSqlCommand.match(/(UPDATE)\s(\b[A-Za-züäö]+\b)/);
+                let insertInfo = tempSqlCommand.match(/(INSERT INTO)\s(\b[A-Za-züäö]+\b)/);
+
+                if (insertInfo != null && insertInfo.length > 0) {
+                    $(".outputArea").append("<h5>INSERT: " + modifiedRows + " Zeilen wurden in der Tabelle: " + insertInfo[2] + " eingefügt.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertInfo[2]);
+                }
+                else if (updateInfo != null && updateInfo.length > 0) {
+                    $(".outputArea").append("<h5>UPDATE: " + modifiedRows + " Zeilen wurden in der Tabelle: " + updateInfo[2] + " aktualisiert.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateInfo[2]);
+                }
+                else if (deleteInfo != null && deleteInfo.length > 0) {
+                    $(".outputArea").append("<h5>DELETE: " + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteInfo[2] + " gelöscht.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteInfo[2]);
+                }
+            }
+
+            //erstellt eine Tabelle mit den Ergebnissen
             for (var i = 0; i < result.length; i++) {
-                if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[0].columns, result[0].values));
+                if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[i].columns, result[i].values));
                 else if (type == "desktop") {
-                    $(".outputArea").append("" + createTableSql(result[0].columns, result[0].values) + "")
-                    var someTabTriggerEl = document.querySelector('#nav-result-tab')
-                    var tab = new bootstrap.Tab(someTabTriggerEl)
-                    tab.show()
+                    $(".outputArea").append("" + createTableSql(result[i].columns, result[i].values) + "");
                 };
             }
-            console.log(result)
+
+            //zeigt das Ergebnis Tab an
+            if (type == "desktop") {
+                var someTabTriggerEl = document.querySelector('#nav-result-tab');
+                var tab = new bootstrap.Tab(someTabTriggerEl);
+                tab.show();
+            }
+
         } catch (err) {
             if (type == "mobile") $(".resultArea.resultModal").html(err.message);
             else if (type == "desktop") {
