@@ -19,6 +19,10 @@
             {
                 "codeComponentClass": ".btnSQLDelete",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDropTable",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -628,7 +632,6 @@
             }
         ],
         "visibleCodeComponents": [
-            
             {
                 "codeComponentClass": ".btnWhere",
                 "codeComponentType": "button"
@@ -648,7 +651,7 @@
             {
                 "codeComponentClass": ".btnJoin",
                 "codeComponentType": "button"
-            }       
+            }
         ]
     },
     {
@@ -733,6 +736,33 @@
     },
     {
         "selectedSQLElement": "DELETE_FROM_1",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selTable",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "DROP_TABLE",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": []
+    },
+    {
+        "selectedSQLElement": "DROP_TABLE_1",
         "level": 1,
         "visibleMainControls": [
             {

@@ -475,6 +475,23 @@ $(document).ready(function () {
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
+    // Button: DROP TABLE ___ 
+    $(".buttonArea.codeComponents").on('click', '.btnDropTable', function () {
+        var classesFromCodeComponent = getClassesFromElementAsString(this);
+        var elementDROP_TABLE = "<span class='codeline'>";
+        elementDROP_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_TABLE'>";
+        NR++;
+        elementDROP_TABLE += "DROP TABLE";
+        elementDROP_TABLE += addLeerzeichen();
+        elementDROP_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DROP_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementDROP_TABLE += "</span></span>";
+
+        $('.codeArea.editor pre code').append(elementDROP_TABLE);
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+
     // Select: add dbField, dbTable, Aggregatsfunktion
     $('.buttonArea.codeComponents').on('change', '.codeSelect', function () {
         if (CURRENT_SELECTED_ELEMENT != undefined) {
@@ -1296,6 +1313,11 @@ $(document).ready(function () {
             case ".btnInsert":
                 $(".buttonArea.codeComponents").append('<button class="btnInsert synSQL sqlInsert">INSERT INTO ___ (___) VALUES (___)</button>');
                 break;
+            case ".btnDropTable":
+                $(".buttonArea.codeComponents").append('<button class="btnDropTable synSQL sqlDelete">DROP TABLE ___</button>');
+                break;
+
+
             default:
             //log("no component found")
         }
@@ -1756,25 +1778,40 @@ $(document).ready(function () {
             $(".outputArea").html("");
 
             var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
             if (modifiedRows > 0) {
+
                 let deleteInfo = tempSqlCommand.match(/(DELETE FROM)\s(\b[A-Za-züäö]+\b)/);
                 let updateInfo = tempSqlCommand.match(/(UPDATE)\s(\b[A-Za-züäö]+\b)/);
                 let insertInfo = tempSqlCommand.match(/(INSERT INTO)\s(\b[A-Za-züäö]+\b)/);
 
                 if (insertInfo != null && insertInfo.length > 0) {
-                    $(".outputArea").append("<h5>INSERT: " + modifiedRows + " Zeilen wurden in der Tabelle: " + insertInfo[2] + " eingefügt.</h5><br>");
+                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertInfo[2] + " eingefügt.</h5><br>");
                     result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertInfo[2]);
                 }
                 else if (updateInfo != null && updateInfo.length > 0) {
-                    $(".outputArea").append("<h5>UPDATE: " + modifiedRows + " Zeilen wurden in der Tabelle: " + updateInfo[2] + " aktualisiert.</h5><br>");
+                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateInfo[2] + " aktualisiert.</h5><br>");
                     result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateInfo[2]);
                 }
                 else if (deleteInfo != null && deleteInfo.length > 0) {
-                    $(".outputArea").append("<h5>DELETE: " + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteInfo[2] + " gelöscht.</h5><br>");
+                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteInfo[2] + " gelöscht.</h5><br>");
                     result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteInfo[2]);
                 }
+            }
+
+            //wurde drop, create, alter table ausgeführt?
+            let dropTableInfo = tempSqlCommand.match(/(DROP TABLE)\s(\b[A-Za-züäö]+\b)/);
+            let createTableInfo = tempSqlCommand.match(/(CREATE TABLE)\s(\b[A-Za-züäö]+\b)/);
+            let alterTableInfo = tempSqlCommand.match(/(ALTER TABLE)\s(\b[A-Za-züäö]+\b)/);
+            if (dropTableInfo != null && dropTableInfo.length > 0)
+                $(".outputArea").append("<h5>Die Tabelle: " + dropTableInfo[2] + " wurde gelöscht.</h5><br>");
+            else if (createTableInfo != null && createTableInfo.length > 0)
+                $(".outputArea").append("<h5>Die Tabelle: " + createTableInfo[2] + " wurde neu erstellt.</h5><br>");
+            else if (alterTableInfo != null && alterTableInfo.length > 0) {
+                $(".outputArea").append("<h5>Die Tabelle: " + alterTableInfo[2] + " wurde verändert.</h5><br>");
+                result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableInfo[2]);
             }
 
             //erstellt eine Tabelle mit den Ergebnissen
