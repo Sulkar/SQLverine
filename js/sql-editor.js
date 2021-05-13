@@ -1783,35 +1783,46 @@ $(document).ready(function () {
             let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
             if (modifiedRows > 0) {
 
-                let deleteInfo = tempSqlCommand.match(/(DELETE FROM)\s(\b[A-Za-züäö]+\b)/);
-                let updateInfo = tempSqlCommand.match(/(UPDATE)\s(\b[A-Za-züäö]+\b)/);
-                let insertInfo = tempSqlCommand.match(/(INSERT INTO)\s(\b[A-Za-züäö]+\b)/);
+                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(\b[A-Za-züäö]+\b)/);
+                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(\b[A-Za-züäö]+\b)/);
+                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(\b[A-Za-züäö]+\b)/);
 
-                if (insertInfo != null && insertInfo.length > 0) {
-                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertInfo[2] + " eingefügt.</h5><br>");
-                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertInfo[2]);
+                if (insertSQL != null && insertSQL.length > 0) {
+                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2]);
                 }
-                else if (updateInfo != null && updateInfo.length > 0) {
-                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateInfo[2] + " aktualisiert.</h5><br>");
-                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateInfo[2]);
+                else if (updateSQL != null && updateSQL.length > 0) {
+                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2]);
                 }
-                else if (deleteInfo != null && deleteInfo.length > 0) {
-                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteInfo[2] + " gelöscht.</h5><br>");
-                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteInfo[2]);
+                else if (deleteSQL != null && deleteSQL.length > 0) {
+                    $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2]);
                 }
             }
 
             //wurde drop, create, alter table ausgeführt?
-            let dropTableInfo = tempSqlCommand.match(/(DROP TABLE)\s(\b[A-Za-züäö]+\b)/);
-            let createTableInfo = tempSqlCommand.match(/(CREATE TABLE)\s(\b[A-Za-züäö]+\b)/);
-            let alterTableInfo = tempSqlCommand.match(/(ALTER TABLE)\s(\b[A-Za-züäö]+\b)/);
-            if (dropTableInfo != null && dropTableInfo.length > 0)
-                $(".outputArea").append("<h5>Die Tabelle: " + dropTableInfo[2] + " wurde gelöscht.</h5><br>");
-            else if (createTableInfo != null && createTableInfo.length > 0)
-                $(".outputArea").append("<h5>Die Tabelle: " + createTableInfo[2] + " wurde neu erstellt.</h5><br>");
-            else if (alterTableInfo != null && alterTableInfo.length > 0) {
-                $(".outputArea").append("<h5>Die Tabelle: " + alterTableInfo[2] + " wurde verändert.</h5><br>");
-                result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableInfo[2]);
+            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\b[A-Za-züäö]+\b)/);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s(\b[A-Za-züäö]+\b)/);
+            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\b[A-Za-züäö]+\b)/);
+            let tablesChanged = false;
+            if (dropTableSQL != null && dropTableSQL.length > 0) {
+                $(".outputArea").append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
+                tablesChanged = true;
+            }
+            else if (createTableSQL != null && createTableSQL.length > 0) {
+                $(".outputArea").append("<h5>Die Tabelle: " + createTableSQL[2] + " wurde neu erstellt.</h5><br>");
+                tablesChanged = true;
+            }
+            else if (alterTableSQL != null && alterTableSQL.length > 0) {
+                $(".outputArea").append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
+                tablesChanged = true;
+                result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2]);
+            }
+            //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
+            if (tablesChanged) {
+                var tempTables = getSqlTables();
+                $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
             }
 
             //erstellt eine Tabelle mit den Ergebnissen
