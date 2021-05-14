@@ -596,7 +596,7 @@ $(document).ready(function () {
     // Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
     $(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
-        var elementCREATE_COLUMN = "<span class='codeline'>";        
+        var elementCREATE_COLUMN = "<span class='codeline'>";
         elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_COLUMN'>";
         NR++;
         elementCREATE_COLUMN += addLeerzeichen();
@@ -609,7 +609,9 @@ $(document).ready(function () {
         elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_2' data-next-element='" + (NR + 2) + "'>___</span>";
         NR++;
 
-        elementCREATE_COLUMN += "</span></span>";
+        elementCREATE_COLUMN += addKomma();
+        elementCREATE_COLUMN += "</span>";
+        elementCREATE_COLUMN += "</span>";
 
         if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
             CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementCREATE_COLUMN);
@@ -617,6 +619,8 @@ $(document).ready(function () {
             CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementCREATE_COLUMN);
         }
 
+        //passt Kommas an
+        cleanSQLCode();
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
@@ -947,6 +951,23 @@ $(document).ready(function () {
         const jsonData = await activeCodeView.json();
 
         return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
+    }
+
+    //function: überprüft den eingegebenen Code und passt diesen ggf. an
+    function cleanSQLCode() {
+        $('.parent').each(function () {
+            //CREATE_COLUMN: fügt Kommas hinzu
+            if ($(this).data("sql-element") === "CREATE_COLUMN") {
+                $(this).find(".komma").html(",")
+            }
+        });
+        //CREATE_COLUMN: entfernt das letzte Komma
+        $(".codeArea pre code").find("[data-sql-element='CREATE_COLUMN'] .komma").last().html("");
+
+        // deletes all empty <span class="codeline">
+        $(".codeline").each(function () {
+            if ($(this).children().length == 0) $(this).remove();
+        });
     }
 
     //function: Aktualisierung der Übungen und der Progressbar
@@ -1548,10 +1569,8 @@ $(document).ready(function () {
             setSelection(elementNr, false);
         }
 
-        // deletes all empty <span class="codeline">
-        $(".codeline").each(function () {
-            if ($(this).children().length == 0) $(this).remove();
-        });
+        //überprüft den eingegebenen Code und passt diesen ggf. an 
+        cleanSQLCode();
     }
 
     //function: löscht ein Element anhand einer ID z.B.: 5
@@ -1832,6 +1851,12 @@ $(document).ready(function () {
         return tempLeerzeichen;
     }
 
+    function addKomma() {
+        var tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
+        NR++;
+        return tempKomma;
+    }
+
     //function: loops through JSON Data and shows Elements based on selected SQL Element
     function updateActiveCodeView() {
 
@@ -1989,7 +2014,7 @@ $(document).ready(function () {
 
             //wurde drop, create, alter table ausgeführt?
             let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\b[A-Za-züäö]+\b)/);
-            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s(\b[A-Za-züäö]+\b)/);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s'(\b[A-Za-züäö]+\b)'/);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\b[A-Za-züäö]+\b)/);
             let tablesChanged = false;
 

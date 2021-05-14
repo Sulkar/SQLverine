@@ -1138,10 +1138,7 @@
         "selectedSQLElement": "CREATE_COLUMN_1",
         "level": 1,
         "visibleMainControls": [
-            {
-                "codeComponentClass": ".btnAdd",
-                "codeComponentType": "button"
-            },
+            
             {
                 "codeComponentClass": ".btnDelete",
                 "codeComponentType": "button"
