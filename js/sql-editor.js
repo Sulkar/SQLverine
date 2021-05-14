@@ -477,8 +477,8 @@ $(document).ready(function () {
 
     // Button: DROP TABLE ___ 
     $(".buttonArea.codeComponents").on('click', '.btnDropTable', function () {
-        var classesFromCodeComponent = getClassesFromElementAsString(this);
-        var elementDROP_TABLE = "<span class='codeline'>";
+        let classesFromCodeComponent = getClassesFromElementAsString(this);
+        let elementDROP_TABLE = "<span class='codeline'>";
         elementDROP_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_TABLE'>";
         NR++;
         elementDROP_TABLE += "DROP TABLE";
@@ -492,6 +492,87 @@ $(document).ready(function () {
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
+    // Button: ALTER TABLE ___ 
+    $(".buttonArea.codeComponents").on('click', '.btnAlterTable', function () {
+        let classesFromCodeComponent = getClassesFromElementAsString(this);
+        let elementALTER_TABLE = "<span class='codeline'>";
+        elementALTER_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ALTER_TABLE'>";
+        NR++;
+        elementALTER_TABLE += "ALTER TABLE";
+        elementALTER_TABLE += addLeerzeichen();
+        elementALTER_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ALTER_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementALTER_TABLE += "</span></span>";
+
+        $('.codeArea.editor pre code').append(elementALTER_TABLE);
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+
+    // Button: DROP COLUMN ___ 
+    $(".buttonArea.codeComponents").on('click', '.btnDropColumn', function () {
+        let classesFromCodeComponent = getClassesFromElementAsString(this);
+        let elementDROP_COLUMN = "";
+        elementDROP_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_COLUMN'>";
+        NR++;
+        elementDROP_COLUMN += addLeerzeichen();
+        elementDROP_COLUMN += "DROP COLUMN";
+        elementDROP_COLUMN += addLeerzeichen();
+        elementDROP_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DROP_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementDROP_COLUMN += "</span>";
+
+        CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementDROP_COLUMN);
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+
+    // Button: RENAME ___ TO ___ 
+    $(".buttonArea.codeComponents").on('click', '.btnRenameTo', function () {
+        let classesFromCodeComponent = getClassesFromElementAsString(this);
+        let elementRENAME_TO = "";
+        elementRENAME_TO += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='RENAME_TO'>";
+        NR++;
+        elementRENAME_TO += addLeerzeichen();
+        elementRENAME_TO += "RENAME";
+        elementRENAME_TO += addLeerzeichen();
+        elementRENAME_TO += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='RENAME_TO_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementRENAME_TO += addLeerzeichen();
+        elementRENAME_TO += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 6) + "'>TO</span>";
+        NR++;
+        elementRENAME_TO += addLeerzeichen();
+        elementRENAME_TO += "<span class='codeElement_" + NR + " inputField unfilled root insert2 sqlIdentifier' data-sql-element='RENAME_TO_2' data-next-element='" + (NR - 4) + "'>___</span>";
+        NR++;
+        elementRENAME_TO += "</span>";
+
+        CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementRENAME_TO);
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+
+    // Button: ADD ___ ___ (TYP) 
+    $(".buttonArea.codeComponents").on('click', '.btnAddColumn', function () {
+        let classesFromCodeComponent = getClassesFromElementAsString(this);
+        let elementADD_COLUMN = "";
+        elementADD_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ADD_COLUMN'>";
+        NR++;
+        elementADD_COLUMN += addLeerzeichen();
+        elementADD_COLUMN += "ADD";
+        elementADD_COLUMN += addLeerzeichen();
+        elementADD_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ADD_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementADD_COLUMN += addLeerzeichen();
+        elementADD_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root insert2 sqlIdentifier' data-sql-element='ADD_COLUMN_2' data-next-element='" + (NR - 4) + "'>___</span>";
+        NR++;
+        elementADD_COLUMN += "</span>";
+
+        CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementADD_COLUMN);
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+
+
     // Select: add dbField, dbTable, Aggregatsfunktion
     $('.buttonArea.codeComponents').on('change', '.codeSelect', function () {
         if (CURRENT_SELECTED_ELEMENT != undefined) {
@@ -499,7 +580,7 @@ $(document).ready(function () {
             var returnObject = {};
             // wich select is triggering?
             // -> selColumn, selTable
-            if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators")) {
+            if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators") || $(tempSelectField).hasClass("selTyp")) {
 
                 if (CURRENT_SELECTED_ELEMENT.hasClass("extended") && CURRENT_SELECTED_ELEMENT.hasClass("comma")) { //Feld erweitert ,___
                     returnObject = addSelectValue(tempSelectField);
@@ -1156,7 +1237,7 @@ $(document).ready(function () {
             value.forEach((element, indexColumn) => {
                 //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
                 checkElement(element, columns[indexColumn]);
-                if (element.length > 200) {
+                if (element != null && element.length > 200) {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {
                     newTable += "<td style=''>" + element + "</td>";
@@ -1316,8 +1397,21 @@ $(document).ready(function () {
             case ".btnDropTable":
                 $(".buttonArea.codeComponents").append('<button class="btnDropTable synSQL sqlDelete">DROP TABLE ___</button>');
                 break;
-
-
+            case ".btnAlterTable":
+                $(".buttonArea.codeComponents").append('<button class="btnAlterTable synSQL sqlDelete">ALTER TABLE ___</button>');
+                break;
+            case ".btnDropColumn":
+                $(".buttonArea.codeComponents").append('<button class="btnDropColumn synSQL sqlDelete">DROP COLUMN ___</button>');
+                break;
+            case ".btnRenameTo":
+                $(".buttonArea.codeComponents").append('<button class="btnRenameTo synSQL sqlDelete">RENAME ___ TO ___</button>');
+                break;
+            case ".btnAddColumn":
+                $(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD ___ TYP</button>');
+                break;
+            case ".selTyp":
+                $(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INT">INT</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option></select>');
+                break;
             default:
             //log("no component found")
         }
@@ -1806,6 +1900,7 @@ $(document).ready(function () {
             let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s(\b[A-Za-züäö]+\b)/);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\b[A-Za-züäö]+\b)/);
             let tablesChanged = false;
+
             if (dropTableSQL != null && dropTableSQL.length > 0) {
                 $(".outputArea").append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
                 tablesChanged = true;
