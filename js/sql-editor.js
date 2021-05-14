@@ -27,7 +27,6 @@ $(document).ready(function () {
     // INIT //
     handleUrlParameters();
 
-
     ////////////
     // EVENTS //
 
@@ -67,7 +66,7 @@ $(document).ready(function () {
         let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
         let urlDatabase = CURRENT_VERINE_DATABASE.name;
         let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
-        let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&code=" + urlCode;
+        let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&maxElementNr=" + NR + "&code=" + urlCode;
         $("#universal-modal").modal('toggle');
         $("#universal-modal .modal-title").html("Link zum aktuellen Code:");
         $("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
@@ -572,6 +571,54 @@ $(document).ready(function () {
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
+    // Button: CREATE TABLE ___ (
+    $(".buttonArea.codeComponents").on('click', '.btnCreateTable', function () {
+        let classesFromCodeComponent = getClassesFromElementAsString(this);
+        let elementCREATE_TABLE = "<span class='codeline'>";
+        elementCREATE_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_TABLE'>";
+        NR++;
+        elementCREATE_TABLE += "CREATE TABLE";
+        elementCREATE_TABLE += addLeerzeichen();
+        elementCREATE_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span> (";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementCREATE_TABLE += "</span></span>";
+
+        //
+        elementCREATE_TABLE += "<span class='codeline'>";
+        elementCREATE_TABLE += "<span class='codeElement_" + NR + " sqlIdentifier extended' data-sql-element='CREATE_END_BRACKET'>)</span>";
+        NR++;
+        elementCREATE_TABLE += "</span>";
+
+        $('.codeArea.editor pre code').append(elementCREATE_TABLE);
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+    // Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
+    $(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
+        var classesFromCodeComponent = getClassesFromElementAsString(this);
+        var elementCREATE_COLUMN = "<span class='codeline'>";        
+        elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_COLUMN'>";
+        NR++;
+        elementCREATE_COLUMN += addLeerzeichen();
+        elementCREATE_COLUMN += addLeerzeichen();
+        elementCREATE_COLUMN += addLeerzeichen();
+        elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementCREATE_COLUMN += addLeerzeichen();
+        elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_2' data-next-element='" + (NR + 2) + "'>___</span>";
+        NR++;
+
+        elementCREATE_COLUMN += "</span></span>";
+
+        if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+            CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementCREATE_COLUMN);
+        } else {
+            CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementCREATE_COLUMN);
+        }
+
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
 
     // Select: add dbField, dbTable, Aggregatsfunktion
     $('.buttonArea.codeComponents').on('change', '.codeSelect', function () {
@@ -580,7 +627,7 @@ $(document).ready(function () {
             var returnObject = {};
             // wich select is triggering?
             // -> selColumn, selTable
-            if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators") || $(tempSelectField).hasClass("selTyp")) {
+            if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators") || $(tempSelectField).hasClass("selTyp") || $(tempSelectField).hasClass("selConstraint")) {
 
                 if (CURRENT_SELECTED_ELEMENT.hasClass("extended") && CURRENT_SELECTED_ELEMENT.hasClass("comma")) { //Feld erweitert ,___
                     returnObject = addSelectValue(tempSelectField);
@@ -617,8 +664,8 @@ $(document).ready(function () {
 
     //Button: Add Element "inputField"
     $(".btnAdd").click(function () {
-        var dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
-
+        let dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
+        console.log(dataSqlElement)
         if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
 
             if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "_AGGREGAT")) { //...
@@ -631,18 +678,28 @@ $(document).ready(function () {
                 CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "insertInto"));
             } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "INSERT_2")) {
 
-                var updateField1 = addLeerzeichenMitKomma();
+                let updateField1 = addLeerzeichenMitKomma();
                 updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "'>___</span>";
                 NR++;
                 CURRENT_SELECTED_ELEMENT.after(updateField1);
 
-                var lastInsert3Field = findElementBySqlData(CURRENT_SELECTED_ELEMENT.closest(".parent").children(), "INSERT_3", "last");
+                let lastInsert3Field = findElementBySqlData(CURRENT_SELECTED_ELEMENT.closest(".parent").children(), "INSERT_3", "last");
 
-                var updateField2 = addLeerzeichenMitKomma();
+                let updateField2 = addLeerzeichenMitKomma();
                 updateField2 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR - 2) + "," + (NR - 3) + "'>___</span>";
                 NR++;
                 $(lastInsert3Field).after(updateField2);
+            }
+            //Create Table Spalte Typ ist gewählt, Feld für Einschränkung wird hinzugefügt
+            else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "CREATE_COLUMN_2, CREATE_COLUMN_3")) {
+                let updateField1 = addLeerzeichen();
+                updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='CREATE_COLUMN_3' data-next-element='" + (NR + 2) + "' data-element-group=''>___</span>";
+                NEXT_ELEMENT_NR = NR;
+                NR++;
+                CURRENT_SELECTED_ELEMENT.after(updateField1);
+
             } else {
+                console.log("in")
                 CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedComma"));
 
             }
@@ -675,13 +732,17 @@ $(document).ready(function () {
     // on Click Element
     $('.codeArea.editor').on('click', 'span', function (event) {
         event.stopPropagation();
+        let elementNr;
         //
         if ($(this).data("goto-element") == "next") {
-            var elementNr = "0";
+            elementNr = "0";
+        }
+        if ($(this).data("goto-element") == "parent") {
+            elementNr = getElementNr($(this).parents().closest(".parent").last().attr("class"));
         } else if ($(this).data("goto-element") != undefined) {
-            var elementNr = $(this).data("goto-element");
+            elementNr = $(this).data("goto-element");
         } else {
-            var elementNr = getElementNr($(this).attr("class"));
+            elementNr = getElementNr($(this).attr("class"));
         }
         setSelection(elementNr, false);
     });
@@ -915,7 +976,6 @@ $(document).ready(function () {
         else $(".exercise-meta").hide();
 
         //Antworten werden im Log angezeigt -> fürs Testen
-        console.log("Antworten: " + CURRENT_EXERCISE.antworten);
         $(".tab-content .exercise-output").html("");
 
         $(".tab-content #exercise-feedback").hide();
@@ -1016,6 +1076,7 @@ $(document).ready(function () {
         const urlQueryString = window.location.search;
         const urlParams = new URLSearchParams(urlQueryString);
         const urlDb = urlParams.get('db');
+        const urlMaxElementNr = urlParams.get('maxElementNr');
         const urlCode = urlParams.get('code');
         try {
             if (urlDb != null && urlDb != "") {
@@ -1026,6 +1087,7 @@ $(document).ready(function () {
             if (urlCode != null && urlCode != "") {
                 //befüllt die Code Area mit Code aus der URL
                 $(".codeArea pre code").html(unescape(urlCode));
+                NR = urlMaxElementNr;
             }
 
         } catch (err) {
@@ -1410,7 +1472,16 @@ $(document).ready(function () {
                 $(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD ___ TYP</button>');
                 break;
             case ".selTyp":
-                $(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INT">INT</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option></select>');
+                $(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option></select>');
+                break;
+            case ".selConstraint":
+                $(".buttonArea.codeComponents").append('<select class="selConstraint synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="UNIQUE">UNIQUE</option><option value="PRIMARY KEY">PRIMARY KEY</option><option value="AUTOINCREMENT">AUTOINCREMENT</option><option value="FOREIGN KEY">FOREIGN KEY</option><option value="NOTT NULL">NOT NULL</option></select>');
+                break;
+            case ".btnCreateTable":
+                $(".buttonArea.codeComponents").append('<button class="btnCreateTable synSQL sqlDelete">CREATE TABLE ___ ( )</button>');
+                break;
+            case ".btnCreateColumn":
+                $(".buttonArea.codeComponents").append('<button class="btnCreateColumn synSQL sqlDelete"> NEUE SPALTE ___ </button>');
                 break;
             default:
             //log("no component found")
@@ -1651,7 +1722,7 @@ $(document).ready(function () {
 
     //function: set Selection to an Element
     function setSelection(elementNr, removeLastSelectedElement) {
-        var element;
+        let element;
 
         //no number is given -> get next unfilled inputField
         if (elementNr == "next") {
@@ -1668,7 +1739,7 @@ $(document).ready(function () {
             }
         }
         //.parent ist selektiert
-        else if (elementNr == "parent") {
+        else if (elementNr == "parent2") {
             //select next .parent
             element = CURRENT_SELECTED_ELEMENT.next(".parent");
             if (element.length == 0) {
@@ -1684,14 +1755,35 @@ $(document).ready(function () {
                 }
             }
         }
+
+
+        //erstes .parent element in .codeline ist selektiert
+        else if (elementNr == "parent") {
+            //erstes .parent der .codeline?
+            if (CURRENT_SELECTED_ELEMENT.prev(".parent").length == 0) {
+                //erste .codeline in der CodeArea?
+                if (CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").length == 0) {
+                    if (removeLastSelectedElement) $('.codeArea.editor pre code').html(""); // lösche alles, keine neue 
+                } else {//hat ein prev .codeline                    
+                    element = CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").find(".parent").last();
+                    CURRENT_SELECTED_ELEMENT = CURRENT_SELECTED_ELEMENT.parent(); //aktuelle Codeline
+                }
+            } else { //hat ein prev .parent
+
+            }
+        }
+
+
+
+
         //next element is chosen by number
         else {
-            element = $(".codeElement_" + elementNr);
+            element = $(".codeArea.editor pre code .codeElement_" + elementNr);
         }
 
         removeSelection(removeLastSelectedElement);
 
-        if (element.length != 0) {
+        if (element != undefined && element.length != 0) {
             element.addClass("active");
             CURRENT_SELECTED_ELEMENT = element;
             CURRENT_SELECTED_SQL_ELEMENT = element.closest(".sqlIdentifier").data("sql-element");
@@ -1729,13 +1821,13 @@ $(document).ready(function () {
 
     //function: add Leerzeichen <span>
     function addLeerzeichen() {
-        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen'>&nbsp;</span>";
+        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
         NR++;
         return tempLeerzeichen;
     }
 
     function addLeerzeichenMitKomma() {
-        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen'>, </span>";
+        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
         NR++;
         return tempLeerzeichen;
     }
