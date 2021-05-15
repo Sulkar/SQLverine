@@ -329,6 +329,11 @@ div.col.centerMenu {
     border-bottom: 0.15em solid cornflowerblue;
 }
 
+div .exerciseMobileView {
+    overflow-y: scroll;
+    max-height: calc(100vh - 28em);
+}
+
 
 /* */
 

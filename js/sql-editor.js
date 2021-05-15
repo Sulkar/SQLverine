@@ -1019,39 +1019,39 @@ $(document).ready(function() {
         let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
         let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
 
-        $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
-        $(".tab-content .exercise-content #exercise-title").html(CURRENT_EXERCISE.titel);
+        $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
+        $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
         //Beschreibung
         if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
             $(".exercise-description").show();
-            $(".tab-content .exercise-content #exercise-description").html(CURRENT_EXERCISE.beschreibung);
+            $(".exercise-content .exercise-description").html(CURRENT_EXERCISE.beschreibung);
         } else $(".exercise-description").hide();
         //Aufgabenstellung
         if (removeEmptyTags(CURRENT_EXERCISE.aufgabenstellung) != "") {
             $(".exercise-task").show();
-            $(".tab-content .exercise-content #exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
+            $(".exercise-content .exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
         } else $(".exercise-task").hide();
         //Informationen
         if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
             $(".exercise-meta").show();
-            $(".tab-content .exercise-content #exercise-meta").html(CURRENT_EXERCISE.informationen);
+            $(".exercise-content .exercise-meta").html(CURRENT_EXERCISE.informationen);
         } else $(".exercise-meta").hide();
 
         //Antworten werden im Log angezeigt -> fürs Testen
-        $(".tab-content .exercise-output").html("");
+        $(".exercise-output").html("");
 
-        $(".tab-content #exercise-feedback").hide();
+        $(".exercise-feedback").hide();
         if (CURRENT_EXERCISE.geloest == 1) {
 
-            $(".tab-content #exercise-feedback").show();
-            $(".tab-content #exercise-feedback div").html(CURRENT_EXERCISE.feedback);
-            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
+            $(".exercise-feedback").show();
+            $(".exercise-feedback div").html(CURRENT_EXERCISE.feedback);
+            $(".exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
         } else if (CURRENT_EXERCISE.answerObject.input) {
-            $(".tab-content .exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+            $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
         } //next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
         else if (CURRENT_EXERCISE.answerObject.next) {
-            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
+            $(".exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
         }
     }
 
