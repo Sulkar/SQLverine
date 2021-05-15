@@ -1131,6 +1131,10 @@
             {
                 "codeComponentClass": ".btnCreateColumn",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnCreateForeignKey",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1138,7 +1142,6 @@
         "selectedSQLElement": "CREATE_COLUMN_1",
         "level": 1,
         "visibleMainControls": [
-            
             {
                 "codeComponentClass": ".btnDelete",
                 "codeComponentType": "button"
@@ -1151,6 +1154,10 @@
             },
             {
                 "codeComponentClass": ".btnCreateColumn",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnCreateForeignKey",
                 "codeComponentType": "button"
             }
         ]
@@ -1191,6 +1198,65 @@
         "visibleCodeComponents": [
             {
                 "codeComponentClass": ".selConstraint",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "CREATE_FOREIGN_KEY",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": []
+    },
+    {
+        "selectedSQLElement": "CREATE_FOREIGN_KEY_1",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumnCreate",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "CREATE_FOREIGN_KEY_2",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selTable",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "CREATE_FOREIGN_KEY_3",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
             }
         ]

@@ -597,7 +597,7 @@ $(document).ready(function () {
     $(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementCREATE_COLUMN = "<span class='codeline'>";
-        elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_COLUMN'>";
+        elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_COLUMN'>";
         NR++;
         elementCREATE_COLUMN += addLeerzeichen();
         elementCREATE_COLUMN += addLeerzeichen();
@@ -605,6 +605,7 @@ $(document).ready(function () {
         elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
         NEXT_ELEMENT_NR = NR;
         NR++;
+
         elementCREATE_COLUMN += addLeerzeichen();
         elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_2' data-next-element='" + (NR + 2) + "'>___</span>";
         NR++;
@@ -624,6 +625,51 @@ $(document).ready(function () {
         setSelection(NEXT_ELEMENT_NR, false);
     });
 
+    // Button: CREATE... FOREIGN KEY spalte REFERENCES tabelle (spalte) 
+    $(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function () {
+        let classesFromCodeComponent = getClassesFromElementAsString(this);
+        let elementFOREIGN_KEY = "<span class='codeline'>";;
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_FOREIGN_KEY'>";
+        NR++;
+        elementFOREIGN_KEY += addLeerzeichen();
+        elementFOREIGN_KEY += addLeerzeichen();
+        elementFOREIGN_KEY += addLeerzeichen();
+        elementFOREIGN_KEY += "FOREIGN KEY";
+        elementFOREIGN_KEY += addLeerzeichen();
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+        NR++;
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+        NR++;
+        elementFOREIGN_KEY += addLeerzeichen();
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 9) + "'>REFERENCES</span>";
+        NR++;
+        elementFOREIGN_KEY += addLeerzeichen();
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_2' data-next-element='" + (NR + 2) + "'>___</span>";
+        NR++;
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+        NR++;
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_3' data-next-element='" + (NR + 2) + "' data-element-group=''>___</span>";
+        NR++;
+        elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+        NR++;
+        elementFOREIGN_KEY += addKomma();
+        elementFOREIGN_KEY += "</span>";
+        elementFOREIGN_KEY += "</span>";
+
+        if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+            CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementFOREIGN_KEY);
+        } else {
+            CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementFOREIGN_KEY);
+        }
+
+        //passt Kommas an
+        cleanSQLCode();
+        setSelection(NEXT_ELEMENT_NR, false);
+    });
+
     // Select: add dbField, dbTable, Aggregatsfunktion
     $('.buttonArea.codeComponents').on('change', '.codeSelect', function () {
         if (CURRENT_SELECTED_ELEMENT != undefined) {
@@ -631,7 +677,7 @@ $(document).ready(function () {
             var returnObject = {};
             // wich select is triggering?
             // -> selColumn, selTable
-            if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators") || $(tempSelectField).hasClass("selTyp") || $(tempSelectField).hasClass("selConstraint")) {
+            if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators") || $(tempSelectField).hasClass("selTyp") || $(tempSelectField).hasClass("selConstraint") || $(tempSelectField).hasClass("selColumnCreate")) {
 
                 if (CURRENT_SELECTED_ELEMENT.hasClass("extended") && CURRENT_SELECTED_ELEMENT.hasClass("comma")) { //Feld erweitert ,___
                     returnObject = addSelectValue(tempSelectField);
@@ -955,14 +1001,12 @@ $(document).ready(function () {
 
     //function: überprüft den eingegebenen Code und passt diesen ggf. an
     function cleanSQLCode() {
-        $('.parent').each(function () {
-            //CREATE_COLUMN: fügt Kommas hinzu
-            if ($(this).data("sql-element") === "CREATE_COLUMN") {
-                $(this).find(".komma").html(",")
-            }
+        //sucht alle Elemente mit Klasse .createComma und fügt im .komma span ein Komma hinzu
+        $('.createComma').each(function () {
+            $(this).find(".komma").html(",")
         });
-        //CREATE_COLUMN: entfernt das letzte Komma
-        $(".codeArea pre code").find("[data-sql-element='CREATE_COLUMN'] .komma").last().html("");
+        //entfernt das letzte Komma der .createComma Klassen
+        $(".codeArea pre code").find(".createComma .komma").last().html("");
 
         // deletes all empty <span class="codeline">
         $(".codeline").each(function () {
@@ -1131,10 +1175,12 @@ $(document).ready(function () {
 
             var newArray = currentTableCreateStatement.split(",");
             newArray.forEach(element => {
-                var regexForeignKeyColumnSelf = element.match(/FOREIGN KEY\((.*?)\)/); //sucht nach FOREIGN KEY ( )
+                var regexForeignKeyColumnSelf = element.match(/FOREIGN KEY(\s\(|\()(.*?)\)/); //sucht nach FOREIGN KEY ( )
                 if (regexForeignKeyColumnSelf != null) {
-                    var columnWithForeignKey = regexForeignKeyColumnSelf[1].replaceAll(/"|\s/g, ""); //entfernt alle Anführungszeichen und Leerzeichen 
+
+                    var columnWithForeignKey = regexForeignKeyColumnSelf[2].replaceAll(/"|\s/g, ""); //entfernt alle Anführungszeichen und Leerzeichen 
                     if (newColumnObject.name == columnWithForeignKey) { //Informationen werden nur ergänzt, wenn es sich um die richtige Spalte handelt
+
                         newColumnObject.columnSelf = columnWithForeignKey;
                         var regexForeignKeyColumnTarget = element.split("REFERENCES")[1].match(/\((.*?)\)/); //sucht nach ( ) 
                         var regexForeignKeyTableTarget = element.split("REFERENCES")[1].match(/^(.*?)\(/); //sucht von vorne bis zur ersten (
@@ -1438,6 +1484,10 @@ $(document).ready(function () {
                 $(".buttonArea.codeComponents").append('<select class="selTable synTables codeSelect"><option value="0" disabled selected hidden>Tabelle wählen</option></select>');
                 fillSelectionTables();
                 break;
+            case ".selColumnCreate":
+                $(".buttonArea.codeComponents").append('<select class="selColumnCreate synColumns codeSelect"><option value="0" disabled selected hidden>Spalte wählen</option></select>');
+                fillSelectionCreateColumns();
+                break;
             case ".selAggregate":
                 $(".buttonArea.codeComponents").append('<select class="selAggregate synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Aggregatsfunktion wählen</option><option value="AVG">AVG ( ___ )</option><option value="COUNT">COUNT ( ___ )</option><option value="MIN">MIN ( ___ )</option><option value="MAX">MAX ( ___ )</option><option value="SUM">SUM ( ___ )</option></select>');
                 break;
@@ -1503,6 +1553,9 @@ $(document).ready(function () {
                 break;
             case ".btnCreateColumn":
                 $(".buttonArea.codeComponents").append('<button class="btnCreateColumn synSQL sqlDelete"> NEUE SPALTE ___ </button>');
+                break;
+            case ".btnCreateForeignKey":
+                $(".buttonArea.codeComponents").append('<button class="btnCreateForeignKey synSQL sqlDelete"> FOREIGN KEY ___ REFERENCES ___ (___)</button>');
                 break;
             default:
             //log("no component found")
@@ -1587,6 +1640,18 @@ $(document).ready(function () {
                 $(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
             }
         }
+    }
+
+    //function: befüllt .selColumnCreate mit allen Spalten im SQL Crate Statement
+    function fillSelectionCreateColumns() {
+        let createSQLStatementLines = $(".codeArea.editor pre code").text().replace(/CREATE TABLE\s'(.*?)'/, "").split(",");
+        createSQLStatementLines.forEach(element => {
+            let currentLineColumn = element.match(/'(.*?)'/);
+            if (currentLineColumn != null && currentLineColumn.length > 0) {
+                $(".buttonArea .selColumnCreate").append(new Option(currentLineColumn[1], currentLineColumn[1]));
+            }
+
+        });
     }
 
     //function: entfernt alle select Optionen außer die erste
@@ -1994,9 +2059,9 @@ $(document).ready(function () {
             let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
             if (modifiedRows > 0) {
 
-                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(\b[A-Za-züäö]+\b)/);
-                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(\b[A-Za-züäö]+\b)/);
-                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(\b[A-Za-züäö]+\b)/);
+                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(.*?)/);
+                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(.*?)/);
+                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(.*?)/);
 
                 if (insertSQL != null && insertSQL.length > 0) {
                     $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
@@ -2013,9 +2078,9 @@ $(document).ready(function () {
             }
 
             //wurde drop, create, alter table ausgeführt?
-            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\b[A-Za-züäö]+\b)/);
-            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s'(\b[A-Za-züäö]+\b)'/);
-            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\b[A-Za-züäö]+\b)/);
+            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(.*?)/);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s'(.*?)'/);
+            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(.*?)/);
             let tablesChanged = false;
 
             if (dropTableSQL != null && dropTableSQL.length > 0) {
