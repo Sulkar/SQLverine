@@ -26,8 +26,7 @@
     <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" href="css/sql-editor.css">
 </head>
 
@@ -43,8 +42,7 @@
                         for="displayDebug">debug</label></span>
                 <a href="./" style="text-decoration: none; color: black;">
                     <h2 id="headerSql">
-                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                            width="2em" viewBox="0,0,436.36684,267.67784">
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2em" viewBox="0,0,436.36684,267.67784">
                             <g transform="translate(-81.81658,-66.37462)">
                                 <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero"
                                     stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
@@ -101,8 +99,7 @@
                         </button>
                         -->
                         <!-- button file Upload -->
-                        <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip"
-                            data-placement="top" title="Upload Database">
+                        <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Upload Database">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                                 class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
                                 <path
@@ -113,8 +110,7 @@
                         </label>
                         <input id="fileDbUpload" type="file" />
 
-                        <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
-                            data-placement="top" title="Download Database">
+                        <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                                 class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                                 <path
@@ -125,8 +121,7 @@
                         </button>
 
 
-                        <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block"
-                            data-toggle="tooltip" data-placement="top" title="New Database">
+                        <button style="display:none!important;" id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="New Database">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                                 width="1.1em" height="1.1em" fill="currentColor" viewBox="0,0,12,16">
                                 <g transform="translate(-294,-191.02041)">
@@ -145,9 +140,7 @@
 
 
                         <!-- Hamburger Nav -->
-                        <button id="btnHamburgerNav" class="btnHamburgerNav d-md-none " data-toggle="tooltip"
-                            data-placement="top" title="Toggle Menu" data-bs-toggle="collapse"
-                            data-bs-target="#navbarDbOptions">
+                        <button id="btnHamburgerNav" class="btnHamburgerNav d-md-none " data-toggle="tooltip" data-placement="top" title="Toggle Menu" data-bs-toggle="collapse" data-bs-target="#navbarDbOptions">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
                                 class="bi bi-list" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
@@ -157,8 +150,7 @@
 
                         <div class="collapse navbar-collapse hamburgerNav" id="navbarDbOptions">
                             <div class="navbar-nav">
-                                <a class="nav-link btnDbInfoMobile" href="#" data-toggle="modal" data-bs-toggle="modal"
-                                    data-bs-target="#dbInfoModal">
+                                <a class="nav-link btnDbInfoMobile" href="#" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#dbInfoModal">
                                     Schema anzeigen
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
                                         fill="currentColor" class="bi bi-info-square" viewBox="0 0 16 16">
@@ -171,8 +163,7 @@
 
 
                                 <a class="nav-link fileUpload" href="#">
-                                    <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip"
-                                        data-placement="top" title="Upload Database">
+                                    <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip" data-placement="top" title="Upload Database">
                                         Datenbank öffnen
                                         <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em"
                                             fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
@@ -214,10 +205,62 @@
                         <!-- Hamburger Nav END -->
 
                     </div>
+
+                    <!-- Aufgabenanzeige für Mobileview -->
+                    <div class="row d-md-none exerciseMobileView">
+
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-exercise" id="progress-bar-exercise" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                            </div>
+                        </div>
+                        <div class="exercise-content" style="margin-top: 1em;">
+                            <h2 class="exercise-title">Überschrift</h2>
+                            <div class="exerciseDescription">
+                                <div class="exercise-description" id="exercise-description">
+                                </div>
+
+
+                                <h3 class="exercise-header">Aufgabe</h3>
+                                <div class="exercise-task" id="exercise-task">
+                                </div>
+
+                                <br>
+
+
+                                <div class="accordion col-sm-10" id="accordionExerciseMeta">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionExerciseMetaCollapse" aria-expanded="false" aria-controls="accordionExerciseMetaCollapse">
+                                                Hilfreiche Informationen
+                                            </button>
+                                        </h2>
+                                        <div id="accordionExerciseMetaCollapse" class="accordion-collapse collapse " aria-labelledby="headingOne" data-bs-parent="#accordionExerciseMeta">
+                                            <div class="exercise-meta accordion-body" id="exercise-meta">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <br>
+                                <div class="exercise-feedback" id="exercise-feedback">
+                                    <h3 class="">Richtig!</h3>
+                                    <div></div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="exercise-output" style="margin-top: 5px;">
+
+                            </div>
+                        </div>
+
+                    </div>
                     <!-- Code Area-->
                     <div class="codeAreaWrapper">
-                        <button id="btnCreateUrl" class="btnCreateUrl d-none d-md-inline-block" data-toggle="tooltip"
-                            data-placement="top" title="Download Database">
+                        <button id="btnCreateUrl" class="btnCreateUrl d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                             <svg xmlns="http://www.w3.org/2000/svg" width="1.6em" height="1.6em" fill="currentColor"
                                 class="bi bi-link-45deg" viewBox="0 0 16 16">
                                 <path
@@ -293,8 +336,7 @@
                             </div>
                             <!-- run button mobile -->
                             <div class="col rightMenu d-md-none">
-                                <button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal"
-                                    data-bs-target="#resultModal">
+                                <button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#resultModal">
                                     <!--<button class="btnRun" data-toggle="modal" data-bs-toggle="modal"
                             data-bs-target="#resultModal">-->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em"
@@ -342,27 +384,19 @@
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <!-- Info Tab -->
-                        <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab"
-                            data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info"
-                            aria-selected="true">Info</button>
+                        <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#nav-info" type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
 
                         <!-- Ergebnis Tab -->
-                        <button class="nav-link" id="nav-result-tab" data-bs-toggle="tab" data-bs-target="#nav-result"
-                            type="button" role="tab" aria-controls="nav-result" aria-selected="false">Ergebnis</button>
+                        <button class="nav-link" id="nav-result-tab" data-bs-toggle="tab" data-bs-target="#nav-result" type="button" role="tab" aria-controls="nav-result" aria-selected="false">Ergebnis</button>
 
                         <!-- Aufgabe Tab -->
-                        <button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission"
-                            type="button" role="tab" aria-controls="nav-mission" aria-selected="false"
-                            style="">Aufgabe</button>
+                        <button class="nav-link" id="nav-mission-tab" data-bs-toggle="tab" data-bs-target="#nav-mission" type="button" role="tab" aria-controls="nav-mission" aria-selected="false" style="">Aufgabe</button>
 
                         <!-- Schema Tab -->
-                        <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema"
-                            type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
+                        <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema" type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
 
                         <!-- Hilfe Tab -->
-                        <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab" data-bs-target="#nav-help"
-                            type="button" role="tab" aria-controls="nav-help" aria-selected="false"
-                            style="display: none;">Hilfe</button>
+                        <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab" data-bs-target="#nav-help" type="button" role="tab" aria-controls="nav-help" aria-selected="false" style="display: none;">Hilfe</button>
                     </div>
                 </nav>
 
@@ -371,14 +405,10 @@
                     <!-- Info Tab -->
                     <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
                         <h3>Willkommen bei SQLverine</h3>
-                        <p>SQLverine ist ein einfacher online SQL Editor für SQLite Datenbanken, der Schülerinnen und
-                            Schülern den Einstieg in das Thema Datenbanken und SQL Abfragen auf spielerische Weise
-                            ermöglicht.
+                        <p>SQLverine ist ein einfacher online SQL Editor für SQLite Datenbanken, der Schülerinnen und Schülern den Einstieg in das Thema Datenbanken und SQL Abfragen auf spielerische Weise ermöglicht.
                         </p>
-                        <p>Auf der linken Seite kannst du mit Hilfe der Codeblöcke verschiedene SQL Abfragen testen oder
-                            du startest mit einer einfachen Aufgabe:</p>
-                        <div class="text-center"><button id="btnGotoExerciseTab" class=" btn btn-outline-success "
-                                data-toggle="tooltip" data-placement="top">
+                        <p>Auf der linken Seite kannst du mit Hilfe der Codeblöcke verschiedene SQL Abfragen testen oder du startest mit einer einfachen Aufgabe:</p>
+                        <div class="text-center"><button id="btnGotoExerciseTab" class=" btn btn-outline-success " data-toggle="tooltip" data-placement="top">
                                 zur Aufgabe
                             </button></div>
                     </div>
@@ -398,19 +428,18 @@
                     <!-- Aufgabe Tab -->
                     <div class="tab-pane fade" id="nav-mission" role="tabpanel" aria-labelledby="nav-result-tab">
                         <div class="progress">
-                            <div class="progress-bar" id="progress-bar-exercise" role="progressbar" aria-valuemin="0"
-                                aria-valuemax="100">
+                            <div class="progress-bar progress-bar-exercise" id="progress-bar-exercise" role="progressbar" aria-valuemin="0" aria-valuemax="100">
                             </div>
                         </div>
                         <div class="exercise-content" style="margin-top: 1em;">
-                            <h2 id="exercise-title">Überschrift</h2>
+                            <h2 class="exercise-title">Überschrift</h2>
                             <div class="exerciseDescription">
                                 <div class="exercise-description" id="exercise-description">
                                 </div>
 
 
                                 <h3 class="exercise-header">Aufgabe</h3>
-                                <div class="" id="exercise-task">
+                                <div class="exercise-task" id="exercise-task">
                                 </div>
 
                                 <br>
@@ -419,16 +448,12 @@
                                 <div class="accordion col-sm-10" id="accordionExerciseMeta">
                                     <div class="accordion-item">
                                         <h2 class="accordion-header" id="headingOne">
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#accordionExerciseMetaCollapse" aria-expanded="false"
-                                                aria-controls="accordionExerciseMetaCollapse">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordionExerciseMetaCollapse" aria-expanded="false" aria-controls="accordionExerciseMetaCollapse">
                                                 Hilfreiche Informationen
                                             </button>
                                         </h2>
-                                        <div id="accordionExerciseMetaCollapse" class="accordion-collapse collapse "
-                                            aria-labelledby="headingOne" data-bs-parent="#accordionExerciseMeta">
-                                            <div class="accordion-body" id="exercise-meta">
+                                        <div id="accordionExerciseMetaCollapse" class="accordion-collapse collapse " aria-labelledby="headingOne" data-bs-parent="#accordionExerciseMeta">
+                                            <div class="exercise-meta accordion-body" id="exercise-meta">
 
                                             </div>
                                         </div>
@@ -444,7 +469,7 @@
                                 </div>
                                 -->
                                 <br>
-                                <div class="" id="exercise-feedback">
+                                <div class="exercise-feedback" id="exercise-feedback">
                                     <h3 class="">Richtig!</h3>
                                     <div></div>
                                 </div>
@@ -475,8 +500,7 @@
             <h4 style="margin-top: 20px;">
                 Debug:
             </h4>
-            <input id="checkDisplayAllCodeComponents" type="checkbox"> <label
-                for="checkDisplayAllCodeComponents">display
+            <input id="checkDisplayAllCodeComponents" type="checkbox"> <label for="checkDisplayAllCodeComponents">display
                 all
                 code components</label>
             <p>
@@ -508,8 +532,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Schema</h5>
-                    <button type="button" class="btn-close dbInfoModal" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close dbInfoModal" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
@@ -520,8 +543,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close dbInfoModal"
-                        data-bs-dismiss="modal">Schließen</button>
+                    <button type="button" class="btn btn-secondary close dbInfoModal" data-bs-dismiss="modal">Schließen</button>
                 </div>
             </div>
         </div>
@@ -533,8 +555,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title resultModal" id="resultModalLabel">Ergebnis</h5>
-                    <button type="button" class="btn-close resultModal" data-bs-dismiss="modal"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close resultModal" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
 
@@ -554,16 +575,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close resultModal"
-                        data-bs-dismiss="modal">Schließen</button>
+                    <button type="button" class="btn btn-secondary close resultModal" data-bs-dismiss="modal">Schließen</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="universal-modal" tabindex="-1" aria-labelledby="universal-modal-label"
-        aria-hidden="true">
+    <div class="modal fade" id="universal-modal" tabindex="-1" aria-labelledby="universal-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -584,9 +603,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
 
     <script type="text/javascript" src="js/he.js"></script>
     <script src="dist/sql-wasm.js"></script>

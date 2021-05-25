@@ -295,6 +295,15 @@ div.col.centerMenu {
     background-image: url("data:image/svg+xml;utf8,<svg fill='orchid' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
 }
 
+.codeArea .synTyp,
+.buttonArea .synTyp {
+    color: grey;
+}
+
+.buttonArea select.synTyp {
+    background-image: url("data:image/svg+xml;utf8,<svg fill='grey' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+}
+
 
 /* Löschen, Hinzufügen, Run Button*/
 
@@ -318,6 +327,11 @@ div.col.centerMenu {
 .buttonArea button.btnRedo {
     color: cornflowerblue;
     border-bottom: 0.15em solid cornflowerblue;
+}
+
+div .exerciseMobileView {
+    overflow-y: scroll;
+    max-height: calc(100vh - 28em);
 }
 
 
@@ -448,12 +462,14 @@ div.tab-pane.active {
     overflow-y: scroll;
 }
 
-#exercise-feedback{
+#exercise-feedback {
     display: none;
 }
-#exercise-feedback h3{
+
+#exercise-feedback h3 {
     color: forestgreen;
 }
+
 .exercise-header {
     color: goldenrod;
 }

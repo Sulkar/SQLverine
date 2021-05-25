@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
 
     //global variables
     var NR = 0;
@@ -16,7 +16,7 @@ $(document).ready(function () {
     var CURRENT_DATABASE_INDEX = 0;
     DATABASE_ARRAY.push(new VerineDatabase("Grundschule.db", null, "server"));
     DATABASE_ARRAY.push(new VerineDatabase("SchuleInfo.db", null, "server"));
-    var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
+    var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightoral"];
 
     // für Übungen zum Überprüfen der Eingaben
     var SOLUTION_ALL_ARRAY = [];
@@ -30,7 +30,7 @@ $(document).ready(function () {
     ////////////
     // EVENTS //
 
-    $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
+    $(".tab-pane").on("click", ".btnInputCheckExercise", function() {
         //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
         if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".input-check").val())) {
             CURRENT_EXERCISE.geloest = 1;
@@ -43,17 +43,17 @@ $(document).ready(function () {
         }
     });
 
-    $(".outputArea").on("click", "#btnExerciseNext", function () {
+    $(".outputArea").on("click", "#btnExerciseNext", function() {
         let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
         tab.show();
     });
 
-    $(".outputArea").on("click", "#btnExerciseSuccess", function () {
+    $(".outputArea").on("click", "#btnExerciseSuccess", function() {
         let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
         tab.show();
     });
 
-    $(".tab-content #nav-mission").on("click", ".btnNextExercise", function () {
+    $(".tab-content #nav-mission").on("click", ".btnNextExercise", function() {
         CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getNextExercise(CURRENT_EXERCISE_ID);
         if (CURRENT_EXERCISE_ID != null) {
             CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
@@ -62,7 +62,7 @@ $(document).ready(function () {
     });
 
     //Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
-    $("#btnCreateUrl").click(function () {
+    $("#btnCreateUrl").click(function() {
         let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
         let urlDatabase = CURRENT_VERINE_DATABASE.name;
         let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
@@ -72,7 +72,7 @@ $(document).ready(function () {
         $("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
         $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
     });
-    $("#universal-modal").on('click', '#btnCopyLink', function () {
+    $("#universal-modal").on('click', '#btnCopyLink', function() {
         var copyUrl = document.getElementById("inputCreateUrl");
         copyUrl.select();
         copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
@@ -81,7 +81,7 @@ $(document).ready(function () {
     });
 
     // Scrollfortschritt als Dots anzeigen
-    $(".buttonArea.codeComponents").on('scroll', function () {
+    $(".buttonArea.codeComponents").on('scroll', function() {
         var maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
         var dotCount = Math.ceil($(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
 
@@ -95,14 +95,14 @@ $(document).ready(function () {
     });
 
     //Button ist im Infotab und navigiert den Nutzer zum Aufgabentab
-    $("#btnGotoExerciseTab").on('click', function () {
+    $("#btnGotoExerciseTab").on('click', function() {
         let tab = new bootstrap.Tab(document.querySelector('#nav-mission-tab'));
         tab.show();
     });
 
 
     // Scrolldots bei Klick an Position springen lassen
-    $(".codeComponentsScrolldots").on('click', 'a', function () {
+    $(".codeComponentsScrolldots").on('click', 'a', function() {
         var dotCountBefore = $(this).prevAll().length;
         var dotCountAfter = $(this).nextAll().length;
         var maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
@@ -119,7 +119,7 @@ $(document).ready(function () {
     });
 
     // Button: SELECT ___ FROM ___
-    $(".buttonArea.codeComponents").on('click', '.btnSelect', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnSelect', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         CURRENT_SELECTED_ELEMENT = undefined;
         var elementSELECT_FROM = "<span class='codeline'>";
@@ -141,7 +141,7 @@ $(document).ready(function () {
     });
 
     // Button: WHERE ___ ___ ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnWhere', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnWhere', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementWHERE = "<span class='codeline'>";
         elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
@@ -168,7 +168,7 @@ $(document).ready(function () {
     });
 
     // Button: JOIN ___ ON ___ ___ ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnJoin', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnJoin', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementJOIN = "<span class='codeline'>";
         elementJOIN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='JOIN'>JOIN";
@@ -200,7 +200,7 @@ $(document).ready(function () {
     });
 
     //Button: AND
-    $(".buttonArea.codeComponents").on('click', '.btnAND', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnAND', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
         var elementWhereAND = "";
@@ -225,7 +225,7 @@ $(document).ready(function () {
     });
 
     //Button: OR
-    $(".buttonArea.codeComponents").on('click', '.btnOR', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnOR', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
         var elementWhereOR = "";
@@ -250,7 +250,7 @@ $(document).ready(function () {
     });
 
     //Button: LeftBracket
-    $(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
             CURRENT_SELECTED_ELEMENT.before("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='LEFTBRACKET'> ( </span>");
@@ -258,7 +258,7 @@ $(document).ready(function () {
         }
     });
     //Button: RightBracket
-    $(".buttonArea.codeComponents").on('click', '.btnRightBracket', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnRightBracket', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
             CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='RIGHTBRACKET'> ) </span>");
@@ -267,7 +267,7 @@ $(document).ready(function () {
     });
 
     // Button: ORDER BY ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnOrder', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnOrder', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementORDER = "";
         elementORDER += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ORDER'>";
@@ -285,7 +285,7 @@ $(document).ready(function () {
     });
 
     //Button: ASC
-    $(".buttonArea.codeComponents").on('click', '.btnAsc', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnAsc', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementOrderAsc = "";
         elementOrderAsc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ASC'>";
@@ -300,7 +300,7 @@ $(document).ready(function () {
     });
 
     //Button: DESC
-    $(".buttonArea.codeComponents").on('click', '.btnDesc', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnDesc', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementOrderDesc = "";
         elementOrderDesc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DESC'>";
@@ -315,7 +315,7 @@ $(document).ready(function () {
     });
 
     // Button: LIMIT ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnLimit', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnLimit', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementLIMIT = "";
         elementLIMIT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='LIMIT'>";
@@ -333,7 +333,7 @@ $(document).ready(function () {
     });
 
     // Button: OFFSET ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnOffset', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnOffset', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementOFFSET = "";
         elementOFFSET += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OFFSET'>";
@@ -351,7 +351,7 @@ $(document).ready(function () {
     });
 
     // Button: GROUP BY ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnGroup', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnGroup', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementGROUP = "";
         elementGROUP += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='GROUP'>";
@@ -369,7 +369,7 @@ $(document).ready(function () {
     });
 
     // Button: HAVING ___ ___ ___ = like WHERE but can handle Aggregate functions
-    $(".buttonArea.codeComponents").on('click', '.btnHaving', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnHaving', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementHAVING = "<span class='codeline'>";
         elementHAVING += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='HAVING'>";
@@ -397,7 +397,7 @@ $(document).ready(function () {
     });
 
     // Button: DELETE FROM ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementDELETE_FROM = "<span class='codeline'>";
         elementDELETE_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DELETE_FROM'>";
@@ -414,7 +414,7 @@ $(document).ready(function () {
     });
 
     // Button: UPDATE ___ SET ___ = ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnUpdate', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnUpdate', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementUPDATE = "<span class='codeline'>";
         elementUPDATE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='UPDATE'>UPDATE";
@@ -442,7 +442,7 @@ $(document).ready(function () {
     });
 
     // Button: INSERT INTO ___ (___) VALUES (___) 
-    $(".buttonArea.codeComponents").on('click', '.btnInsert', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnInsert', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementINSERT = "<span class='codeline'>";
         elementINSERT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='INSERT'>INSERT INTO";
@@ -475,7 +475,7 @@ $(document).ready(function () {
     });
 
     // Button: DROP TABLE ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnDropTable', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnDropTable', function() {
         let classesFromCodeComponent = getClassesFromElementAsString(this);
         let elementDROP_TABLE = "<span class='codeline'>";
         elementDROP_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_TABLE'>";
@@ -492,7 +492,7 @@ $(document).ready(function () {
     });
 
     // Button: ALTER TABLE ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnAlterTable', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnAlterTable', function() {
         let classesFromCodeComponent = getClassesFromElementAsString(this);
         let elementALTER_TABLE = "<span class='codeline'>";
         elementALTER_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ALTER_TABLE'>";
@@ -509,7 +509,7 @@ $(document).ready(function () {
     });
 
     // Button: DROP COLUMN ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnDropColumn', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnDropColumn', function() {
         let classesFromCodeComponent = getClassesFromElementAsString(this);
         let elementDROP_COLUMN = "";
         elementDROP_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_COLUMN'>";
@@ -527,7 +527,7 @@ $(document).ready(function () {
     });
 
     // Button: RENAME ___ TO ___ 
-    $(".buttonArea.codeComponents").on('click', '.btnRenameTo', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnRenameTo', function() {
         let classesFromCodeComponent = getClassesFromElementAsString(this);
         let elementRENAME_TO = "";
         elementRENAME_TO += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='RENAME_TO'>";
@@ -551,7 +551,7 @@ $(document).ready(function () {
     });
 
     // Button: ADD ___ ___ (TYP) 
-    $(".buttonArea.codeComponents").on('click', '.btnAddColumn', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnAddColumn', function() {
         let classesFromCodeComponent = getClassesFromElementAsString(this);
         let elementADD_COLUMN = "";
         elementADD_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ADD_COLUMN'>";
@@ -572,7 +572,7 @@ $(document).ready(function () {
     });
 
     // Button: CREATE TABLE ___ (
-    $(".buttonArea.codeComponents").on('click', '.btnCreateTable', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnCreateTable', function() {
         let classesFromCodeComponent = getClassesFromElementAsString(this);
         let elementCREATE_TABLE = "<span class='codeline'>";
         elementCREATE_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_TABLE'>";
@@ -594,7 +594,7 @@ $(document).ready(function () {
         setSelection(NEXT_ELEMENT_NR, false);
     });
     // Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
-    $(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function() {
         var classesFromCodeComponent = getClassesFromElementAsString(this);
         var elementCREATE_COLUMN = "<span class='codeline'>";
         elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_COLUMN'>";
@@ -626,7 +626,7 @@ $(document).ready(function () {
     });
 
     // Button: CREATE... FOREIGN KEY spalte REFERENCES tabelle (spalte) 
-    $(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function () {
+    $(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function() {
         let classesFromCodeComponent = getClassesFromElementAsString(this);
         let elementFOREIGN_KEY = "<span class='codeline'>";;
         elementFOREIGN_KEY += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_FOREIGN_KEY'>";
@@ -671,7 +671,7 @@ $(document).ready(function () {
     });
 
     // Select: add dbField, dbTable, Aggregatsfunktion
-    $('.buttonArea.codeComponents').on('change', '.codeSelect', function () {
+    $('.buttonArea.codeComponents').on('change', '.codeSelect', function() {
         if (CURRENT_SELECTED_ELEMENT != undefined) {
             var tempSelectField = this;
             var returnObject = {};
@@ -713,7 +713,7 @@ $(document).ready(function () {
     });
 
     //Button: Add Element "inputField"
-    $(".btnAdd").click(function () {
+    $(".btnAdd").click(function() {
         let dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
         console.log(dataSqlElement)
         if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
@@ -773,14 +773,14 @@ $(document).ready(function () {
     });
 
     // Button: Delete Element
-    $('.btnDelete').click(function () {
+    $('.btnDelete').click(function() {
         deleteElement(CURRENT_SELECTED_ELEMENT);
         // aktualisiert alle .selColumn <select>
         updateSelectCodeComponents();
     });
 
     // on Click Element
-    $('.codeArea.editor').on('click', 'span', function (event) {
+    $('.codeArea.editor').on('click', 'span', function(event) {
         event.stopPropagation();
         let elementNr;
         //
@@ -798,14 +798,14 @@ $(document).ready(function () {
     });
 
     // on Click CodeArea - deselct
-    $('body').on('click', '.codeArea.editor', function (event) {
+    $('body').on('click', '.codeArea.editor', function(event) {
         event.stopPropagation();
         removeSelection(false);
         checkCodeAreaSQLElements();
     });
 
     // Input: add text to Selected Element span
-    $(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
+    $(".buttonArea.codeComponents").on('keyup', '.codeInput', function(e) {
         if (CURRENT_SELECTED_ELEMENT != undefined) {
             var tempValue = $(this).val();
             if (tempValue != "") {
@@ -833,7 +833,7 @@ $(document).ready(function () {
     });
 
     // Select: Datenbank wird ausgewählt
-    $('#selDbChooser').on('change', function () {
+    $('#selDbChooser').on('change', function() {
         $(".codeArea pre code").html("");
 
         CURRENT_SELECTED_SQL_ELEMENT = "START";
@@ -868,18 +868,18 @@ $(document).ready(function () {
             tab.show()
         }
         // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
-        else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
+        else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/ ) {
             loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
         }
     });
 
     // Datenbankdatei wurde zum Upload ausgewählt
-    $("#fileDbUpload").on('change', function () {
+    $("#fileDbUpload").on('change', function() {
         var uploadedFile = this.files[0];
 
         var fileReader = new FileReader();
-        fileReader.onload = function () {
-            init(fileReader.result).then(function (initObject) {
+        fileReader.onload = function() {
+            init(fileReader.result).then(function(initObject) {
 
                 var uploadedFileName = buildDatabaseName(uploadedFile.name, null);
 
@@ -918,14 +918,14 @@ $(document).ready(function () {
                 //debug:
                 $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
 
-            }, function (error) { console.log(error) });
+            }, function(error) { console.log(error) });
         }
         fileReader.readAsArrayBuffer(uploadedFile);
 
     });
 
     //Button: lädt die aktuell ausgewählte Datenbank herunter
-    $(".btnDbDownload").click(function () {
+    $(".btnDbDownload").click(function() {
         var binaryArray = CURRENT_VERINE_DATABASE.database.export();
 
         var blob = new Blob([binaryArray]);
@@ -933,8 +933,8 @@ $(document).ready(function () {
         document.body.appendChild(a);
         a.href = window.URL.createObjectURL(blob);
         a.download = DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name;
-        a.onclick = function () {
-            setTimeout(function () {
+        a.onclick = function() {
+            setTimeout(function() {
                 window.URL.revokeObjectURL(a.href);
             }, 1500);
         };
@@ -942,41 +942,41 @@ $(document).ready(function () {
     });
 
     // Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
-    $(".btnDbInfo").click(function () {
+    $(".btnDbInfo").click(function() {
         var tempTables = getSqlTables();
         $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
     });
-    $(".btnDbInfoMobile").click(function () {
+    $(".btnDbInfoMobile").click(function() {
         var tempTables = getSqlTables();
         $(".schemaArea.dbInfoModal").html(createTableInfo(tempTables, "1,2"));
 
     });
 
     // Button: close modal (x - schließen)
-    $(".btn-close.dbInfoModal").click(function () {
+    $(".btn-close.dbInfoModal").click(function() {
         //$(".codeArea.resultModal pre code").html("");
     });
-    $(".btn.btn-secondary.close.dbInfoModal").click(function () {
+    $(".btn.btn-secondary.close.dbInfoModal").click(function() {
         //$(".codeArea.resultModal pre code").html("");
     });
 
     // Button: run sql command - desktop
-    $(".btnRun").click(function () {
+    $(".btnRun").click(function() {
         execSqlCommand(null, "desktop");
         checkAnswer(CURRENT_EXERCISE.answerObject.input);
     });
     // Button: run sql command - mobile 
-    $(".btnRunMobile").click(function () {
+    $(".btnRunMobile").click(function() {
 
         var tempCode = $(".codeArea.editor pre code").html().trim();
         $(".codeArea.resultModal pre code").html(tempCode);
         execSqlCommand(null, "mobile");
     });
     // Button: close modal (x - schließen)
-    $(".btn-close.resultModal").click(function () {
+    $(".btn-close.resultModal").click(function() {
         $(".codeArea.resultModal pre code").html("");
     });
-    $(".btn.btn-secondary.close.resultModal").click(function () {
+    $(".btn.btn-secondary.close.resultModal").click(function() {
         $(".codeArea.resultModal pre code").html("");
     });
 
@@ -1002,14 +1002,14 @@ $(document).ready(function () {
     //function: überprüft den eingegebenen Code und passt diesen ggf. an
     function cleanSQLCode() {
         //sucht alle Elemente mit Klasse .createComma und fügt im .komma span ein Komma hinzu
-        $('.createComma').each(function () {
+        $('.createComma').each(function() {
             $(this).find(".komma").html(",")
         });
         //entfernt das letzte Komma der .createComma Klassen
         $(".codeArea pre code").find(".createComma .komma").last().html("");
 
         // deletes all empty <span class="codeline">
-        $(".codeline").each(function () {
+        $(".codeline").each(function() {
             if ($(this).children().length == 0) $(this).remove();
         });
     }
@@ -1019,42 +1019,39 @@ $(document).ready(function () {
         let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
         let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
 
-        $("#progress-bar-exercise").css('width', progressBarPercentage + "%");
-        $(".tab-content .exercise-content #exercise-title").html(CURRENT_EXERCISE.titel);
+        $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
+        $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
         //Beschreibung
         if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
             $(".exercise-description").show();
-            $(".tab-content .exercise-content #exercise-description").html(CURRENT_EXERCISE.beschreibung);
-        }
-        else $(".exercise-description").hide();
+            $(".exercise-content .exercise-description").html(CURRENT_EXERCISE.beschreibung);
+        } else $(".exercise-description").hide();
         //Aufgabenstellung
         if (removeEmptyTags(CURRENT_EXERCISE.aufgabenstellung) != "") {
             $(".exercise-task").show();
-            $(".tab-content .exercise-content #exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
-        }
-        else $(".exercise-task").hide();
+            $(".exercise-content .exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
+        } else $(".exercise-task").hide();
         //Informationen
         if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
             $(".exercise-meta").show();
-            $(".tab-content .exercise-content #exercise-meta").html(CURRENT_EXERCISE.informationen);
-        }
-        else $(".exercise-meta").hide();
+            $(".exercise-content .exercise-meta").html(CURRENT_EXERCISE.informationen);
+        } else $(".exercise-meta").hide();
 
         //Antworten werden im Log angezeigt -> fürs Testen
-        $(".tab-content .exercise-output").html("");
+        $(".exercise-output").html("");
 
-        $(".tab-content #exercise-feedback").hide();
+        $(".exercise-feedback").hide();
         if (CURRENT_EXERCISE.geloest == 1) {
 
-            $(".tab-content #exercise-feedback").show();
-            $(".tab-content #exercise-feedback div").html(CURRENT_EXERCISE.feedback);
-            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
+            $(".exercise-feedback").show();
+            $(".exercise-feedback div").html(CURRENT_EXERCISE.feedback);
+            $(".exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
         } else if (CURRENT_EXERCISE.answerObject.input) {
-            $(".tab-content .exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
-        }//next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
+            $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        } //next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
         else if (CURRENT_EXERCISE.answerObject.next) {
-            $(".tab-content .exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
+            $(".exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
         }
     }
 
@@ -1101,7 +1098,7 @@ $(document).ready(function () {
 
     //function: lädt eine DB vom Server
     function loadDbFromServer(dbName) {
-        init(fetch("data/" + dbName).then(res => res.arrayBuffer())).then(function (initObject) {
+        init(fetch("data/" + dbName).then(res => res.arrayBuffer())).then(function(initObject) {
             CURRENT_VERINE_DATABASE = new VerineDatabase(dbName, initObject[0], "server");
             ACTIVE_CODE_VIEW_DATA = initObject[1];
             CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(this.value);
@@ -1132,7 +1129,7 @@ $(document).ready(function () {
             let tab = new bootstrap.Tab(someTabTriggerEl)
             tab.show()
 
-        }, function (error) { console.log(error) });
+        }, function(error) { console.log(error) });
     }
 
     //function: sucht nach Parametern in der URL, wenn gefunden wird zur DB gewechselt und Code geladen
@@ -1558,7 +1555,7 @@ $(document).ready(function () {
                 $(".buttonArea.codeComponents").append('<button class="btnCreateForeignKey synSQL sqlDelete"> FOREIGN KEY ___ REFERENCES ___ (___)</button>');
                 break;
             default:
-            //log("no component found")
+                //log("no component found")
         }
     }
 
@@ -1566,14 +1563,14 @@ $(document).ready(function () {
     function findElementBySqlData(elements, attributeValue, position) {
         var tempElement;
         if (position == "first") {
-            $(elements).each(function () {
+            $(elements).each(function() {
                 tempElement = this;
                 if ($(tempElement).data("sql-element") == attributeValue) {
                     return false; //found element -> stop loop
                 }
             });
         } else if (position == "last") {
-            $(elements.get().reverse()).each(function () {
+            $(elements.get().reverse()).each(function() {
                 tempElement = this;
                 if ($(tempElement).data("sql-element") == attributeValue) {
                     return false; //found element -> stop loop
@@ -1662,7 +1659,7 @@ $(document).ready(function () {
     //function: get all used db tables in code area
     function updateUsedTables() {
         USED_TABLES = [];
-        $(".codeArea.editor .selTable").each(function () {
+        $(".codeArea.editor .selTable").each(function() {
             if (!USED_TABLES.includes($(this).html())) {
                 USED_TABLES.push($(this).html());
             }
@@ -1674,7 +1671,7 @@ $(document).ready(function () {
         //check all used tables in code area
         updateUsedTables();
         //entfernt alle .inputField die ein Feld einer gelöscht Tabelle haben
-        $(".codeArea.editor .selColumn").each(function () {
+        $(".codeArea.editor .selColumn").each(function() {
             var isTableActive = false;
             USED_TABLES.forEach(element => {
                 if ($(this).hasClass(element)) {
@@ -1848,7 +1845,7 @@ $(document).ready(function () {
                 //erste .codeline in der CodeArea?
                 if (CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").length == 0) {
                     if (removeLastSelectedElement) $('.codeArea.editor pre code').html(""); // lösche alles, keine neue 
-                } else {//hat ein prev .codeline                    
+                } else { //hat ein prev .codeline                    
                     element = CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").find(".parent").last();
                     CURRENT_SELECTED_ELEMENT = CURRENT_SELECTED_ELEMENT.parent(); //aktuelle Codeline
                 }
@@ -2012,7 +2009,7 @@ $(document).ready(function () {
     //function: get all SQL Elements in CodeArea
     function getCodeAreaSQLElements() {
         var codeAreaElements = [];
-        $('.codeArea.editor').children(".parent").each(function () {
+        $('.codeArea.editor').children(".parent").each(function() {
             var tempSqlElement = $(this).data("sql-element");
             codeAreaElements.push(tempSqlElement);
         });
@@ -2066,12 +2063,10 @@ $(document).ready(function () {
                 if (insertSQL != null && insertSQL.length > 0) {
                     $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
                     result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2]);
-                }
-                else if (updateSQL != null && updateSQL.length > 0) {
+                } else if (updateSQL != null && updateSQL.length > 0) {
                     $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
                     result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2]);
-                }
-                else if (deleteSQL != null && deleteSQL.length > 0) {
+                } else if (deleteSQL != null && deleteSQL.length > 0) {
                     $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
                     result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2]);
                 }
@@ -2086,12 +2081,10 @@ $(document).ready(function () {
             if (dropTableSQL != null && dropTableSQL.length > 0) {
                 $(".outputArea").append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
                 tablesChanged = true;
-            }
-            else if (createTableSQL != null && createTableSQL.length > 0) {
+            } else if (createTableSQL != null && createTableSQL.length > 0) {
                 $(".outputArea").append("<h5>Die Tabelle: " + createTableSQL[2] + " wurde neu erstellt.</h5><br>");
                 tablesChanged = true;
-            }
-            else if (alterTableSQL != null && alterTableSQL.length > 0) {
+            } else if (alterTableSQL != null && alterTableSQL.length > 0) {
                 $(".outputArea").append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
                 tablesChanged = true;
                 result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2]);
@@ -2137,7 +2130,7 @@ $(document).ready(function () {
     //$(codeVersion).append("0.5");
 
     //display debug area with controls
-    $("#displayDebug").click(function () {
+    $("#displayDebug").click(function() {
         if (!isCheckboxChecked("#displayDebug")) {
             $("#debug-area").hide();
         } else {
@@ -2147,42 +2140,42 @@ $(document).ready(function () {
 
 
     //Debug jquery-code textarea
-    $(".btnCode-parent").click(function () {
+    $(".btnCode-parent").click(function() {
         CURRENT_SELECTED_ELEMENT.parent().addClass("debug");
     });
-    $(".btnCode-closest1").click(function () {
+    $(".btnCode-closest1").click(function() {
         CURRENT_SELECTED_ELEMENT.closest(".parent").addClass("debug");
     });
-    $(".btnCode-closest2").click(function () {
+    $(".btnCode-closest2").click(function() {
         CURRENT_SELECTED_ELEMENT.closest(".inputFields").addClass("debug");
     });
-    $(".btnCode-find1").click(function () {
+    $(".btnCode-find1").click(function() {
         CURRENT_SELECTED_ELEMENT.find(".parent").addClass("debug");
     });
-    $(".btnCode-copycodeto").click(function () {
+    $(".btnCode-copycodeto").click(function() {
         var copyCode = $("#jquery-code").val();
         $(".codeArea.editor pre code").html(copyCode);
     });
-    $(".btnCode-copycodefrom").click(function () {
+    $(".btnCode-copycodefrom").click(function() {
         var tempCode = $(".codeArea.editor pre code").html().trim();
         $("#jquery-code").html(tempCode);
         saveToLocalStorage("tempSqlCommand", tempCode);
     });
-    $(".btnCode-getSqlString").click(function () {
+    $(".btnCode-getSqlString").click(function() {
         var tempCode = $(".codeArea.editor pre code").clone();
         tempCode.find(".codeline").prepend("<span>&nbsp;</span>");
         $("#jquery-code").html(tempCode.text().trim());
     });
-    $(".btnCode-execSql").click(function () {
+    $(".btnCode-execSql").click(function() {
         var tempSqlCommand = $("#jquery-code").val();
         execSqlCommand(tempSqlCommand, "desktop");
         $("#exampleModal").modal('toggle');
     });
-    $(".btnCode-remove").click(function () {
+    $(".btnCode-remove").click(function() {
         $("div").removeClass("debug");
         $("[class^='codeElement_']").removeClass("debug");
     });
-    $("#checkDisplayAllCodeComponents").click(function () {
+    $("#checkDisplayAllCodeComponents").click(function() {
         updateActiveCodeView();
     });
 
