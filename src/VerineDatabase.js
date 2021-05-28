@@ -1,8 +1,8 @@
 
-
-class VerineDatabase {
+export class VerineDatabase {
 
     constructor(name, currentDatabase, type) {
+        
         this.name = name;
         this.database = currentDatabase;
         this.type = type;

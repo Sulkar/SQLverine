@@ -1,0 +1,1584 @@
+import $ from "jquery";
+import { Tab, Modal } from "bootstrap";
+import initSqlJs from "sql.js";
+import { VerineDatabase } from "./VerineDatabase";
+import sqlVerineEditor from "./SqlVerineEditor"
+
+
+
+
+//global variables
+var NR = 0;
+var NEXT_ELEMENT_NR = 0;
+var CURRENT_SELECTED_ELEMENT = undefined;
+var CURRENT_SELECTED_SQL_ELEMENT = "START";
+var ACTIVE_CODE_VIEW_DATA; // JSON Data holder
+var USED_TABLES = []; // listet alle genutzten Tabellen einer DB auf, um SELECTs entsprechend zu befüllen
+var CURRENT_VERINE_DATABASE;
+var DATABASE_ARRAY = [];
+var CURRENT_EXERCISE_ID;
+var CURRENT_EXERCISE;
+
+
+var CURRENT_DATABASE_INDEX = 0;
+DATABASE_ARRAY.push(new VerineDatabase("Grundschule.db", null, "server"));
+DATABASE_ARRAY.push(new VerineDatabase("SchuleInfo.db", null, "server"));
+var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightoral"];
+
+
+// für Übungen zum Überprüfen der Eingaben
+var SOLUTION_ALL_ARRAY = [];
+var SOLUTION_ROW_COUNTER = 0;
+
+
+//////////
+// INIT //
+handleUrlParameters();
+
+////////////
+// EVENTS //
+
+$(".tab-pane").on("click", ".btnInputCheckExercise", function () {
+    //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
+    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".input-check").val())) {
+        CURRENT_EXERCISE.geloest = 1;
+        if ($(".tab-pane.active").attr("id") != "nav-mission") {
+            $("#outputInfo").html("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+        }
+        updateExercise();
+    } else {
+        $("#outputInfo").html("<p style='color:red;'>Leider falsch! Probiere es nochmal!</p>");
+    }
+});
+
+$(".outputArea").on("click", "#btnExerciseNext", function () {
+    let tab = new Tab(document.querySelector('#nav-mission-tab'));
+    tab.show();
+});
+
+$(".outputArea").on("click", "#btnExerciseSuccess", function () {
+    let tab = new Tab(document.querySelector('#nav-mission-tab'));
+    tab.show();
+});
+
+$(".tab-content #nav-mission").on("click", ".btnNextExercise", function () {
+    CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getNextExercise(CURRENT_EXERCISE_ID);
+    if (CURRENT_EXERCISE_ID != null) {
+        CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+        updateExercise();
+    }
+});
+
+//Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
+$("#btnCreateUrl").click(function () {
+    let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
+    let urlDatabase = CURRENT_VERINE_DATABASE.name;
+    let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
+    let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&maxElementNr=" + NR + "&code=" + urlCode;
+    let modal = new Modal(document.getElementById('universal-modal'));
+    modal.toggle();
+    $("#universal-modal .modal-title").html("Link zum aktuellen Code:");
+    $("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
+    $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
+});
+$("#universal-modal").on('click', '#btnCopyLink', function () {
+    let copyUrl = document.getElementById("inputCreateUrl");
+    copyUrl.select();
+    copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
+    //kopiert den selektierten Text in die Zwischenablage
+    document.execCommand("copy");
+});
+
+// Scrollfortschritt als Dots anzeigen
+$(".buttonArea.codeComponents").on('scroll', function () {
+    let maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
+    let dotCount = Math.ceil($(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
+
+
+    let scrollIndex = Math.ceil(($(".buttonArea.codeComponents").scrollLeft() + ($(".buttonArea.codeComponents").get(0).clientWidth / 2)) / ((maxWidth / dotCount)));
+
+
+    $(".codeComponentsScrolldots a").removeClass("activeDot");
+    $(".codeComponentsScrolldots a").eq(scrollIndex).addClass("activeDot");
+
+});
+
+//Button ist im Infotab und navigiert den Nutzer zum Aufgabentab
+$("#btnGotoExerciseTab").on('click', function () {
+    let tab = new Tab(document.querySelector('#nav-mission-tab'));
+    tab.show();
+});
+
+
+// Scrolldots bei Klick an Position springen lassen
+$(".codeComponentsScrolldots").on('click', 'a', function () {
+    var dotCountBefore = $(this).prevAll().length;
+    var dotCountAfter = $(this).nextAll().length;
+    var maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
+    var scrollPos = 0;
+
+    if (dotCountBefore == 0) {
+        scrollPos = 0;
+    } else if (dotCountAfter == 0) {
+        scrollPos = maxWidth;
+    } else {
+        scrollPos = $(".buttonArea.codeComponents").get(0).clientWidth * dotCountBefore;
+    }
+    $(".buttonArea.codeComponents").scrollLeft(scrollPos);
+});
+
+
+
+
+
+// Button: WHERE ___ ___ ___ 
+$(".buttonArea.codeComponents").on('click', '.btnWhere', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementWHERE = "<span class='codeline'>";
+    elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
+    NR++;
+    elementWHERE += addLeerzeichen();
+    elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementWHERE += addLeerzeichen();
+    elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+    elementWHERE += addLeerzeichen();
+    elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_3' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementWHERE += "</span></span>";
+
+    if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+        CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementWHERE);
+    } else {
+        CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementWHERE);
+    }
+
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: JOIN ___ ON ___ ___ ___ 
+$(".buttonArea.codeComponents").on('click', '.btnJoin', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementJOIN = "<span class='codeline'>";
+    elementJOIN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='JOIN'>JOIN";
+    NR++;
+    elementJOIN += addLeerzeichen();
+    elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementJOIN += addLeerzeichen();
+    elementJOIN += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>ON</span>";
+    NR++;
+    elementJOIN += addLeerzeichen();
+    elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+    elementJOIN += addLeerzeichen();
+    elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_3' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementJOIN += addLeerzeichen();
+    elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_4' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementJOIN += "</span></span>";
+
+    if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+        CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementJOIN);
+    } else {
+        CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementJOIN);
+    }
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+//Button: AND
+$(".buttonArea.codeComponents").on('click', '.btnAND', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+    var elementWhereAND = "";
+    elementWhereAND += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='AND'>";
+    NR++;
+    elementWhereAND += addLeerzeichen();
+    elementWhereAND += "AND";
+    elementWhereAND += addLeerzeichen();
+    elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementWhereAND += addLeerzeichen();
+    elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+    elementWhereAND += addLeerzeichen();
+    elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_3' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementWhereAND += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementWhereAND);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+//Button: OR
+$(".buttonArea.codeComponents").on('click', '.btnOR', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+    var elementWhereOR = "";
+    elementWhereOR += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OR'>";
+    NR++;
+    elementWhereOR += addLeerzeichen();
+    elementWhereOR += "OR";
+    elementWhereOR += addLeerzeichen();
+    elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementWhereOR += addLeerzeichen();
+    elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+    elementWhereOR += addLeerzeichen();
+    elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_3' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementWhereOR += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementWhereOR);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+//Button: LeftBracket
+$(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
+        CURRENT_SELECTED_ELEMENT.before("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='LEFTBRACKET'> ( </span>");
+        NR++;
+    }
+});
+//Button: RightBracket
+$(".buttonArea.codeComponents").on('click', '.btnRightBracket', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
+        CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='RIGHTBRACKET'> ) </span>");
+        NR++;
+    }
+});
+
+// Button: ORDER BY ___ 
+$(".buttonArea.codeComponents").on('click', '.btnOrder', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementORDER = "";
+    elementORDER += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ORDER'>";
+    NR++;
+    elementORDER += addLeerzeichen();
+    elementORDER += "ORDER BY";
+    elementORDER += addLeerzeichen();
+    elementORDER += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ORDER_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementORDER += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementORDER);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+//Button: ASC
+$(".buttonArea.codeComponents").on('click', '.btnAsc', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementOrderAsc = "";
+    elementOrderAsc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ASC'>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementOrderAsc += addLeerzeichen();
+    elementOrderAsc += "ASC";
+    elementOrderAsc += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOrderAsc);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+//Button: DESC
+$(".buttonArea.codeComponents").on('click', '.btnDesc', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementOrderDesc = "";
+    elementOrderDesc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DESC'>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementOrderDesc += addLeerzeichen();
+    elementOrderDesc += "DESC";
+    elementOrderDesc += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOrderDesc);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: LIMIT ___ 
+$(".buttonArea.codeComponents").on('click', '.btnLimit', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementLIMIT = "";
+    elementLIMIT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='LIMIT'>";
+    NR++;
+    elementLIMIT += addLeerzeichen();
+    elementLIMIT += "LIMIT";
+    elementLIMIT += addLeerzeichen();
+    elementLIMIT += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='LIMIT_1' >___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementLIMIT += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementLIMIT);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: OFFSET ___ 
+$(".buttonArea.codeComponents").on('click', '.btnOffset', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementOFFSET = "";
+    elementOFFSET += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OFFSET'>";
+    NR++;
+    elementOFFSET += addLeerzeichen();
+    elementOFFSET += "OFFSET";
+    elementOFFSET += addLeerzeichen();
+    elementOFFSET += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='OFFSET_1' >___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementOFFSET += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOFFSET);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: GROUP BY ___ 
+$(".buttonArea.codeComponents").on('click', '.btnGroup', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementGROUP = "";
+    elementGROUP += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='GROUP'>";
+    NR++;
+    elementGROUP += addLeerzeichen();
+    elementGROUP += "GROUP BY";
+    elementGROUP += addLeerzeichen();
+    elementGROUP += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='GROUP_1'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementGROUP += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementGROUP);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: HAVING ___ ___ ___ = like WHERE but can handle Aggregate functions
+$(".buttonArea.codeComponents").on('click', '.btnHaving', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementHAVING = "<span class='codeline'>";
+    elementHAVING += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='HAVING'>";
+    NR++;
+    elementHAVING += "HAVING";
+    elementHAVING += addLeerzeichen();
+    elementHAVING += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='HAVING_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementHAVING += addLeerzeichen();
+    elementHAVING += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='HAVING_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+    elementHAVING += addLeerzeichen();
+    elementHAVING += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='HAVING_3' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementHAVING += "</span>";
+
+    if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+        CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementHAVING);
+    } else {
+        CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementHAVING);
+    }
+
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: DELETE FROM ___ 
+$(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementDELETE_FROM = "<span class='codeline'>";
+    elementDELETE_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DELETE_FROM'>";
+    NR++;
+    elementDELETE_FROM += "DELETE FROM";
+    elementDELETE_FROM += addLeerzeichen();
+    elementDELETE_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DELETE_FROM_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementDELETE_FROM += "</span></span>";
+
+    $('.codeArea.editor pre code').append(elementDELETE_FROM);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: UPDATE ___ SET ___ = ___ 
+$(".buttonArea.codeComponents").on('click', '.btnUpdate', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementUPDATE = "<span class='codeline'>";
+    elementUPDATE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='UPDATE'>UPDATE";
+    NR++;
+    elementUPDATE += addLeerzeichen();
+    elementUPDATE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='UPDATE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementUPDATE += addLeerzeichen();
+    elementUPDATE += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>SET</span>";
+    NR++;
+    elementUPDATE += addLeerzeichen();
+    elementUPDATE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+    elementUPDATE += addLeerzeichen();
+    elementUPDATE += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 8) + "'> = </span>";
+    NR++;
+    elementUPDATE += addLeerzeichen();
+    elementUPDATE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='UPDATE_3' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementUPDATE += "</span></span>";
+
+    $('.codeArea.editor pre code').append(elementUPDATE);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: INSERT INTO ___ (___) VALUES (___) 
+$(".buttonArea.codeComponents").on('click', '.btnInsert', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementINSERT = "<span class='codeline'>";
+    elementINSERT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='INSERT'>INSERT INTO";
+    NR++;
+    elementINSERT += addLeerzeichen();
+    elementINSERT += "<span class='codeElement_" + NR + " inputField unfilled root insert1 sqlIdentifier' data-sql-element='INSERT_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementINSERT += addLeerzeichen();
+
+    elementINSERT += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+    NR++;
+
+    elementINSERT += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 2) + "," + (NR - 1) + "," + (NR + 1) + "'>___</span>";
+    NR++;
+
+    elementINSERT += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+    NR++;
+
+    elementINSERT += addLeerzeichen();
+    elementINSERT += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 6) + "'>VALUES</span>";
+    NR++;
+    elementINSERT += addLeerzeichen();
+    elementINSERT += "(<span class='codeElement_" + NR + " inputField unfilled root insert3 sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (NR - 4) + "'>___</span>)";
+    NR++;
+    elementINSERT += "</span></span>";
+
+    $('.codeArea.editor pre code').append(elementINSERT);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: DROP TABLE ___ 
+$(".buttonArea.codeComponents").on('click', '.btnDropTable', function () {
+    let classesFromCodeComponent = getClassesFromElementAsString(this);
+    let elementDROP_TABLE = "<span class='codeline'>";
+    elementDROP_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_TABLE'>";
+    NR++;
+    elementDROP_TABLE += "DROP TABLE";
+    elementDROP_TABLE += addLeerzeichen();
+    elementDROP_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DROP_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementDROP_TABLE += "</span></span>";
+
+    $('.codeArea.editor pre code').append(elementDROP_TABLE);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: ALTER TABLE ___ 
+$(".buttonArea.codeComponents").on('click', '.btnAlterTable', function () {
+    let classesFromCodeComponent = getClassesFromElementAsString(this);
+    let elementALTER_TABLE = "<span class='codeline'>";
+    elementALTER_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ALTER_TABLE'>";
+    NR++;
+    elementALTER_TABLE += "ALTER TABLE";
+    elementALTER_TABLE += addLeerzeichen();
+    elementALTER_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ALTER_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementALTER_TABLE += "</span></span>";
+
+    $('.codeArea.editor pre code').append(elementALTER_TABLE);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: DROP COLUMN ___ 
+$(".buttonArea.codeComponents").on('click', '.btnDropColumn', function () {
+    let classesFromCodeComponent = getClassesFromElementAsString(this);
+    let elementDROP_COLUMN = "";
+    elementDROP_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_COLUMN'>";
+    NR++;
+    elementDROP_COLUMN += addLeerzeichen();
+    elementDROP_COLUMN += "DROP COLUMN";
+    elementDROP_COLUMN += addLeerzeichen();
+    elementDROP_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DROP_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementDROP_COLUMN += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementDROP_COLUMN);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: RENAME ___ TO ___ 
+$(".buttonArea.codeComponents").on('click', '.btnRenameTo', function () {
+    let classesFromCodeComponent = getClassesFromElementAsString(this);
+    let elementRENAME_TO = "";
+    elementRENAME_TO += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='RENAME_TO'>";
+    NR++;
+    elementRENAME_TO += addLeerzeichen();
+    elementRENAME_TO += "RENAME";
+    elementRENAME_TO += addLeerzeichen();
+    elementRENAME_TO += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='RENAME_TO_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementRENAME_TO += addLeerzeichen();
+    elementRENAME_TO += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 6) + "'>TO</span>";
+    NR++;
+    elementRENAME_TO += addLeerzeichen();
+    elementRENAME_TO += "<span class='codeElement_" + NR + " inputField unfilled root insert2 sqlIdentifier' data-sql-element='RENAME_TO_2' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementRENAME_TO += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementRENAME_TO);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: ADD ___ ___ (TYP) 
+$(".buttonArea.codeComponents").on('click', '.btnAddColumn', function () {
+    let classesFromCodeComponent = getClassesFromElementAsString(this);
+    let elementADD_COLUMN = "";
+    elementADD_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ADD_COLUMN'>";
+    NR++;
+    elementADD_COLUMN += addLeerzeichen();
+    elementADD_COLUMN += "ADD";
+    elementADD_COLUMN += addLeerzeichen();
+    elementADD_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ADD_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementADD_COLUMN += addLeerzeichen();
+    elementADD_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root insert2 sqlIdentifier' data-sql-element='ADD_COLUMN_2' data-next-element='" + (NR - 4) + "'>___</span>";
+    NR++;
+    elementADD_COLUMN += "</span>";
+
+    CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementADD_COLUMN);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: CREATE TABLE ___ (
+$(".buttonArea.codeComponents").on('click', '.btnCreateTable', function () {
+    let classesFromCodeComponent = getClassesFromElementAsString(this);
+    let elementCREATE_TABLE = "<span class='codeline'>";
+    elementCREATE_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_TABLE'>";
+    NR++;
+    elementCREATE_TABLE += "CREATE TABLE";
+    elementCREATE_TABLE += addLeerzeichen();
+    elementCREATE_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span> (";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementCREATE_TABLE += "</span></span>";
+
+    //
+    elementCREATE_TABLE += "<span class='codeline'>";
+    elementCREATE_TABLE += "<span class='codeElement_" + NR + " sqlIdentifier extended' data-sql-element='CREATE_END_BRACKET'>)</span>";
+    NR++;
+    elementCREATE_TABLE += "</span>";
+
+    $('.codeArea.editor pre code').append(elementCREATE_TABLE);
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+// Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
+$(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
+    var classesFromCodeComponent = getClassesFromElementAsString(this);
+    var elementCREATE_COLUMN = "<span class='codeline'>";
+    elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_COLUMN'>";
+    NR++;
+    elementCREATE_COLUMN += addLeerzeichen();
+    elementCREATE_COLUMN += addLeerzeichen();
+    elementCREATE_COLUMN += addLeerzeichen();
+    elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+
+    elementCREATE_COLUMN += addLeerzeichen();
+    elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+
+    elementCREATE_COLUMN += addKomma();
+    elementCREATE_COLUMN += "</span>";
+    elementCREATE_COLUMN += "</span>";
+
+    if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+        CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementCREATE_COLUMN);
+    } else {
+        CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementCREATE_COLUMN);
+    }
+
+    //passt Kommas an
+    cleanSQLCode();
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+// Button: CREATE... FOREIGN KEY spalte REFERENCES tabelle (spalte) 
+$(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function () {
+    let classesFromCodeComponent = getClassesFromElementAsString(this);
+    let elementFOREIGN_KEY = "<span class='codeline'>";;
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_FOREIGN_KEY'>";
+    NR++;
+    elementFOREIGN_KEY += addLeerzeichen();
+    elementFOREIGN_KEY += addLeerzeichen();
+    elementFOREIGN_KEY += addLeerzeichen();
+    elementFOREIGN_KEY += "FOREIGN KEY";
+    elementFOREIGN_KEY += addLeerzeichen();
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+    NR++;
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_1' data-next-element='" + (NR + 2) + "'>___</span>";
+    NEXT_ELEMENT_NR = NR;
+    NR++;
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+    NR++;
+    elementFOREIGN_KEY += addLeerzeichen();
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 9) + "'>REFERENCES</span>";
+    NR++;
+    elementFOREIGN_KEY += addLeerzeichen();
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_2' data-next-element='" + (NR + 2) + "'>___</span>";
+    NR++;
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+    NR++;
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_3' data-next-element='" + (NR + 2) + "' data-element-group=''>___</span>";
+    NR++;
+    elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+    NR++;
+    elementFOREIGN_KEY += addKomma();
+    elementFOREIGN_KEY += "</span>";
+    elementFOREIGN_KEY += "</span>";
+
+    if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+        CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementFOREIGN_KEY);
+    } else {
+        CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementFOREIGN_KEY);
+    }
+
+    //passt Kommas an
+    cleanSQLCode();
+    setSelection(NEXT_ELEMENT_NR, false);
+});
+
+
+
+//Button: Add Element "inputField"
+$(".btnAdd").click(function () {
+    let dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
+    console.log(dataSqlElement)
+    if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
+
+        if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "_AGGREGAT")) { //...
+            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
+
+        } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "WHERE_3, OR_3, AND_3")) { //...
+            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
+
+        } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "INSERT_1")) {
+            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "insertInto"));
+        } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "INSERT_2")) {
+
+            let updateField1 = addLeerzeichenMitKomma();
+            updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "'>___</span>";
+            NR++;
+            CURRENT_SELECTED_ELEMENT.after(updateField1);
+
+            let lastInsert3Field = findElementBySqlData(CURRENT_SELECTED_ELEMENT.closest(".parent").children(), "INSERT_3", "last");
+
+            let updateField2 = addLeerzeichenMitKomma();
+            updateField2 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR - 2) + "," + (NR - 3) + "'>___</span>";
+            NR++;
+            $(lastInsert3Field).after(updateField2);
+        }
+        //Create Table Spalte Typ ist gewählt, Feld für Einschränkung wird hinzugefügt
+        else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "CREATE_COLUMN_2, CREATE_COLUMN_3")) {
+            let updateField1 = addLeerzeichen();
+            updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='CREATE_COLUMN_3' data-next-element='" + (NR + 2) + "' data-element-group=''>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            CURRENT_SELECTED_ELEMENT.after(updateField1);
+
+        } else {
+            console.log("in")
+            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedComma"));
+
+        }
+        setSelection(NEXT_ELEMENT_NR, false);
+    }
+
+    // UPDATE: fügt ", ___ = ___" hinzu
+    else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "UPDATE")) {
+        var lastUpdateField = findElementBySqlData(CURRENT_SELECTED_ELEMENT.children(), "UPDATE_3", "last");
+        var updateFields = addLeerzeichenMitKomma();
+        updateFields += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "," + (NR + 3) + "," + (NR + 4) + "'>___</span>";
+        NR++;
+        updateFields += addLeerzeichen();
+        updateFields += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 8) + "'> = </span>";
+        NR++;
+        updateFields += addLeerzeichen();
+        updateFields += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_3' data-next-element='" + (NR - 4) + "' data-element-group='" + (NR - 1) + "," + (NR - 2) + "," + (NR - 3) + "," + (NR - 4) + "'>___</span>";
+        NR++;
+        $(lastUpdateField).after(updateFields);
+    }
+});
+
+// Button: Delete Element
+$('.btnDelete').click(function () {
+    deleteElement(CURRENT_SELECTED_ELEMENT);
+    // aktualisiert alle .selColumn <select>
+    updateSelectCodeComponents();
+});
+
+
+// Input: add text to Selected Element span
+$(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
+    if (CURRENT_SELECTED_ELEMENT != undefined) {
+        var tempValue = $(this).val();
+        if (tempValue != "") {
+            if (isNaN(tempValue)) {
+                CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
+            } else {
+                CURRENT_SELECTED_ELEMENT.html(tempValue);
+            }
+        } else {
+            CURRENT_SELECTED_ELEMENT.html("___");
+        }
+        CURRENT_SELECTED_ELEMENT.addClass("input");
+        if (e.key === 'Enter' || e.keyCode === 13) {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            if (tempValue != "") {
+                CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
+                CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
+            } else {
+                CURRENT_SELECTED_ELEMENT.addClass("unfilled");
+                CURRENT_SELECTED_ELEMENT.removeClass(classesFromCodeComponent);
+            }
+            setSelection("next", false);
+        }
+    }
+});
+
+// Select: Datenbank wird ausgewählt
+$('#selDbChooser').on('change', function () {
+    $(".codeArea pre code").html("");
+
+    CURRENT_SELECTED_SQL_ELEMENT = "START";
+    CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(this.value);
+
+    // 1) Datenbank exisitiert und wurde bereits eingelesen
+    if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database != null) {
+        CURRENT_VERINE_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX];
+
+        updateDbChooser(CURRENT_VERINE_DATABASE.name);
+        //updateActiveCodeView();
+
+        // zeigt das Datenbankschema an
+        var tempTables = getSqlTables();
+        $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+        let exercises = CURRENT_VERINE_DATABASE.getExercises();
+        if (exercises.length > 0) {
+            //$("#nav-mission").show();
+            $("#nav-mission-tab").show();
+            CURRENT_EXERCISE_ID = 1;
+            CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+            updateExercise();
+        } else {
+            //$("#nav-mission").hide();
+            $("#nav-mission-tab").hide();
+        }
+
+        //wechselt zum Info Tab
+        let someTabTriggerEl = document.querySelector('#nav-info-tab')
+        let tab = new Tab(someTabTriggerEl)
+        tab.show()
+    }
+    // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
+    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
+        loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
+    }
+});
+
+// Datenbankdatei wurde zum Upload ausgewählt
+$("#fileDbUpload").on('change', function () {
+    var uploadedFile = this.files[0];
+
+    var fileReader = new FileReader();
+    fileReader.onload = function () {
+        init(fileReader.result).then(function (initObject) {
+
+            var uploadedFileName = buildDatabaseName(uploadedFile.name, null);
+
+            CURRENT_VERINE_DATABASE = new VerineDatabase(uploadedFileName, initObject[0], "local");
+            ACTIVE_CODE_VIEW_DATA = initObject[1];
+
+            DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_VERINE_DATABASE, "local"));
+            CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
+
+            updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
+            $(".codeArea pre code").html("");
+            CURRENT_SELECTED_SQL_ELEMENT = "START";
+
+            //updateActiveCodeView();
+
+            // zeigt das Datenbankschema an
+            var tempTables = getSqlTables();
+
+            $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+            let exercises = CURRENT_VERINE_DATABASE.getExercises();
+            if (exercises.length > 0) {
+                $("#nav-mission-tab").show();
+                CURRENT_EXERCISE_ID = 1;
+                CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+                updateExercise();
+            } else {
+                $("#nav-mission-tab").hide();
+            }
+
+            //wechselt zum Info Tab
+            let someTabTriggerEl = document.querySelector('#nav-info-tab')
+            let tab = new Tab(someTabTriggerEl)
+            tab.show()
+
+            //debug:
+            $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
+
+        }, function (error) { console.log(error) });
+    }
+    fileReader.readAsArrayBuffer(uploadedFile);
+
+});
+
+//Button: lädt die aktuell ausgewählte Datenbank herunter
+$(".btnDbDownload").click(function () {
+    var binaryArray = CURRENT_VERINE_DATABASE.database.export();
+
+    var blob = new Blob([binaryArray]);
+    var a = document.createElement("a");
+    document.body.appendChild(a);
+    a.href = window.URL.createObjectURL(blob);
+    a.download = DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name;
+    a.onclick = function () {
+        setTimeout(function () {
+            window.URL.revokeObjectURL(a.href);
+        }, 1500);
+    };
+    a.click();
+});
+
+// Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
+$(".btnDbInfo").click(function () {
+    var tempTables = getSqlTables();
+    $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+});
+$(".btnDbInfoMobile").click(function () {
+    var tempTables = getSqlTables();
+    $(".schemaArea.dbInfoModal").html(createTableInfo(tempTables, "1,2"));
+
+});
+
+// Button: close modal (x - schließen)
+$(".btn-close.dbInfoModal").click(function () {
+    //$(".codeArea.resultModal pre code").html("");
+});
+$(".btn.btn-secondary.close.dbInfoModal").click(function () {
+    //$(".codeArea.resultModal pre code").html("");
+});
+
+
+// Button: run sql command - mobile 
+$(".btnRunMobile").click(function () {
+
+    var tempCode = $(".codeArea.editor pre code").html().trim();
+    $(".codeArea.resultModal pre code").html(tempCode);
+    execSqlCommand(null, "mobile");
+});
+// Button: close modal (x - schließen)
+$(".btn-close.resultModal").click(function () {
+    $(".codeArea.resultModal pre code").html("");
+});
+$(".btn.btn-secondary.close.resultModal").click(function () {
+    $(".codeArea.resultModal pre code").html("");
+});
+
+
+///////////////
+// FUNCTIONS //
+
+//function: Datenbank und JSON für active code view werden geladen
+async function init(dataPromise) {
+    //fetch Database
+    const sqlPromise = initSqlJs({
+        locateFile: file => `${file}`
+    });
+    //fetch active code view json
+    const activeCodeViewPromise = fetch("data/activeCodeViewData.json");
+    const [sql, bufferedDatabase, activeCodeView] = await Promise.all([sqlPromise, dataPromise, activeCodeViewPromise]);
+
+    const jsonData = await activeCodeView.json();
+
+    return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
+}
+
+
+
+//function: Aktualisierung der Übungen und der Progressbar
+function updateExercise() {
+    let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
+    let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
+
+    $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
+    $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
+    //Beschreibung
+    if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
+        $(".exercise-description").show();
+        $(".exercise-content .exercise-description").html(CURRENT_EXERCISE.beschreibung);
+    } else $(".exercise-description").hide();
+    //Aufgabenstellung
+    if (removeEmptyTags(CURRENT_EXERCISE.aufgabenstellung) != "") {
+        $(".exercise-task").show();
+        $(".exercise-content .exercise-task").html(CURRENT_EXERCISE.aufgabenstellung);
+    } else $(".exercise-task").hide();
+    //Informationen
+    if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
+        $(".exercise-meta").show();
+        $(".exercise-content .exercise-meta").html(CURRENT_EXERCISE.informationen);
+    } else $(".exercise-meta").hide();
+
+    //Antworten werden im Log angezeigt -> fürs Testen
+    $(".exercise-output").html("");
+
+    $(".exercise-feedback").hide();
+    if (CURRENT_EXERCISE.geloest == 1) {
+
+        $(".exercise-feedback").show();
+        $(".exercise-feedback div").html(CURRENT_EXERCISE.feedback);
+        $(".exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
+
+    } else if (CURRENT_EXERCISE.answerObject.input) {
+        $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+    } //next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
+    else if (CURRENT_EXERCISE.answerObject.next) {
+        $(".exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
+    }
+}
+
+//function: entfernt Tags aus Daten von der Datenbank, um zu prüfen ob ein Inhalt vorhanden ist.
+function removeEmptyTags(stringToTest) {
+    return stringToTest.replaceAll(/[<p>|<br>|</p>|\s]/g, "");
+}
+
+//function: Überprüft ob die Antwort richtig ist
+function checkAnswer(answerInput) {
+    let solutionRows = CURRENT_EXERCISE.answerObject.rows;
+    let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;
+    //check solution
+    // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
+    // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
+    // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
+    if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
+        CURRENT_EXERCISE.geloest = 1;
+        $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+
+        updateExercise();
+    }
+    //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
+    else if (answerInput) {
+        $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+    }
+
+}
+
+
+//function: lädt eine DB vom Server
+function loadDbFromServer(dbName) {
+    init(fetch("data/" + dbName).then(res => res.arrayBuffer())).then(function (initObject) {
+
+        CURRENT_VERINE_DATABASE = new VerineDatabase(dbName, initObject[0], "server");
+        ACTIVE_CODE_VIEW_DATA = initObject[1];
+        CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(CURRENT_VERINE_DATABASE.name);
+        DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = CURRENT_VERINE_DATABASE;
+
+
+        ///////////
+
+
+
+
+
+        sqlVerineEditor.init("SqlVerineEditor", ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
+
+
+
+
+        ////////////
+
+        updateDbChooser(CURRENT_VERINE_DATABASE.name);
+        //updateActiveCodeView();
+
+        // zeigt das Datenbankschema an
+        var tempTables = getSqlTables();
+
+        $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+
+        let exercises = CURRENT_VERINE_DATABASE.getExercises();
+        if (exercises.length > 0) {
+            //$("#nav-mission").show();
+            $("#nav-mission-tab").show();
+            CURRENT_EXERCISE_ID = 1;
+            CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+            updateExercise();
+        } else {
+            //$("#nav-mission").hide();
+            $("#nav-mission-tab").hide();
+        }
+
+        //wechselt zum Info Tab
+        let someTabTriggerEl = document.querySelector('#nav-info-tab')
+        let tab = new Tab(someTabTriggerEl)
+        tab.show()
+
+    }, function (error) { console.log(error) });
+}
+
+//function: sucht nach Parametern in der URL, wenn gefunden wird zur DB gewechselt und Code geladen
+function handleUrlParameters() {
+    //Verarbeitet URL Parameter
+    const urlQueryString = window.location.search;
+    const urlParams = new URLSearchParams(urlQueryString);
+    const urlDb = urlParams.get('db');
+    const urlMaxElementNr = urlParams.get('maxElementNr');
+    const urlCode = urlParams.get('code');
+    try {
+        if (urlDb != null && urlDb != "") {
+            loadDbFromServer(urlDb);
+        } else {
+            loadDbFromServer("Grundschule.db");
+        }
+        if (urlCode != null && urlCode != "") {
+            //befüllt die Code Area mit Code aus der URL
+            $(".codeArea pre code").html(unescape(urlCode));
+            NR = urlMaxElementNr;
+        }
+
+    } catch (err) {
+        loadDbFromServer("Grundschule.db");
+    };
+}
+
+//function: parst anhand des SQL CREATE Befehls die Foreign Keys 
+function getTableForeignKeyInformation(tableName) {
+
+    var tableForeignKeyInformationArray = [];
+    var currentTableColumns = getSqlTableFields(tableName);
+    var currentTableCreateStatement = CURRENT_VERINE_DATABASE.database.exec("SELECT sql FROM sqlite_master WHERE name = '" + tableName + "'")[0].values[0][0];
+
+    currentTableColumns.forEach(column => { //id, name, vorname, klasse_id, ...
+        var foreignKeyfound = false;
+        var newColumnObject = {};
+        newColumnObject.name = column[1];
+        newColumnObject.tableSelf = tableName;
+
+        var newArray = currentTableCreateStatement.split(",");
+        newArray.forEach(element => {
+            var regexForeignKeyColumnSelf = element.match(/FOREIGN KEY(\s\(|\()(.*?)\)/); //sucht nach FOREIGN KEY ( )
+            if (regexForeignKeyColumnSelf != null) {
+
+                var columnWithForeignKey = regexForeignKeyColumnSelf[2].replaceAll(/"|\s/g, ""); //entfernt alle Anführungszeichen und Leerzeichen 
+                if (newColumnObject.name == columnWithForeignKey) { //Informationen werden nur ergänzt, wenn es sich um die richtige Spalte handelt
+
+                    newColumnObject.columnSelf = columnWithForeignKey;
+                    var regexForeignKeyColumnTarget = element.split("REFERENCES")[1].match(/\((.*?)\)/); //sucht nach ( ) 
+                    var regexForeignKeyTableTarget = element.split("REFERENCES")[1].match(/^(.*?)\(/); //sucht von vorne bis zur ersten (
+                    if (regexForeignKeyColumnTarget != null && regexForeignKeyTableTarget != null) {
+                        newColumnObject.columnTarget = regexForeignKeyColumnTarget[1].replaceAll(/"|\s/g, "");
+                        newColumnObject.tableTarget = regexForeignKeyTableTarget[1].replaceAll(/"|\s/g, "");
+                        foreignKeyfound = true;
+                    }
+                }
+            }
+
+        });
+
+        if (!foreignKeyfound) {
+            newColumnObject.columnSelf = null;
+            newColumnObject.columnTarget = null;
+            newColumnObject.tableTarget = null;
+        }
+        tableForeignKeyInformationArray.push(newColumnObject);
+    });
+    return tableForeignKeyInformationArray;
+
+}
+
+//function: Erstellt eine Tabelle mit den Informationen der Tabellen einer SQL Datenbank
+function createTableInfo(tables, indexesToDisplay) {
+
+    let tableCounter = 1;
+    let htmlTableInfo = "";
+    let databaseForeignKeyInformationArray = [];
+    let tableColorArray = [];
+
+    tables.forEach(table => {
+        if (table != "verine_exercises") {
+            let tableColor = CSS_COLOR_ARRAY[tableCounter % CSS_COLOR_ARRAY.length];
+
+            if (tableCounter % 3 == 0) {
+                htmlTableInfo += "</div><div class='row'>";
+            } else if (tableCounter == 1) {
+                htmlTableInfo += "<div class='row'>";
+            }
+
+            let currentTableData = CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + table + ")");
+
+            htmlTableInfo += "<div class='col-sm'>";
+
+            //ForeignKey Informationen der Tabelle je Spalte wird abgerufen
+            let tableForeignKeyInformationArray = getTableForeignKeyInformation(table);
+            let indexesToDisplayArray = [];
+
+            //erstellt eine Tabelle mit dem Datenbankschema
+            for (let i = 0; i < currentTableData.length; i++) {
+
+                if (indexesToDisplay != null) {
+
+                    indexesToDisplayArray = indexesToDisplay.split(",");
+                    indexesToDisplayArray = indexesToDisplayArray.map(Number);
+                }
+
+                htmlTableInfo += "<table class='table table-bordered schemaTable' style='max-width: 20em;'>";
+                htmlTableInfo += "<thead>";
+
+                if (indexesToDisplay == null) {
+                    htmlTableInfo += "<tr><th colspan='" + currentTableData[i].columns.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
+                } else {
+                    htmlTableInfo += "<tr><th colspan='" + indexesToDisplayArray.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
+                }
+
+                //speichert den Tabellennamen und die gewählte Farbe, um "foreignKeys" zu referenzieren
+                let newTableColor = {};
+                newTableColor.tableName = table;
+                newTableColor.tableColor = tableColor;
+                tableColorArray.push(newTableColor);
+
+                htmlTableInfo += "</thead>";
+                htmlTableInfo += "<tbody>";
+                currentTableData[i].values.forEach((value) => {
+                    htmlTableInfo += "<tr>";
+                    value.forEach((element, index2) => {
+
+
+                        //sucht nach "foreign Keys" (z.B.: mitarbeiter_id -> tabellenname + _id) und aktualisiert die Einträge im tableForeignKeyInformationArray                    
+                        if (element != null) {
+                            let foundForeignKeyReference = element.toString().match(/\_id|\_ID/g);
+                            if (foundForeignKeyReference != null) {
+                                tableForeignKeyInformationArray.forEach(column => {
+                                    if (column.name == element && column.tableTarget == null) {
+                                        column.columnSelf = element;
+                                        column.tableSelf = table[0];
+                                        column.columnTarget = foundForeignKeyReference.toString().replace("_", "");
+                                        column.tableTarget = element.toString().replace(/\_id|\_ID/g, "");
+                                    }
+                                });
+                            }
+                        }
+
+                        if (indexesToDisplay == null) {
+                            htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
+                        } else if (indexesToDisplayArray.includes(index2)) {
+                            htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
+                        }
+                    });
+                    htmlTableInfo += "</tr>";
+                });
+                htmlTableInfo += "</tbody>";
+                htmlTableInfo += "</table>"
+            }
+            htmlTableInfo += "</div>";
+
+            tableCounter++;
+            //Foreign Key Informationen der Tabelle wird dem Foreign Key Database Array hinzugefügt.
+            databaseForeignKeyInformationArray.push(tableForeignKeyInformationArray);
+        }
+    });
+
+    //kennzeichne ForeignKey Verbindungen farblich
+    databaseForeignKeyInformationArray.forEach(tableForeignKeyInformationArray => {
+        tableForeignKeyInformationArray.forEach(tableColumn => {
+            tableColorArray.forEach(tableColor => {
+                if (tableColor.tableName == tableColumn.tableTarget) {
+                    var foreignKeyElementId = "id='" + tableColumn.tableSelf + "-" + tableColumn.columnSelf + "'";
+                    var backgroundGradient = "background: linear-gradient(90deg, " + tableColor.tableColor + ", " + tableColor.tableColor + " 0.6em, white 0.6em);";
+                    var leftBorderColor = "border-left: " + tableColor.tableColor + " 1px solid;";
+                    htmlTableInfo = htmlTableInfo.replace(foreignKeyElementId, foreignKeyElementId + " style='" + backgroundGradient + " " + leftBorderColor + "' ");
+                }
+            });
+        });
+    });
+
+    return htmlTableInfo;
+}
+
+
+
+function checkElement(value, column) {
+
+    CURRENT_EXERCISE.answerObject.exerciseSolutionArray.forEach(solution => {
+        //ist vale im LösungsString
+        if (solution.loesungString == value) {
+            //ist eine Tabelle im Antwortobjekt definiert ?
+            if (solution.table != undefined) {
+                //checkt ob der aktuelle Wert in der Tabelle des Antwortobjekt ist
+                if (USED_TABLES.includes(solution.table)) {
+                    if (solution.column != undefined) {
+                        if (solution.column == column) {
+                            if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                        }
+                    } else {
+                        if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                    }
+                }
+            }
+            //keine Tabelle nötig
+            else {
+                //ist der aktuelle Wert in der richtigen Spalte?
+                if (solution.column != undefined) {
+                    if (solution.column == column) {
+                        if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                    }
+                } else {
+                    if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                }
+            }
+        }
+    });
+}
+
+//function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
+function createTableSql(columns, values) {
+
+    SOLUTION_ALL_ARRAY = [];
+    SOLUTION_ROW_COUNTER = 0;
+
+    var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
+    newTable += "<thead>";
+    columns.forEach((column) => {
+        newTable += "<th scope='col'>" + column + "</th>";
+    });
+    newTable += "</thead>";
+
+    newTable += "<tbody>";
+    values.forEach((value) => {
+        newTable += "<tr>";
+        SOLUTION_ROW_COUNTER++;
+        value.forEach((element, indexColumn) => {
+            //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
+            checkElement(element, columns[indexColumn]);
+            if (element != null && element.length > 200) {
+                newTable += "<td style='min-width: 200px;'>" + element + "</td>";
+            } else {
+                newTable += "<td style=''>" + element + "</td>";
+            }
+
+        });
+        newTable += "</tr>";
+    });
+    newTable += "</tbody>";
+    newTable += "</table></div>"
+
+    return newTable;
+}
+
+//function: aktualisiert das #selDbChooser select Feld
+function updateDbChooser(selected) {
+    $("#selDbChooser").html("");
+    DATABASE_ARRAY.forEach(element => {
+        $("#selDbChooser").append(new Option(element.name, element.name));
+    })
+    if (selected != null) $("#selDbChooser").val(selected);
+}
+
+// function: liefert den Index eines Datenbankobjekts aus dem DATABASE_ARRAY anhand des Namens zurück
+function getIndexOfDatabaseobject(databaseName) {
+    var indexOfDatabaseobject = null;
+    DATABASE_ARRAY.forEach((element, index) => {
+        if (element.name == databaseName) {
+            indexOfDatabaseobject = index;
+        }
+    });
+    return indexOfDatabaseobject;
+}
+
+// function: erstellt ein database Objekt und gibt dieses zurück, wird dann im DATABASE_ARRAY gespeichert
+function createDatabaseObject(name, database, type) {
+    var databaseObject = {};
+    databaseObject.name = name;
+    databaseObject.database = database;
+    databaseObject.type = type; //server, local, new
+    return databaseObject;
+}
+
+// function: testet ob es beim Upload eine Datenbank mit dem gleichen Namen gibt, wenn ja, dann wird ein Appendix hinzugefügt
+function buildDatabaseName(name, appendix) {
+    var found = false;
+
+    if (appendix != null) {
+        var nameArray = name.split(".");
+        var fileEnding = nameArray[nameArray.length - 1];
+
+        if (appendix == 1) {
+            name = name.replace("." + fileEnding, "_" + appendix + "." + fileEnding);
+        } else {
+            name = name.replace("_" + (appendix - 1) + "." + fileEnding, "_" + appendix + "." + fileEnding);
+        }
+    }
+
+    DATABASE_ARRAY.forEach(element => {
+        if (element.name == name) {
+            if (appendix == null) {
+                appendix = 1;
+            } else {
+                appendix++;
+            }
+            found = true;
+        }
+    });
+
+    if (found) {
+        return buildDatabaseName(name, appendix);
+    } else {
+        return name;
+
+    }
+}
+
+//funtion: Sucht ein Element mit sql-element data attribut
+function findElementBySqlData(elements, attributeValue, position) {
+    var tempElement;
+    if (position == "first") {
+        $(elements).each(function () {
+            tempElement = this;
+            if ($(tempElement).data("sql-element") == attributeValue) {
+                return false; //found element -> stop loop
+            }
+        });
+    } else if (position == "last") {
+        $(elements.get().reverse()).each(function () {
+            tempElement = this;
+            if ($(tempElement).data("sql-element") == attributeValue) {
+                return false; //found element -> stop loop
+            }
+        });
+    }
+    return tempElement;
+}
+
+
+
+
+//function: get all used db tables in code area
+function updateUsedTables() {
+    USED_TABLES = [];
+    $(".codeArea.editor .selTable").each(function () {
+        if (!USED_TABLES.includes($(this).html())) {
+            USED_TABLES.push($(this).html());
+        }
+    });
+}
+
+
+
+
+//function: checks if data-sql-element contains string i.e. "WHERE_3, OR_3, AND_3"
+function hasCurrentSelectedElementSqlDataString(currentSelectedElement, sqlDataIdentifier) {
+    var sqlStringFound = false;
+    var tempSqlDataArray = sqlDataIdentifier.replaceAll(" ", "").split(",");
+    tempSqlDataArray.forEach(element => {
+        if (currentSelectedElement.data("sql-element").includes(element)) {
+            sqlStringFound = true;
+        }
+    });
+    return sqlStringFound;
+}
+
+
+
+
+
+//function: liefert alle Klassen eines Elements als String zurück, außer der letzten Kontrollklasse (codeButton, codeSelect, codeInput)
+function getClassesFromElementAsString(element) {
+    var codeComponentClassesAsString = $(element).attr("class").replace(/[\W]*\S+[\W]*$/, '');
+    return codeComponentClassesAsString;
+}
+
+
+
+//function: get NextElementNr by data field
+function getNextElementNr() {
+    if (CURRENT_SELECTED_ELEMENT != undefined) {
+        if (CURRENT_SELECTED_ELEMENT.data("next-element") != undefined) {
+            return CURRENT_SELECTED_ELEMENT.data("next-element");
+        }
+    }
+}
+
+//function: get Element NR from Element ID
+function getElementNr(elementClasses) {
+    return elementClasses.split(" ")[0].split("_")[1];
+}
+
+//function: add new line <span>
+function addNewLine() {
+    var tempLeerzeichen = "<span class='codeElement_" + NR + " newline'><br></span>";
+    NR++;
+    return tempLeerzeichen;
+}
+
+//function: add Leerzeichen <span>
+function addLeerzeichen() {
+    var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
+    NR++;
+    return tempLeerzeichen;
+}
+
+function addLeerzeichenMitKomma() {
+    var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
+    NR++;
+    return tempLeerzeichen;
+}
+
+function addKomma() {
+    var tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
+    NR++;
+    return tempKomma;
+}
+
+//function: checks all Code Elements in the CodeArea, and updates Code View
+function checkCodeAreaSQLElements() {
+    if (!isSQLElementInCodeArea("SELECT")) {
+        CURRENT_SELECTED_SQL_ELEMENT = "START";
+        updateActiveCodeView();
+    } else {
+        CURRENT_SELECTED_SQL_ELEMENT = "";
+        updateActiveCodeView();
+    }
+}
+
+//function: get all SQL Elements in CodeArea
+function getCodeAreaSQLElements() {
+    var codeAreaElements = [];
+    $('.codeArea.editor').children(".parent").each(function () {
+        var tempSqlElement = $(this).data("sql-element");
+        codeAreaElements.push(tempSqlElement);
+    });
+    return codeAreaElements;
+}
+
+//function: checks if a SQL Element is in CodeArea
+function isSQLElementInCodeArea(sqlElement) {
+    if (getCodeAreaSQLElements().includes(sqlElement)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//SQLite functions:
+function getSqlTables() {
+    return CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
+}
+
+function getSqlTableFields(tempTableName) {
+    return CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
+}
+
+//function: run sql command, type = desktop or mobile
+function execSqlCommand(tempSqlCommand, type) {
+
+    //bereitet den sql Befehl vor
+    var re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
+    if (tempSqlCommand == null) {
+        tempSqlCommand = $(".codeArea.editor pre code").clone();
+        tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
+        tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
+    }
+    //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
+    try {
+        //löscht alte Ausgabe
+        $(".resultArea.resultModal").html("");
+        $(".outputArea").html("");
+
+        var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+
+        //wurde ein delete, insert, update Befehl ausgeführt?
+        let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
+        if (modifiedRows > 0) {
+
+            let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(.*?)/);
+            let updateSQL = tempSqlCommand.match(/(UPDATE)\s(.*?)/);
+            let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(.*?)/);
+
+            if (insertSQL != null && insertSQL.length > 0) {
+                $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
+                result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2]);
+            } else if (updateSQL != null && updateSQL.length > 0) {
+                $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
+                result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2]);
+            } else if (deleteSQL != null && deleteSQL.length > 0) {
+                $(".outputArea").append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
+                result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2]);
+            }
+        }
+
+        //wurde drop, create, alter table ausgeführt?
+        let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(.*?)/);
+        let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s'(.*?)'/);
+        let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(.*?)/);
+        let tablesChanged = false;
+
+        if (dropTableSQL != null && dropTableSQL.length > 0) {
+            $(".outputArea").append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
+            tablesChanged = true;
+        } else if (createTableSQL != null && createTableSQL.length > 0) {
+            $(".outputArea").append("<h5>Die Tabelle: " + createTableSQL[2] + " wurde neu erstellt.</h5><br>");
+            tablesChanged = true;
+        } else if (alterTableSQL != null && alterTableSQL.length > 0) {
+            $(".outputArea").append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
+            tablesChanged = true;
+            result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2]);
+        }
+        //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
+        if (tablesChanged) {
+            var tempTables = getSqlTables();
+            $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+        }
+
+        //erstellt eine Tabelle mit den Ergebnissen
+        for (var i = 0; i < result.length; i++) {
+            if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[i].columns, result[i].values));
+            else if (type == "desktop") {
+                $(".outputArea").append("" + createTableSql(result[i].columns, result[i].values) + "");
+            };
+        }
+
+        //zeigt das Ergebnis Tab an
+        if (type == "desktop") {
+            var someTabTriggerEl = document.querySelector('#nav-result-tab');
+            var tab = new Tab(someTabTriggerEl);
+            tab.show();
+        }
+
+    } catch (err) {
+        if (type == "mobile") $(".resultArea.resultModal").html(err.message);
+        else if (type == "desktop") {
+            $(".outputArea").html("<h4>SQL Fehler:</h4>" + "<span style='color: tomato;'>" + err.message + "</span>")
+            var someTabTriggerEl = document.querySelector('#nav-result-tab')
+            var tab = new Tab(someTabTriggerEl)
+            tab.show()
+        };
+
+    }
+}
+
