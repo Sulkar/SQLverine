@@ -1,4 +1,5 @@
 import $ from "jquery";
+import { Tab, Modal } from "bootstrap";
 
 export default (function () {
 
@@ -12,9 +13,12 @@ export default (function () {
     var CURRENT_VERINE_DATABASE;
     var USED_TABLES = [];
     var EDITOR_CONTAINER;
+    var OUTPUT_CONTAINER;
 
-    sqlVerineEditor.init = (editorContainer, activeCodeViewData, currentVerineDatabase) => {
+    //Initialisierung des SqlVerineEditors
+    sqlVerineEditor.init = (editorContainer, outputContainer, activeCodeViewData, currentVerineDatabase) => {
         EDITOR_CONTAINER = document.getElementById(editorContainer);
+        OUTPUT_CONTAINER = document.getElementById(outputContainer);
         NR = 0;
         NEXT_ELEMENT_NR = 0;
         CURRENT_SELECTED_ELEMENT = undefined;
@@ -89,7 +93,7 @@ export default (function () {
 
         return buttonArea;
     }
-    
+
     //////////
     //EVENTS//
     function initEvents() {
@@ -160,7 +164,7 @@ export default (function () {
         // Button: run sql command - desktop
         $(EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
             execSqlCommand(null, "desktop");
-            checkAnswer(CURRENT_EXERCISE.answerObject.input);
+            //checkAnswer(CURRENT_EXERCISE.answerObject.input);
         });
     }
 
@@ -169,9 +173,130 @@ export default (function () {
 
 
 
+    //function: run sql command, type = desktop or mobile
+    function execSqlCommand(tempSqlCommand, type) {
+
+        //bereitet den sql Befehl vor
+        var re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
+        if (tempSqlCommand == null) {
+            tempSqlCommand = $(".codeArea.editor pre code").clone();
+            tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
+            tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
+        }
+        //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
+        try {
+            //löscht alte Ausgabe
+            $(".resultArea.resultModal").html("");
+            $(OUTPUT_CONTAINER).html("");
+
+            var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+            console.log(result)
+            //wurde ein delete, insert, update Befehl ausgeführt?
+            let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
+            if (modifiedRows > 0) {
+
+                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(.*?)/);
+                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(.*?)/);
+                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(.*?)/);
+
+                if (insertSQL != null && insertSQL.length > 0) {
+                    $(OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2]);
+                } else if (updateSQL != null && updateSQL.length > 0) {
+                    $(OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2]);
+                } else if (deleteSQL != null && deleteSQL.length > 0) {
+                    $(OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
+                    result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2]);
+                }
+            }
+
+            //wurde drop, create, alter table ausgeführt?
+            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(.*?)/);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s'(.*?)'/);
+            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(.*?)/);
+            let tablesChanged = false;
+
+            if (dropTableSQL != null && dropTableSQL.length > 0) {
+                $(OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
+                tablesChanged = true;
+            } else if (createTableSQL != null && createTableSQL.length > 0) {
+                $(OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + createTableSQL[2] + " wurde neu erstellt.</h5><br>");
+                tablesChanged = true;
+            } else if (alterTableSQL != null && alterTableSQL.length > 0) {
+                $(OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
+                tablesChanged = true;
+                result = CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2]);
+            }
+            //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
+            if (tablesChanged) {
+                var tempTables = getSqlTables();
+                $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+            }
+
+            //erstellt eine Tabelle mit den Ergebnissen
+            for (var i = 0; i < result.length; i++) {
+                if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[i].columns, result[i].values));
+                else if (type == "desktop") {
+                    $(OUTPUT_CONTAINER).append("" + createTableSql(result[i].columns, result[i].values) + "");
+                };
+            }
+
+            //zeigt das Ergebnis Tab an
+            if (type == "desktop") {
+                var someTabTriggerEl = document.querySelector('#nav-result-tab');
+                var tab = new Tab(someTabTriggerEl);
+                tab.show();
+            }
+
+        } catch (err) {
+            if (type == "mobile") $(".resultArea.resultModal").html(err.message);
+            else if (type == "desktop") {
+                $(OUTPUT_CONTAINER).html("<h4>SQL Fehler:</h4>" + "<span style='color: tomato;'>" + err.message + "</span>")
+                var someTabTriggerEl = document.querySelector('#nav-result-tab')
+                var tab = new Tab(someTabTriggerEl)
+                tab.show()
+            };
+
+        }
+    }
 
 
+    //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
+    function createTableSql(columns, values) {
 
+        console.log(columns)
+        //SOLUTION_ALL_ARRAY = [];
+        //SOLUTION_ROW_COUNTER = 0;
+
+        var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
+        newTable += "<thead>";
+        columns.forEach((column) => {
+            newTable += "<th scope='col'>" + column + "</th>";
+        });
+        newTable += "</thead>";
+
+        newTable += "<tbody>";
+        values.forEach((value) => {
+            newTable += "<tr>";
+            //SOLUTION_ROW_COUNTER++;
+            value.forEach((element, indexColumn) => {
+                //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
+                //checkElement(element, columns[indexColumn]);
+                if (element != null && element.length > 200) {
+                    newTable += "<td style='min-width: 200px;'>" + element + "</td>";
+                } else {
+                    newTable += "<td style=''>" + element + "</td>";
+                }
+
+            });
+            newTable += "</tr>";
+        });
+        newTable += "</tbody>";
+        newTable += "</table></div>"
+
+        return newTable;
+    }
 
 
 
