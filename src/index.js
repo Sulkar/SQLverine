@@ -663,72 +663,7 @@ $(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function () 
 
 
 
-//Button: Add Element "inputField"
-$(".btnAdd").click(function () {
-    let dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
-    console.log(dataSqlElement)
-    if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
 
-        if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "_AGGREGAT")) { //...
-            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
-
-        } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "WHERE_3, OR_3, AND_3")) { //...
-            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
-
-        } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "INSERT_1")) {
-            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "insertInto"));
-        } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "INSERT_2")) {
-
-            let updateField1 = addLeerzeichenMitKomma();
-            updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "'>___</span>";
-            NR++;
-            CURRENT_SELECTED_ELEMENT.after(updateField1);
-
-            let lastInsert3Field = findElementBySqlData(CURRENT_SELECTED_ELEMENT.closest(".parent").children(), "INSERT_3", "last");
-
-            let updateField2 = addLeerzeichenMitKomma();
-            updateField2 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR - 2) + "," + (NR - 3) + "'>___</span>";
-            NR++;
-            $(lastInsert3Field).after(updateField2);
-        }
-        //Create Table Spalte Typ ist gewählt, Feld für Einschränkung wird hinzugefügt
-        else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "CREATE_COLUMN_2, CREATE_COLUMN_3")) {
-            let updateField1 = addLeerzeichen();
-            updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='CREATE_COLUMN_3' data-next-element='" + (NR + 2) + "' data-element-group=''>___</span>";
-            NEXT_ELEMENT_NR = NR;
-            NR++;
-            CURRENT_SELECTED_ELEMENT.after(updateField1);
-
-        } else {
-            console.log("in")
-            CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedComma"));
-
-        }
-        setSelection(NEXT_ELEMENT_NR, false);
-    }
-
-    // UPDATE: fügt ", ___ = ___" hinzu
-    else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "UPDATE")) {
-        var lastUpdateField = findElementBySqlData(CURRENT_SELECTED_ELEMENT.children(), "UPDATE_3", "last");
-        var updateFields = addLeerzeichenMitKomma();
-        updateFields += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "," + (NR + 3) + "," + (NR + 4) + "'>___</span>";
-        NR++;
-        updateFields += addLeerzeichen();
-        updateFields += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 8) + "'> = </span>";
-        NR++;
-        updateFields += addLeerzeichen();
-        updateFields += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_3' data-next-element='" + (NR - 4) + "' data-element-group='" + (NR - 1) + "," + (NR - 2) + "," + (NR - 3) + "," + (NR - 4) + "'>___</span>";
-        NR++;
-        $(lastUpdateField).after(updateFields);
-    }
-});
-
-// Button: Delete Element
-$('.btnDelete').click(function () {
-    deleteElement(CURRENT_SELECTED_ELEMENT);
-    // aktualisiert alle .selColumn <select>
-    updateSelectCodeComponents();
-});
 
 
 // Input: add text to Selected Element span
@@ -888,13 +823,7 @@ $(".btn.btn-secondary.close.dbInfoModal").click(function () {
 });
 
 
-// Button: run sql command - mobile 
-$(".btnRunMobile").click(function () {
 
-    var tempCode = $(".codeArea.editor pre code").html().trim();
-    $(".codeArea.resultModal pre code").html(tempCode);
-    execSqlCommand(null, "mobile");
-});
 // Button: close modal (x - schließen)
 $(".btn-close.resultModal").click(function () {
     $(".codeArea.resultModal pre code").html("");
@@ -1007,8 +936,10 @@ function loadDbFromServer(dbName) {
 
 
 
-
-        sqlVerineEditor.init("SqlVerineEditor", "outputArea", ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
+        sqlVerineEditor.setEditorContainer("SqlVerineEditor");
+        sqlVerineEditor.setOutputContainer("outputArea");
+        sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+        sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
 
 
 
@@ -1321,136 +1252,11 @@ function buildDatabaseName(name, appendix) {
     }
 }
 
-//funtion: Sucht ein Element mit sql-element data attribut
-function findElementBySqlData(elements, attributeValue, position) {
-    var tempElement;
-    if (position == "first") {
-        $(elements).each(function () {
-            tempElement = this;
-            if ($(tempElement).data("sql-element") == attributeValue) {
-                return false; //found element -> stop loop
-            }
-        });
-    } else if (position == "last") {
-        $(elements.get().reverse()).each(function () {
-            tempElement = this;
-            if ($(tempElement).data("sql-element") == attributeValue) {
-                return false; //found element -> stop loop
-            }
-        });
-    }
-    return tempElement;
-}
-
-
-
-
-//function: get all used db tables in code area
-function updateUsedTables() {
-    USED_TABLES = [];
-    $(".codeArea.editor .selTable").each(function () {
-        if (!USED_TABLES.includes($(this).html())) {
-            USED_TABLES.push($(this).html());
-        }
-    });
-}
-
-
-
-
-//function: checks if data-sql-element contains string i.e. "WHERE_3, OR_3, AND_3"
-function hasCurrentSelectedElementSqlDataString(currentSelectedElement, sqlDataIdentifier) {
-    var sqlStringFound = false;
-    var tempSqlDataArray = sqlDataIdentifier.replaceAll(" ", "").split(",");
-    tempSqlDataArray.forEach(element => {
-        if (currentSelectedElement.data("sql-element").includes(element)) {
-            sqlStringFound = true;
-        }
-    });
-    return sqlStringFound;
-}
 
 
 
 
 
-//function: liefert alle Klassen eines Elements als String zurück, außer der letzten Kontrollklasse (codeButton, codeSelect, codeInput)
-function getClassesFromElementAsString(element) {
-    var codeComponentClassesAsString = $(element).attr("class").replace(/[\W]*\S+[\W]*$/, '');
-    return codeComponentClassesAsString;
-}
-
-
-
-//function: get NextElementNr by data field
-function getNextElementNr() {
-    if (CURRENT_SELECTED_ELEMENT != undefined) {
-        if (CURRENT_SELECTED_ELEMENT.data("next-element") != undefined) {
-            return CURRENT_SELECTED_ELEMENT.data("next-element");
-        }
-    }
-}
-
-//function: get Element NR from Element ID
-function getElementNr(elementClasses) {
-    return elementClasses.split(" ")[0].split("_")[1];
-}
-
-//function: add new line <span>
-function addNewLine() {
-    var tempLeerzeichen = "<span class='codeElement_" + NR + " newline'><br></span>";
-    NR++;
-    return tempLeerzeichen;
-}
-
-//function: add Leerzeichen <span>
-function addLeerzeichen() {
-    var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
-    NR++;
-    return tempLeerzeichen;
-}
-
-function addLeerzeichenMitKomma() {
-    var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
-    NR++;
-    return tempLeerzeichen;
-}
-
-function addKomma() {
-    var tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
-    NR++;
-    return tempKomma;
-}
-
-//function: checks all Code Elements in the CodeArea, and updates Code View
-function checkCodeAreaSQLElements() {
-    if (!isSQLElementInCodeArea("SELECT")) {
-        CURRENT_SELECTED_SQL_ELEMENT = "START";
-        updateActiveCodeView();
-    } else {
-        CURRENT_SELECTED_SQL_ELEMENT = "";
-        updateActiveCodeView();
-    }
-}
-
-//function: get all SQL Elements in CodeArea
-function getCodeAreaSQLElements() {
-    var codeAreaElements = [];
-    $('.codeArea.editor').children(".parent").each(function () {
-        var tempSqlElement = $(this).data("sql-element");
-        codeAreaElements.push(tempSqlElement);
-    });
-    return codeAreaElements;
-}
-
-//function: checks if a SQL Element is in CodeArea
-function isSQLElementInCodeArea(sqlElement) {
-    if (getCodeAreaSQLElements().includes(sqlElement)) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 //SQLite functions:
 function getSqlTables() {

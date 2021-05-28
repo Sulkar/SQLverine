@@ -14,11 +14,10 @@ export default (function () {
     var USED_TABLES = [];
     var EDITOR_CONTAINER;
     var OUTPUT_CONTAINER;
+    var OUTPUT_CONTAINER_MOBILE;
 
     //Initialisierung des SqlVerineEditors
-    sqlVerineEditor.init = (editorContainer, outputContainer, activeCodeViewData, currentVerineDatabase) => {
-        EDITOR_CONTAINER = document.getElementById(editorContainer);
-        OUTPUT_CONTAINER = document.getElementById(outputContainer);
+    sqlVerineEditor.init = (activeCodeViewData, currentVerineDatabase) => {
         NR = 0;
         NEXT_ELEMENT_NR = 0;
         CURRENT_SELECTED_ELEMENT = undefined;
@@ -33,11 +32,20 @@ export default (function () {
         initEvents();
     }
 
+    sqlVerineEditor.setEditorContainer = (editorContainer) => {
+        EDITOR_CONTAINER = document.getElementById(editorContainer);;
+    }
+    sqlVerineEditor.setOutputContainer = (outputContainer) => {
+        OUTPUT_CONTAINER = document.getElementById(outputContainer);;
+    }
+    sqlVerineEditor.setOutputContainerMobile = (outputContainerMobile) => {
+        OUTPUT_CONTAINER_MOBILE = document.getElementById(outputContainerMobile);;
+    }
+
     function setupEditor() {
         let sqlVerineEditor = setupCodeArea() + setupMainMenu() + setupButtonArea() + '<br><div id="sqlTest">Richi</div>';
         EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
     }
-
 
     function setupCodeArea() {
         let codeArea = '<div class="codeAreaWrapper">';
@@ -117,7 +125,6 @@ export default (function () {
             setSelection(elementNr, false);
         });
 
-
         // Select: change dbField, dbTable, Aggregatsfunktion
         $(EDITOR_CONTAINER).on('change', '.buttonArea.codeComponents .codeSelect', function () {
 
@@ -166,12 +173,138 @@ export default (function () {
             execSqlCommand(null, "desktop");
             //checkAnswer(CURRENT_EXERCISE.answerObject.input);
         });
+        // Button: run sql command - mobile 
+        $(EDITOR_CONTAINER).on('click', '.btnRunMobile', function (event) {
+            var tempCode = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
+            $(OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
+            execSqlCommand(null, "mobile");
+        });
+        // Button: Delete Element
+        $(EDITOR_CONTAINER).on('click', '.btnDelete', function (event) {
+            deleteElement(CURRENT_SELECTED_ELEMENT);
+            // aktualisiert alle .selColumn <select>
+            updateSelectCodeComponents();
+        });
+
+        //Button: Add Element "inputField"
+        $(EDITOR_CONTAINER).on('click', '.btnAdd', function (event) {
+            let dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
+
+            if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
+
+                if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "_AGGREGAT")) { //...
+                    CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
+
+                } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "WHERE_3, OR_3, AND_3")) { //...
+                    CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
+
+                } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "INSERT_1")) {
+                    CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "insertInto"));
+                } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "INSERT_2")) {
+
+                    let updateField1 = addLeerzeichenMitKomma();
+                    updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "'>___</span>";
+                    NR++;
+                    CURRENT_SELECTED_ELEMENT.after(updateField1);
+
+                    let lastInsert3Field = findElementBySqlData(CURRENT_SELECTED_ELEMENT.closest(".parent").children(), "INSERT_3", "last");
+
+                    let updateField2 = addLeerzeichenMitKomma();
+                    updateField2 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR - 2) + "," + (NR - 3) + "'>___</span>";
+                    NR++;
+                    $(lastInsert3Field).after(updateField2);
+                }
+                //Create Table Spalte Typ ist gewählt, Feld für Einschränkung wird hinzugefügt
+                else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "CREATE_COLUMN_2, CREATE_COLUMN_3")) {
+                    let updateField1 = addLeerzeichen();
+                    updateField1 += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='CREATE_COLUMN_3' data-next-element='" + (NR + 2) + "' data-element-group=''>___</span>";
+                    NEXT_ELEMENT_NR = NR;
+                    NR++;
+                    CURRENT_SELECTED_ELEMENT.after(updateField1);
+
+                } else {
+                    console.log("in")
+                    CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedComma"));
+
+                }
+                setSelection(NEXT_ELEMENT_NR, false);
+            }
+
+            // UPDATE: fügt ", ___ = ___" hinzu
+            else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "UPDATE")) {
+                var lastUpdateField = findElementBySqlData(CURRENT_SELECTED_ELEMENT.children(), "UPDATE_3", "last");
+                var updateFields = addLeerzeichenMitKomma();
+                updateFields += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "," + (NR + 3) + "," + (NR + 4) + "'>___</span>";
+                NR++;
+                updateFields += addLeerzeichen();
+                updateFields += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 8) + "'> = </span>";
+                NR++;
+                updateFields += addLeerzeichen();
+                updateFields += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_3' data-next-element='" + (NR - 4) + "' data-element-group='" + (NR - 1) + "," + (NR - 2) + "," + (NR - 3) + "," + (NR - 4) + "'>___</span>";
+                NR++;
+                $(lastUpdateField).after(updateFields);
+            }
+        });
     }
 
+    //funtion: Sucht ein Element mit sql-element data attribut
+    function findElementBySqlData(elements, attributeValue, position) {
+        var tempElement;
+        if (position == "first") {
+            $(elements).each(function () {
+                tempElement = this;
+                if ($(tempElement).data("sql-element") == attributeValue) {
+                    return false; //found element -> stop loop
+                }
+            });
+        } else if (position == "last") {
+            $(elements.get().reverse()).each(function () {
+                tempElement = this;
+                if ($(tempElement).data("sql-element") == attributeValue) {
+                    return false; //found element -> stop loop
+                }
+            });
+        }
+        return tempElement;
+    }
+    //function: get Element NR from Element ID
+    function getElementNr(elementClasses) {
+        return elementClasses.split(" ")[0].split("_")[1];
+    }
+    //function: add new line <span>
+    function addNewLine() {
+        var tempLeerzeichen = "<span class='codeElement_" + NR + " newline'><br></span>";
+        NR++;
+        return tempLeerzeichen;
+    }
+    //function: add Leerzeichen, Leerzeichen mit Komma, Komma <span>
+    function addLeerzeichen() {
+        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
+        NR++;
+        return tempLeerzeichen;
+    }
+    function addLeerzeichenMitKomma() {
+        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
+        NR++;
+        return tempLeerzeichen;
+    }
+    function addKomma() {
+        var tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
+        NR++;
+        return tempKomma;
+    }
 
-
-
-
+    //function: checks if data-sql-element contains string i.e. "WHERE_3, OR_3, AND_3"
+    function hasCurrentSelectedElementSqlDataString(currentSelectedElement, sqlDataIdentifier) {
+        var sqlStringFound = false;
+        var tempSqlDataArray = sqlDataIdentifier.replaceAll(" ", "").split(",");
+        tempSqlDataArray.forEach(element => {
+            if (currentSelectedElement.data("sql-element").includes(element)) {
+                sqlStringFound = true;
+            }
+        });
+        return sqlStringFound;
+    }
 
     //function: run sql command, type = desktop or mobile
     function execSqlCommand(tempSqlCommand, type) {
@@ -179,14 +312,14 @@ export default (function () {
         //bereitet den sql Befehl vor
         var re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
         if (tempSqlCommand == null) {
-            tempSqlCommand = $(".codeArea.editor pre code").clone();
+            tempSqlCommand = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
             tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
             tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
         }
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
             //löscht alte Ausgabe
-            $(".resultArea.resultModal").html("");
+            $(OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
             $(OUTPUT_CONTAINER).html("");
 
             var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
@@ -236,7 +369,7 @@ export default (function () {
 
             //erstellt eine Tabelle mit den Ergebnissen
             for (var i = 0; i < result.length; i++) {
-                if (type == "mobile") $(".resultArea.resultModal").append(createTableSql(result[i].columns, result[i].values));
+                if (type == "mobile") $(OUTPUT_CONTAINER_MOBILE).find(".resultArea").append(createTableSql(result[i].columns, result[i].values));
                 else if (type == "desktop") {
                     $(OUTPUT_CONTAINER).append("" + createTableSql(result[i].columns, result[i].values) + "");
                 };
@@ -250,22 +383,19 @@ export default (function () {
             }
 
         } catch (err) {
-            if (type == "mobile") $(".resultArea.resultModal").html(err.message);
+            if (type == "mobile") $(OUTPUT_CONTAINER_MOBILE).find(".resultArea").html(err.message);
             else if (type == "desktop") {
                 $(OUTPUT_CONTAINER).html("<h4>SQL Fehler:</h4>" + "<span style='color: tomato;'>" + err.message + "</span>")
                 var someTabTriggerEl = document.querySelector('#nav-result-tab')
                 var tab = new Tab(someTabTriggerEl)
                 tab.show()
             };
-
         }
     }
-
 
     //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
     function createTableSql(columns, values) {
 
-        console.log(columns)
         //SOLUTION_ALL_ARRAY = [];
         //SOLUTION_ROW_COUNTER = 0;
 
@@ -297,9 +427,6 @@ export default (function () {
 
         return newTable;
     }
-
-
-
 
     //function: erstellt neue select elemente basierend auf den gewählten Tabellen in der code area
     function updateSelectCodeComponents() {
@@ -460,14 +587,10 @@ export default (function () {
         return returnObject;
     }
 
-
-
     //function: get Element NR from Element ID
     function getElementNr(elementClasses) {
         return elementClasses.split(" ")[0].split("_")[1];
     }
-
-
 
     // Button: SELECT ___ FROM ___
     function createSelectButton() {
@@ -497,10 +620,8 @@ export default (function () {
         elementSELECT_FROM += "</span></span>";
 
         selectButton.onclick = event => {
-
             $('.codeArea.editor pre code').append(elementSELECT_FROM);
             setSelection(NEXT_ELEMENT_NR, false);
-
         };
 
         $(".buttonArea.codeComponents").append(selectButton);
@@ -596,7 +717,6 @@ export default (function () {
         CURRENT_SELECTED_ELEMENT = undefined;
     }
 
-
     //function: loops through JSON Data and shows Elements based on selected SQL Element
     function updateActiveCodeView() {
 
@@ -666,7 +786,6 @@ export default (function () {
 
         initScrollDots();
     }
-
 
     //function: fügt der buttonArea aktuell notwendige codeComponents hinzu
     function createCodeComponent(codeComponent, option) {
@@ -846,7 +965,6 @@ export default (function () {
         }
     }
 
-
     //function: get all used db tables in code area
     function updateUsedTables() {
         USED_TABLES = [];
@@ -856,7 +974,6 @@ export default (function () {
             }
         });
     }
-
 
     // returns Editor Object
     return sqlVerineEditor;
