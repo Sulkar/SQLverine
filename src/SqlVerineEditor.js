@@ -179,7 +179,7 @@ export default (function () {
         // Button: run sql command - desktop
         $(EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
             execSqlCommand(null, "desktop");
-            RUN_FUNCTIONS.forEach(runFunction =>{
+            RUN_FUNCTIONS.forEach(runFunction => {
                 runFunction();
             });
             //checkAnswer(CURRENT_EXERCISE.answerObject.input);
@@ -254,7 +254,38 @@ export default (function () {
                 $(lastUpdateField).after(updateFields);
             }
         });
+
+        // Input: add text to Selected Element span
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
+            if (CURRENT_SELECTED_ELEMENT != undefined) {
+                var tempValue = $(this).val();
+                if (tempValue != "") {
+                    if (isNaN(tempValue)) {
+                        CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
+                    } else {
+                        CURRENT_SELECTED_ELEMENT.html(tempValue);
+                    }
+                } else {
+                    CURRENT_SELECTED_ELEMENT.html("___");
+                }
+                CURRENT_SELECTED_ELEMENT.addClass("input");
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    var classesFromCodeComponent = getClassesFromElementAsString(this);
+                    if (tempValue != "") {
+                        CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
+                        CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
+                    } else {
+                        CURRENT_SELECTED_ELEMENT.addClass("unfilled");
+                        CURRENT_SELECTED_ELEMENT.removeClass(classesFromCodeComponent);
+                    }
+                    setSelection("next", false);
+                }
+            }
+        });
     }
+
+    /////////////
+    //FUNCTIONS//
 
     //funtion: Sucht ein Element mit sql-element data attribut
     function findElementBySqlData(elements, attributeValue, position) {
@@ -276,16 +307,19 @@ export default (function () {
         }
         return tempElement;
     }
+
     //function: get Element NR from Element ID
     function getElementNr(elementClasses) {
         return elementClasses.split(" ")[0].split("_")[1];
     }
+
     //function: add new line <span>
     function addNewLine() {
         var tempLeerzeichen = "<span class='codeElement_" + NR + " newline'><br></span>";
         NR++;
         return tempLeerzeichen;
     }
+
     //function: add Leerzeichen, Leerzeichen mit Komma, Komma <span>
     function addLeerzeichen() {
         var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
@@ -317,7 +351,6 @@ export default (function () {
 
     //function: run sql command, type = desktop or mobile
     function execSqlCommand(tempSqlCommand, type) {
-
         //bereitet den sql Befehl vor
         var re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
         if (tempSqlCommand == null) {
@@ -385,7 +418,7 @@ export default (function () {
         } catch (err) {
             if (type == "mobile") $(OUTPUT_CONTAINER_MOBILE).find(".resultArea").html(err.message);
             else if (type == "desktop") {
-                $(OUTPUT_CONTAINER).html("<h4>SQL Fehler:</h4>" + "<span style='color: tomato;'>" + err.message + "</span>");                
+                $(OUTPUT_CONTAINER).html("<h4>SQL Fehler:</h4>" + "<span style='color: tomato;'>" + err.message + "</span>");
             };
         }
     }
@@ -415,7 +448,6 @@ export default (function () {
                 } else {
                     newTable += "<td style=''>" + element + "</td>";
                 }
-
             });
             newTable += "</tr>";
         });
@@ -468,7 +500,6 @@ export default (function () {
                     deleteElementById(element);
                 });
             }
-
             setSelection("next", true);
         }
         // extended inputField
@@ -510,21 +541,17 @@ export default (function () {
             NR++;
         } else if (type == "insertInto") {
             var tempInputField = addLeerzeichen();
-
             tempInputField += "<span class='codeElement_" + NR + " sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>(</span>";
             NR++;
-
             tempInputField += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 2) + "," + (NR - 1) + "," + (NR + 1) + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
             NR++;
-
             tempInputField += "<span class='codeElement_" + NR + " sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>)</span>";
             NR++;
         }
-
         return tempInputField;
-
     }
+
     //function: adds an Aggregat <span> with inputField
     function addAggregat(tempSelectField) {
         var classesFromCodeComponent = getClassesFromElementAsString(tempSelectField);
@@ -587,41 +614,6 @@ export default (function () {
     //function: get Element NR from Element ID
     function getElementNr(elementClasses) {
         return elementClasses.split(" ")[0].split("_")[1];
-    }
-
-    // Button: SELECT ___ FROM ___
-    function createSelectButton() {
-
-        //button for Button Area
-        let selectButton = document.createElement('button');
-        selectButton.setAttribute("class", "btnSelect synSQL sqlSelect codeButton")
-        selectButton.innerHTML = 'SELECT ___ FROM ___';
-
-        //element for Code Editor
-        let elementSELECT_FROM = "";
-        let classesFromCodeComponent = getClassesFromElementAsString(selectButton);
-        CURRENT_SELECTED_ELEMENT = undefined;
-        elementSELECT_FROM += "<span class='codeline'>";
-        elementSELECT_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " start parent sqlIdentifier inputFields' data-sql-element='SELECT'>SELECT";
-        NR++;
-        elementSELECT_FROM += addLeerzeichen();
-        elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='SELECT_SELECT' data-next-element='" + (NR + 4) + "'>___</span>";
-        NR++;
-        elementSELECT_FROM += addLeerzeichen();
-        elementSELECT_FROM += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>FROM</span>";
-        NR++;
-        elementSELECT_FROM += addLeerzeichen();
-        elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier active' data-sql-element='SELECT_FROM' data-next-element='" + (NR - 4) + "'>___</span>";
-        NEXT_ELEMENT_NR = NR;
-        NR++;
-        elementSELECT_FROM += "</span></span>";
-
-        selectButton.onclick = event => {
-            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementSELECT_FROM);
-            setSelection(NEXT_ELEMENT_NR, false);
-        };
-
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(selectButton);
     }
 
     //function: add Leerzeichen <span>
@@ -784,17 +776,90 @@ export default (function () {
         initScrollDots();
     }
 
+    //function: befüllt .selTable mit allen Tabellen der Datenbank
+    function fillSelectionTables() {
+        clearSelectionOptions(".buttonArea .selTable");
+        let databaseTables = getSqlTables();
+        for (let i = 0; i < databaseTables.length; i++) {
+            if (databaseTables[i] != "verine_exercises") {
+                $(EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
+            }
+        }
+    }
+
+    //function: befüllt die .selColumn Element mit Feldern der genutzten Datenbanken
+    function fillSelectionFields(tableName, selectFields) {
+        let tempTableFields = getSqlTableFields(tableName);
+        tempTableFields.forEach(element => {
+            $(selectFields).append(new Option(element[1], element[1]));
+        });
+    }
+
+    //function: befüllt .selColumnCreate mit allen Spalten im SQL Crate Statement
+    function fillSelectionCreateColumns() {
+        let createSQLStatementLines = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").text().replace(/CREATE TABLE\s'(.*?)'/, "").split(",");
+        createSQLStatementLines.forEach(element => {
+            let currentLineColumn = element.match(/'(.*?)'/);
+            if (currentLineColumn != null && currentLineColumn.length > 0) {
+                $(EDITOR_CONTAINER).find(".buttonArea .selColumnCreate").append(new Option(currentLineColumn[1], currentLineColumn[1]));
+            }
+
+        });
+    }
+
+    //function: entfernt alle select Optionen außer die erste
+    function clearSelectionOptions(selectElement) {
+        $(selectElement + ' option[value!="0"]').remove();
+    }
+
+    //SQLite functions:
+    function getSqlTables() {
+        return CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
+    }
+
+    function getSqlTableFields(tempTableName) {
+        return CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
+    }
+
+    //function: In der mobilen Ansicht werden Dots anstelle einer horizontalen Scrollbar für die CodeComponents angezeigt.
+    function initScrollDots() {
+        let dotCount = Math.ceil($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
+        $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").html("");
+        if (dotCount > 1) {
+            for (let index = 0; index < dotCount; index++) {
+                if (index == 0) {
+                    $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").append('<a class="activeDot"><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
+                } else {
+                    $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").append('<a><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
+                }
+            }
+        }
+    }
+
+    //function: get all used db tables in code area
+    function updateUsedTables() {
+        USED_TABLES = [];
+        $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
+            if (!USED_TABLES.includes($(this).html())) {
+                USED_TABLES.push($(this).html());
+            }
+        });
+    }
+
+
+    ///////////////////
+    //Code Components//
     //function: fügt der buttonArea aktuell notwendige codeComponents hinzu
     function createCodeComponent(codeComponent, option) {
         switch (codeComponent) {
             case "zeilenumbruch":
-                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<br>'); //...
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<br>');
                 break;
             case ".btnSelect":
                 createSelectButton();
                 break;
             case ".btnWhere":
-                $(".buttonArea.codeComponents").append('<button class="btnWhere synSQL sqlWhere codeButton">WHERE ___ ___ ___</button>');
+                createWhereButton();
                 break;
             case ".btnOrder":
                 $(".buttonArea.codeComponents").append('<button class="btnOrder synSQL sqlOrder codeButton">ORDER BY ___</button>');
@@ -902,74 +967,76 @@ export default (function () {
         }
     }
 
-    //function: befüllt .selTable mit allen Tabellen der Datenbank
-    function fillSelectionTables() {
-        clearSelectionOptions(".buttonArea .selTable");
-        let databaseTables = getSqlTables();
-        for (let i = 0; i < databaseTables.length; i++) {
-            if (databaseTables[i] != "verine_exercises") {
-                $(EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
+    //CodeComponent: SELECT ___ FROM ___
+    function createSelectButton() {
+
+        //button for Button Area
+        let selectButton = document.createElement('button');
+        selectButton.setAttribute("class", "btnSelect synSQL sqlSelect codeButton")
+        selectButton.innerHTML = 'SELECT ___ FROM ___';
+
+        //element for Code Editor
+        let elementSELECT_FROM = "";
+        let classesFromCodeComponent = getClassesFromElementAsString(selectButton);
+        CURRENT_SELECTED_ELEMENT = undefined;
+        elementSELECT_FROM += "<span class='codeline'>";
+        elementSELECT_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " start parent sqlIdentifier inputFields' data-sql-element='SELECT'>SELECT";
+        NR++;
+        elementSELECT_FROM += addLeerzeichen();
+        elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='SELECT_SELECT' data-next-element='" + (NR + 4) + "'>___</span>";
+        NR++;
+        elementSELECT_FROM += addLeerzeichen();
+        elementSELECT_FROM += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>FROM</span>";
+        NR++;
+        elementSELECT_FROM += addLeerzeichen();
+        elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier active' data-sql-element='SELECT_FROM' data-next-element='" + (NR - 4) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementSELECT_FROM += "</span></span>";
+
+        selectButton.onclick = event => {
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementSELECT_FROM);
+            setSelection(NEXT_ELEMENT_NR, false);
+        };
+
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(selectButton);
+    }
+
+    // Button: WHERE ___ ___ ___ 
+    function createWhereButton() {
+
+        //button for Button Area
+        let whereButton = document.createElement('button');
+        whereButton.setAttribute("class", "btnWhere synSQL sqlWhere codeButton");
+        whereButton.innerHTML = 'WHERE ___ ___ ___';
+
+        //element for Code Editor
+        let classesFromCodeComponent = getClassesFromElementAsString(whereButton);
+        let elementWHERE = "<span class='codeline'>";
+        elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
+        NR++;
+        elementWHERE += addLeerzeichen();
+        elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+        NEXT_ELEMENT_NR = NR;
+        NR++;
+        elementWHERE += addLeerzeichen();
+        elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_2' data-next-element='" + (NR + 2) + "'>___</span>";
+        NR++;
+        elementWHERE += addLeerzeichen();
+        elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_3' data-next-element='" + (NR - 4) + "'>___</span>";
+        NR++;
+        elementWHERE += "</span></span>";
+
+        whereButton.onclick = event => {
+            if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+                CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementWHERE);
+            } else {
+                CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementWHERE);
             }
-        }
-    }
+            setSelection(NEXT_ELEMENT_NR, false);
+        };
 
-    //function: befüllt die .selColumn Element mit Feldern der genutzten Datenbanken
-    function fillSelectionFields(tableName, selectFields) {
-        let tempTableFields = getSqlTableFields(tableName);
-        tempTableFields.forEach(element => {
-            $(selectFields).append(new Option(element[1], element[1]));
-        });
-    }
-
-    //function: befüllt .selColumnCreate mit allen Spalten im SQL Crate Statement
-    function fillSelectionCreateColumns() {
-        let createSQLStatementLines = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").text().replace(/CREATE TABLE\s'(.*?)'/, "").split(",");
-        createSQLStatementLines.forEach(element => {
-            let currentLineColumn = element.match(/'(.*?)'/);
-            if (currentLineColumn != null && currentLineColumn.length > 0) {
-                $(EDITOR_CONTAINER).find(".buttonArea .selColumnCreate").append(new Option(currentLineColumn[1], currentLineColumn[1]));
-            }
-
-        });
-    }
-
-    //function: entfernt alle select Optionen außer die erste
-    function clearSelectionOptions(selectElement) {
-        $(selectElement + ' option[value!="0"]').remove();
-    }
-
-    //SQLite functions:
-    function getSqlTables() {
-        return CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
-    }
-
-    function getSqlTableFields(tempTableName) {
-        return CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
-    }
-
-    //function: In der mobilen Ansicht werden Dots anstelle einer horizontalen Scrollbar für die CodeComponents angezeigt.
-    function initScrollDots() {
-        let dotCount = Math.ceil($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
-        $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").html("");
-        if (dotCount > 1) {
-            for (let index = 0; index < dotCount; index++) {
-                if (index == 0) {
-                    $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").append('<a class="activeDot"><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
-                } else {
-                    $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").append('<a><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
-                }
-            }
-        }
-    }
-
-    //function: get all used db tables in code area
-    function updateUsedTables() {
-        USED_TABLES = [];
-        $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
-            if (!USED_TABLES.includes($(this).html())) {
-                USED_TABLES.push($(this).html());
-            }
-        });
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(whereButton);
     }
 
     // returns Editor Object

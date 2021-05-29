@@ -129,32 +129,7 @@ $(".codeComponentsScrolldots").on('click', 'a', function () {
 
 
 
-// Button: WHERE ___ ___ ___ 
-$(".buttonArea.codeComponents").on('click', '.btnWhere', function () {
-    var classesFromCodeComponent = getClassesFromElementAsString(this);
-    var elementWHERE = "<span class='codeline'>";
-    elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
-    NR++;
-    elementWHERE += addLeerzeichen();
-    elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_1' data-next-element='" + (NR + 2) + "'>___</span>";
-    NEXT_ELEMENT_NR = NR;
-    NR++;
-    elementWHERE += addLeerzeichen();
-    elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_2' data-next-element='" + (NR + 2) + "'>___</span>";
-    NR++;
-    elementWHERE += addLeerzeichen();
-    elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_3' data-next-element='" + (NR - 4) + "'>___</span>";
-    NR++;
-    elementWHERE += "</span></span>";
 
-    if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
-        CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementWHERE);
-    } else {
-        CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementWHERE);
-    }
-
-    setSelection(NEXT_ELEMENT_NR, false);
-});
 
 // Button: JOIN ___ ON ___ ___ ___ 
 $(".buttonArea.codeComponents").on('click', '.btnJoin', function () {
@@ -664,33 +639,7 @@ $(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function () 
 
 
 
-// Input: add text to Selected Element span
-$(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
-    if (CURRENT_SELECTED_ELEMENT != undefined) {
-        var tempValue = $(this).val();
-        if (tempValue != "") {
-            if (isNaN(tempValue)) {
-                CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
-            } else {
-                CURRENT_SELECTED_ELEMENT.html(tempValue);
-            }
-        } else {
-            CURRENT_SELECTED_ELEMENT.html("___");
-        }
-        CURRENT_SELECTED_ELEMENT.addClass("input");
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            if (tempValue != "") {
-                CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
-                CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
-            } else {
-                CURRENT_SELECTED_ELEMENT.addClass("unfilled");
-                CURRENT_SELECTED_ELEMENT.removeClass(classesFromCodeComponent);
-            }
-            setSelection("next", false);
-        }
-    }
-});
+
 
 // Select: Datenbank wird ausgewählt
 $('#selDbChooser').on('change', function () {
