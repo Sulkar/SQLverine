@@ -13,6 +13,7 @@ export default (function () {
     var CURRENT_VERINE_DATABASE;
     var USED_TABLES = [];
     var EDITOR_CONTAINER;
+    var SCHEMA_CONTAINER;
     var OUTPUT_CONTAINER;
     var OUTPUT_CONTAINER_MOBILE;
 
@@ -33,13 +34,16 @@ export default (function () {
     }
 
     sqlVerineEditor.setEditorContainer = (editorContainer) => {
-        EDITOR_CONTAINER = document.getElementById(editorContainer);;
+        EDITOR_CONTAINER = document.getElementById(editorContainer);
+    }
+    sqlVerineEditor.setSchemaContainer = (schemaContainer) => {
+        SCHEMA_CONTAINER = document.getElementById(schemaContainer);
     }
     sqlVerineEditor.setOutputContainer = (outputContainer) => {
-        OUTPUT_CONTAINER = document.getElementById(outputContainer);;
+        OUTPUT_CONTAINER = document.getElementById(outputContainer);
     }
     sqlVerineEditor.setOutputContainerMobile = (outputContainerMobile) => {
-        OUTPUT_CONTAINER_MOBILE = document.getElementById(outputContainerMobile);;
+        OUTPUT_CONTAINER_MOBILE = document.getElementById(outputContainerMobile);
     }
 
     function setupEditor() {
@@ -363,7 +367,7 @@ export default (function () {
             }
             //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
             if (tablesChanged) {
-                $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+                $(SCHEMA_CONTAINER).html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
             }
 
             //erstellt eine Tabelle mit den Ergebnissen
@@ -432,7 +436,7 @@ export default (function () {
         //check all used tables in code area
         updateUsedTables();
         //entfernt alle .inputField die ein Feld einer gelöscht Tabelle haben
-        $(".codeArea.editor .selColumn").each(function () {
+        $(EDITOR_CONTAINER).find(".codeArea.editor .selColumn").each(function () {
             let isTableActive = false;
             USED_TABLES.forEach(element => {
                 if ($(this).hasClass(element)) {
@@ -547,21 +551,21 @@ export default (function () {
     //function: überprüft den eingegebenen Code und passt diesen ggf. an
     function cleanSQLCode() {
         //sucht alle Elemente mit Klasse .createComma und fügt im .komma span ein Komma hinzu
-        $('.createComma').each(function () {
+        $(EDITOR_CONTAINER).find('.createComma').each(function () {
             $(this).find(".komma").html(",")
         });
         //entfernt das letzte Komma der .createComma Klassen
-        $(".codeArea pre code").find(".createComma .komma").last().html("");
+        $(EDITOR_CONTAINER).find(".codeArea pre code").find(".createComma .komma").last().html("");
 
         // deletes all empty <span class="codeline">
-        $(".codeline").each(function () {
+        $(EDITOR_CONTAINER).find(".codeline").each(function () {
             if ($(this).children().length == 0) $(this).remove();
         });
     }
 
     //function: löscht ein Element anhand einer ID z.B.: 5
     function deleteElementById(elementId) {
-        $(".codeArea.editor pre code").find(".codeElement_" + elementId).remove();
+        $(EDITOR_CONTAINER).find(".codeArea.editor pre code").find(".codeElement_" + elementId).remove();
     }
 
     //function: adds a selected Value from and <select> Component
@@ -619,11 +623,11 @@ export default (function () {
         elementSELECT_FROM += "</span></span>";
 
         selectButton.onclick = event => {
-            $('.codeArea.editor pre code').append(elementSELECT_FROM);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementSELECT_FROM);
             setSelection(NEXT_ELEMENT_NR, false);
         };
 
-        $(".buttonArea.codeComponents").append(selectButton);
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(selectButton);
     }
 
     //function: add Leerzeichen <span>
@@ -681,7 +685,7 @@ export default (function () {
             if (CURRENT_SELECTED_ELEMENT.prev(".parent").length == 0) {
                 //erste .codeline in der CodeArea?
                 if (CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").length == 0) {
-                    if (removeLastSelectedElement) $('.codeArea.editor pre code').html(""); // lösche alles, keine neue 
+                    if (removeLastSelectedElement) $(EDITOR_CONTAINER).find('.codeArea.editor pre code').html(""); // lösche alles, keine neue 
                 } else { //hat ein prev .codeline                    
                     element = CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").find(".parent").last();
                     CURRENT_SELECTED_ELEMENT = CURRENT_SELECTED_ELEMENT.parent(); //aktuelle Codeline
@@ -693,7 +697,7 @@ export default (function () {
 
         //next element is chosen by number
         else {
-            element = $(".codeArea.editor pre code .codeElement_" + elementNr);
+            element = $(EDITOR_CONTAINER).find(".codeArea.editor pre code .codeElement_" + elementNr);
         }
 
         removeSelection(removeLastSelectedElement);
@@ -710,8 +714,8 @@ export default (function () {
 
     //function: remove Selection from all Elements
     function removeSelection(removeLastSelectedElement) {
-        $("[class^='codeElement_']").removeClass("active");
-        $(".codeInput").val("");
+        $(EDITOR_CONTAINER).find("[class^='codeElement_']").removeClass("active");
+        $(EDITOR_CONTAINER).find(".codeInput").val("");
         if (removeLastSelectedElement) CURRENT_SELECTED_ELEMENT.remove();
         CURRENT_SELECTED_ELEMENT = undefined;
     }
@@ -720,10 +724,10 @@ export default (function () {
     function updateActiveCodeView() {
 
         //reset add und delete Button
-        $(".buttonArea.mainMenu .btnAdd").hide();
-        $(".buttonArea.mainMenu .btnDelete").hide();
+        $(EDITOR_CONTAINER).find(".buttonArea.mainMenu .btnAdd").hide();
+        $(EDITOR_CONTAINER).find(".buttonArea.mainMenu .btnDelete").hide();
 
-        $(".buttonArea.codeComponents").html("");
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").html("");
 
         ACTIVE_CODE_VIEW_DATA.forEach(element => {
             if (element.selectedSQLElement == CURRENT_SELECTED_SQL_ELEMENT) {
@@ -790,7 +794,7 @@ export default (function () {
     function createCodeComponent(codeComponent, option) {
         switch (codeComponent) {
             case "zeilenumbruch":
-                $(".buttonArea.codeComponents").append('<br>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<br>'); //...
                 break;
             case ".btnSelect":
                 createSelectButton();
@@ -910,7 +914,7 @@ export default (function () {
         let databaseTables = getSqlTables();
         for (let i = 0; i < databaseTables.length; i++) {
             if (databaseTables[i] != "verine_exercises") {
-                $(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
+                $(EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
             }
         }
     }
@@ -925,11 +929,11 @@ export default (function () {
 
     //function: befüllt .selColumnCreate mit allen Spalten im SQL Crate Statement
     function fillSelectionCreateColumns() {
-        let createSQLStatementLines = $(".codeArea.editor pre code").text().replace(/CREATE TABLE\s'(.*?)'/, "").split(",");
+        let createSQLStatementLines = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").text().replace(/CREATE TABLE\s'(.*?)'/, "").split(",");
         createSQLStatementLines.forEach(element => {
             let currentLineColumn = element.match(/'(.*?)'/);
             if (currentLineColumn != null && currentLineColumn.length > 0) {
-                $(".buttonArea .selColumnCreate").append(new Option(currentLineColumn[1], currentLineColumn[1]));
+                $(EDITOR_CONTAINER).find(".buttonArea .selColumnCreate").append(new Option(currentLineColumn[1], currentLineColumn[1]));
             }
 
         });
@@ -951,14 +955,14 @@ export default (function () {
 
     //function: In der mobilen Ansicht werden Dots anstelle einer horizontalen Scrollbar für die CodeComponents angezeigt.
     function initScrollDots() {
-        let dotCount = Math.ceil($(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
-        $(".codeComponentsScrolldots span").html("");
+        let dotCount = Math.ceil($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
+        $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").html("");
         if (dotCount > 1) {
             for (let index = 0; index < dotCount; index++) {
                 if (index == 0) {
-                    $(".codeComponentsScrolldots span").append('<a class="activeDot"><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
+                    $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").append('<a class="activeDot"><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
                 } else {
-                    $(".codeComponentsScrolldots span").append('<a><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
+                    $(EDITOR_CONTAINER).find(".codeComponentsScrolldots span").append('<a><svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"/></svg></a>');
                 }
             }
         }
@@ -967,7 +971,7 @@ export default (function () {
     //function: get all used db tables in code area
     function updateUsedTables() {
         USED_TABLES = [];
-        $(".codeArea.editor .selTable").each(function () {
+        $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
             if (!USED_TABLES.includes($(this).html())) {
                 USED_TABLES.push($(this).html());
             }

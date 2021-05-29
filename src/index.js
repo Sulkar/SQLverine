@@ -6,7 +6,6 @@ import sqlVerineEditor from "./SqlVerineEditor"
 
 
 
-
 //global variables
 var NR = 0;
 var NEXT_ELEMENT_NR = 0;
@@ -708,7 +707,7 @@ $('#selDbChooser').on('change', function () {
         //updateActiveCodeView();
 
         // zeigt das Datenbankschema an
-        $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+        $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
         let exercises = CURRENT_VERINE_DATABASE.getExercises();
         if (exercises.length > 0) {
@@ -756,7 +755,7 @@ $("#fileDbUpload").on('change', function () {
             //updateActiveCodeView();
 
             // zeigt das Datenbankschema an
-            $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+            $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
             let exercises = CURRENT_VERINE_DATABASE.getExercises();
             if (exercises.length > 0) {
@@ -801,10 +800,10 @@ $(".btnDbDownload").click(function () {
 
 // Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
 $(".btnDbInfo").click(function () {
-    $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+    $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 });
 $(".btnDbInfoMobile").click(function () {
-    $(".schemaArea.dbInfoModal").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+    $("#schemaAreaMobile").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
 });
 
@@ -931,6 +930,7 @@ function loadDbFromServer(dbName) {
 
 
         sqlVerineEditor.setEditorContainer("SqlVerineEditor");
+        sqlVerineEditor.setSchemaContainer("schemaArea");
         sqlVerineEditor.setOutputContainer("outputArea");
         sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
         sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
@@ -944,7 +944,7 @@ function loadDbFromServer(dbName) {
         //updateActiveCodeView();
 
         // zeigt das Datenbankschema an
-        $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+        $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
         let exercises = CURRENT_VERINE_DATABASE.getExercises();
         if (exercises.length > 0) {
