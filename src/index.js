@@ -23,7 +23,6 @@ var CURRENT_EXERCISE;
 var CURRENT_DATABASE_INDEX = 0;
 DATABASE_ARRAY.push(new VerineDatabase("Grundschule.db", null, "server"));
 DATABASE_ARRAY.push(new VerineDatabase("SchuleInfo.db", null, "server"));
-var CSS_COLOR_ARRAY = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightoral"];
 
 
 // für Übungen zum Überprüfen der Eingaben
@@ -709,8 +708,7 @@ $('#selDbChooser').on('change', function () {
         //updateActiveCodeView();
 
         // zeigt das Datenbankschema an
-        var tempTables = getSqlTables();
-        $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+        $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
         let exercises = CURRENT_VERINE_DATABASE.getExercises();
         if (exercises.length > 0) {
@@ -758,9 +756,7 @@ $("#fileDbUpload").on('change', function () {
             //updateActiveCodeView();
 
             // zeigt das Datenbankschema an
-            var tempTables = getSqlTables();
-
-            $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+            $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
             let exercises = CURRENT_VERINE_DATABASE.getExercises();
             if (exercises.length > 0) {
@@ -805,12 +801,10 @@ $(".btnDbDownload").click(function () {
 
 // Button: Info - lässt ein Modal mit dem aktuellen Datenbankschema erscheinen
 $(".btnDbInfo").click(function () {
-    var tempTables = getSqlTables();
-    $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+    $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 });
 $(".btnDbInfoMobile").click(function () {
-    var tempTables = getSqlTables();
-    $(".schemaArea.dbInfoModal").html(createTableInfo(tempTables, "1,2"));
+    $(".schemaArea.dbInfoModal").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
 });
 
@@ -950,9 +944,7 @@ function loadDbFromServer(dbName) {
         //updateActiveCodeView();
 
         // zeigt das Datenbankschema an
-        var tempTables = getSqlTables();
-
-        $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+        $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
         let exercises = CURRENT_VERINE_DATABASE.getExercises();
         if (exercises.length > 0) {
@@ -999,158 +991,9 @@ function handleUrlParameters() {
     };
 }
 
-//function: parst anhand des SQL CREATE Befehls die Foreign Keys 
-function getTableForeignKeyInformation(tableName) {
-
-    var tableForeignKeyInformationArray = [];
-    var currentTableColumns = getSqlTableFields(tableName);
-    var currentTableCreateStatement = CURRENT_VERINE_DATABASE.database.exec("SELECT sql FROM sqlite_master WHERE name = '" + tableName + "'")[0].values[0][0];
-
-    currentTableColumns.forEach(column => { //id, name, vorname, klasse_id, ...
-        var foreignKeyfound = false;
-        var newColumnObject = {};
-        newColumnObject.name = column[1];
-        newColumnObject.tableSelf = tableName;
-
-        var newArray = currentTableCreateStatement.split(",");
-        newArray.forEach(element => {
-            var regexForeignKeyColumnSelf = element.match(/FOREIGN KEY(\s\(|\()(.*?)\)/); //sucht nach FOREIGN KEY ( )
-            if (regexForeignKeyColumnSelf != null) {
-
-                var columnWithForeignKey = regexForeignKeyColumnSelf[2].replaceAll(/"|\s/g, ""); //entfernt alle Anführungszeichen und Leerzeichen 
-                if (newColumnObject.name == columnWithForeignKey) { //Informationen werden nur ergänzt, wenn es sich um die richtige Spalte handelt
-
-                    newColumnObject.columnSelf = columnWithForeignKey;
-                    var regexForeignKeyColumnTarget = element.split("REFERENCES")[1].match(/\((.*?)\)/); //sucht nach ( ) 
-                    var regexForeignKeyTableTarget = element.split("REFERENCES")[1].match(/^(.*?)\(/); //sucht von vorne bis zur ersten (
-                    if (regexForeignKeyColumnTarget != null && regexForeignKeyTableTarget != null) {
-                        newColumnObject.columnTarget = regexForeignKeyColumnTarget[1].replaceAll(/"|\s/g, "");
-                        newColumnObject.tableTarget = regexForeignKeyTableTarget[1].replaceAll(/"|\s/g, "");
-                        foreignKeyfound = true;
-                    }
-                }
-            }
-
-        });
-
-        if (!foreignKeyfound) {
-            newColumnObject.columnSelf = null;
-            newColumnObject.columnTarget = null;
-            newColumnObject.tableTarget = null;
-        }
-        tableForeignKeyInformationArray.push(newColumnObject);
-    });
-    return tableForeignKeyInformationArray;
-
-}
-
-//function: Erstellt eine Tabelle mit den Informationen der Tabellen einer SQL Datenbank
-function createTableInfo(tables, indexesToDisplay) {
-
-    let tableCounter = 1;
-    let htmlTableInfo = "";
-    let databaseForeignKeyInformationArray = [];
-    let tableColorArray = [];
-
-    tables.forEach(table => {
-        if (table != "verine_exercises") {
-            let tableColor = CSS_COLOR_ARRAY[tableCounter % CSS_COLOR_ARRAY.length];
-
-            if (tableCounter % 3 == 0) {
-                htmlTableInfo += "</div><div class='row'>";
-            } else if (tableCounter == 1) {
-                htmlTableInfo += "<div class='row'>";
-            }
-
-            let currentTableData = CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + table + ")");
-
-            htmlTableInfo += "<div class='col-sm'>";
-
-            //ForeignKey Informationen der Tabelle je Spalte wird abgerufen
-            let tableForeignKeyInformationArray = getTableForeignKeyInformation(table);
-            let indexesToDisplayArray = [];
-
-            //erstellt eine Tabelle mit dem Datenbankschema
-            for (let i = 0; i < currentTableData.length; i++) {
-
-                if (indexesToDisplay != null) {
-
-                    indexesToDisplayArray = indexesToDisplay.split(",");
-                    indexesToDisplayArray = indexesToDisplayArray.map(Number);
-                }
-
-                htmlTableInfo += "<table class='table table-bordered schemaTable' style='max-width: 20em;'>";
-                htmlTableInfo += "<thead>";
-
-                if (indexesToDisplay == null) {
-                    htmlTableInfo += "<tr><th colspan='" + currentTableData[i].columns.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
-                } else {
-                    htmlTableInfo += "<tr><th colspan='" + indexesToDisplayArray.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
-                }
-
-                //speichert den Tabellennamen und die gewählte Farbe, um "foreignKeys" zu referenzieren
-                let newTableColor = {};
-                newTableColor.tableName = table;
-                newTableColor.tableColor = tableColor;
-                tableColorArray.push(newTableColor);
-
-                htmlTableInfo += "</thead>";
-                htmlTableInfo += "<tbody>";
-                currentTableData[i].values.forEach((value) => {
-                    htmlTableInfo += "<tr>";
-                    value.forEach((element, index2) => {
 
 
-                        //sucht nach "foreign Keys" (z.B.: mitarbeiter_id -> tabellenname + _id) und aktualisiert die Einträge im tableForeignKeyInformationArray                    
-                        if (element != null) {
-                            let foundForeignKeyReference = element.toString().match(/\_id|\_ID/g);
-                            if (foundForeignKeyReference != null) {
-                                tableForeignKeyInformationArray.forEach(column => {
-                                    if (column.name == element && column.tableTarget == null) {
-                                        column.columnSelf = element;
-                                        column.tableSelf = table[0];
-                                        column.columnTarget = foundForeignKeyReference.toString().replace("_", "");
-                                        column.tableTarget = element.toString().replace(/\_id|\_ID/g, "");
-                                    }
-                                });
-                            }
-                        }
 
-                        if (indexesToDisplay == null) {
-                            htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
-                        } else if (indexesToDisplayArray.includes(index2)) {
-                            htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
-                        }
-                    });
-                    htmlTableInfo += "</tr>";
-                });
-                htmlTableInfo += "</tbody>";
-                htmlTableInfo += "</table>"
-            }
-            htmlTableInfo += "</div>";
-
-            tableCounter++;
-            //Foreign Key Informationen der Tabelle wird dem Foreign Key Database Array hinzugefügt.
-            databaseForeignKeyInformationArray.push(tableForeignKeyInformationArray);
-        }
-    });
-
-    //kennzeichne ForeignKey Verbindungen farblich
-    databaseForeignKeyInformationArray.forEach(tableForeignKeyInformationArray => {
-        tableForeignKeyInformationArray.forEach(tableColumn => {
-            tableColorArray.forEach(tableColor => {
-                if (tableColor.tableName == tableColumn.tableTarget) {
-                    var foreignKeyElementId = "id='" + tableColumn.tableSelf + "-" + tableColumn.columnSelf + "'";
-                    var backgroundGradient = "background: linear-gradient(90deg, " + tableColor.tableColor + ", " + tableColor.tableColor + " 0.6em, white 0.6em);";
-                    var leftBorderColor = "border-left: " + tableColor.tableColor + " 1px solid;";
-                    htmlTableInfo = htmlTableInfo.replace(foreignKeyElementId, foreignKeyElementId + " style='" + backgroundGradient + " " + leftBorderColor + "' ");
-                }
-            });
-        });
-    });
-
-    return htmlTableInfo;
-}
 
 
 
@@ -1251,21 +1094,5 @@ function buildDatabaseName(name, appendix) {
 
     }
 }
-
-
-
-
-
-
-
-//SQLite functions:
-function getSqlTables() {
-    return CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
-}
-
-function getSqlTableFields(tempTableName) {
-    return CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
-}
-
 
 

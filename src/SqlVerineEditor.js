@@ -363,8 +363,7 @@ export default (function () {
             }
             //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
             if (tablesChanged) {
-                var tempTables = getSqlTables();
-                $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
+                $(".schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
             }
 
             //erstellt eine Tabelle mit den Ergebnissen
