@@ -1,6 +1,5 @@
 import $ from "jquery";
 import { Tab, Modal } from "bootstrap";
-import "./CodeComponents";
 
 
 export default (function () {
