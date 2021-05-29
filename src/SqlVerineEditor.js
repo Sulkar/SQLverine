@@ -1,5 +1,7 @@
 import $ from "jquery";
 import { Tab, Modal } from "bootstrap";
+import "./CodeComponents";
+
 
 export default (function () {
 
@@ -16,6 +18,7 @@ export default (function () {
     var SCHEMA_CONTAINER;
     var OUTPUT_CONTAINER;
     var OUTPUT_CONTAINER_MOBILE;
+    var RUN_FUNCTIONS = [];
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = (activeCodeViewData, currentVerineDatabase) => {
@@ -44,6 +47,9 @@ export default (function () {
     }
     sqlVerineEditor.setOutputContainerMobile = (outputContainerMobile) => {
         OUTPUT_CONTAINER_MOBILE = document.getElementById(outputContainerMobile);
+    }
+    sqlVerineEditor.addRunFunction = (runFunction) => {
+        RUN_FUNCTIONS.push(runFunction);
     }
 
     function setupEditor() {
@@ -111,7 +117,6 @@ export default (function () {
     function initEvents() {
         //span click
         $(EDITOR_CONTAINER).on('click', '.codeArea.editor span', function (event) {
-            console.log("innn")
 
             event.stopPropagation();
             let elementNr;
@@ -175,6 +180,9 @@ export default (function () {
         // Button: run sql command - desktop
         $(EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
             execSqlCommand(null, "desktop");
+            RUN_FUNCTIONS.forEach(runFunction =>{
+                runFunction();
+            });
             //checkAnswer(CURRENT_EXERCISE.answerObject.input);
         });
         // Button: run sql command - mobile 
@@ -227,9 +235,7 @@ export default (function () {
                     CURRENT_SELECTED_ELEMENT.after(updateField1);
 
                 } else {
-                    console.log("in")
                     CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedComma"));
-
                 }
                 setSelection(NEXT_ELEMENT_NR, false);
             }
@@ -327,7 +333,6 @@ export default (function () {
             $(OUTPUT_CONTAINER).html("");
 
             var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
-            console.log(result)
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
             if (modifiedRows > 0) {
@@ -378,20 +383,10 @@ export default (function () {
                 };
             }
 
-            //zeigt das Ergebnis Tab an
-            if (type == "desktop") {
-                var someTabTriggerEl = document.querySelector('#nav-result-tab');
-                var tab = new Tab(someTabTriggerEl);
-                tab.show();
-            }
-
         } catch (err) {
             if (type == "mobile") $(OUTPUT_CONTAINER_MOBILE).find(".resultArea").html(err.message);
             else if (type == "desktop") {
-                $(OUTPUT_CONTAINER).html("<h4>SQL Fehler:</h4>" + "<span style='color: tomato;'>" + err.message + "</span>")
-                var someTabTriggerEl = document.querySelector('#nav-result-tab')
-                var tab = new Tab(someTabTriggerEl)
-                tab.show()
+                $(OUTPUT_CONTAINER).html("<h4>SQL Fehler:</h4>" + "<span style='color: tomato;'>" + err.message + "</span>");                
             };
         }
     }

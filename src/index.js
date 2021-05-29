@@ -933,6 +933,13 @@ function loadDbFromServer(dbName) {
         sqlVerineEditor.setSchemaContainer("schemaArea");
         sqlVerineEditor.setOutputContainer("outputArea");
         sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+
+        sqlVerineEditor.addRunFunction(() => {
+            let someTabTriggerEl = document.querySelector('#nav-result-tab');
+            let tab = new Tab(someTabTriggerEl);
+            tab.show();
+        });
+
         sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
 
 
