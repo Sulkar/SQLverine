@@ -1,6 +1,4 @@
 import $ from "jquery";
-import { Tab, Modal } from "bootstrap";
-
 
 export default (function () {
 
@@ -33,6 +31,7 @@ export default (function () {
         updateActiveCodeView();
         //
         initEvents();
+        initCodeComponentsButtons();
     }
 
     sqlVerineEditor.setEditorContainer = (editorContainer) => {
@@ -849,6 +848,7 @@ export default (function () {
 
     ///////////////////
     //Code Components//
+
     //function: fügt der buttonArea aktuell notwendige codeComponents hinzu
     function createCodeComponent(codeComponent, option) {
         switch (codeComponent) {
@@ -856,25 +856,25 @@ export default (function () {
                 $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<br>');
                 break;
             case ".btnSelect":
-                createSelectButton();
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnSelect synSQL sqlSelect codeButton">SELECT ___ FROM ___</button>');
                 break;
             case ".btnWhere":
-                createWhereButton();
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnWhere synSQL sqlWhere codeButton">WHERE ___ ___ ___</button>');
                 break;
             case ".btnOrder":
-                $(".buttonArea.codeComponents").append('<button class="btnOrder synSQL sqlOrder codeButton">ORDER BY ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnOrder synSQL sqlOrder codeButton">ORDER BY ___</button>');
                 break;
             case ".btnLimit":
-                $(".buttonArea.codeComponents").append('<button class="btnLimit synSQL sqlOrder codeButton">LIMIT ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnLimit synSQL sqlOrder codeButton">LIMIT ___</button>');
                 break;
             case ".btnOffset":
-                $(".buttonArea.codeComponents").append('<button class="btnOffset synSQL sqlOrder codeButton">OFFSET ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnOffset synSQL sqlOrder codeButton">OFFSET ___</button>');
                 break;
             case ".btnGroup":
-                $(".buttonArea.codeComponents").append('<button class="btnGroup synSQL sqlGroup codeButton">GROUP BY ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnGroup synSQL sqlGroup codeButton">GROUP BY ___</button>');
                 break;
             case ".btnJoin":
-                $(".buttonArea.codeComponents").append('<button class="btnJoin synSQL sqlJoin codeButton">JOIN ___ ON ___ ___ ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnJoin synSQL sqlJoin codeButton">JOIN ___ ON ___ ___ ___</button>');
                 break;
             case ".selColumn":
                 var selColumn = "<select class='selColumn synColumns " + option + " codeSelect'>";
@@ -882,162 +882,656 @@ export default (function () {
                 selColumn += "<option value='*'>*</option>";
                 selColumn += "</select>";
                 var selColumn = $.parseHTML(selColumn);
-                $(".buttonArea.codeComponents").append(selColumn);
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(selColumn);
                 fillSelectionFields(option, selColumn);
                 break;
             case ".selTable":
-                $(".buttonArea.codeComponents").append('<select class="selTable synTables codeSelect"><option value="0" disabled selected hidden>Tabelle wählen</option></select>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selTable synTables codeSelect"><option value="0" disabled selected hidden>Tabelle wählen</option></select>');
                 fillSelectionTables();
                 break;
             case ".selColumnCreate":
-                $(".buttonArea.codeComponents").append('<select class="selColumnCreate synColumns codeSelect"><option value="0" disabled selected hidden>Spalte wählen</option></select>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selColumnCreate synColumns codeSelect"><option value="0" disabled selected hidden>Spalte wählen</option></select>');
                 fillSelectionCreateColumns();
                 break;
             case ".selAggregate":
-                $(".buttonArea.codeComponents").append('<select class="selAggregate synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Aggregatsfunktion wählen</option><option value="AVG">AVG ( ___ )</option><option value="COUNT">COUNT ( ___ )</option><option value="MIN">MIN ( ___ )</option><option value="MAX">MAX ( ___ )</option><option value="SUM">SUM ( ___ )</option></select>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selAggregate synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Aggregatsfunktion wählen</option><option value="AVG">AVG ( ___ )</option><option value="COUNT">COUNT ( ___ )</option><option value="MIN">MIN ( ___ )</option><option value="MAX">MAX ( ___ )</option><option value="SUM">SUM ( ___ )</option></select>');
                 break;
             case ".btnAND":
-                $(".buttonArea.codeComponents").append('<button class="btnAND synSQL sqlWhere codeButton">AND</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAND synSQL sqlWhere codeButton">AND</button>');
                 break;
             case ".btnOR":
-                $(".buttonArea.codeComponents").append('<button class="btnOR synSQL sqlWhere codeButton">OR</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnOR synSQL sqlWhere codeButton">OR</button>');
                 break;
             case ".btnLeftBracket":
-                $(".buttonArea.codeComponents").append('<button class="btnLeftBracket synBrackets sqlWhere codeButton">(</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnLeftBracket synBrackets sqlWhere codeButton">(</button>');
                 break;
             case ".btnRightBracket":
-                $(".buttonArea.codeComponents").append('<button class="btnRightBracket synBrackets sqlWhere codeButton">)</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnRightBracket synBrackets sqlWhere codeButton">)</button>');
                 break;
             case ".selOperators":
-                $(".buttonArea.codeComponents").append('<select class="selOperators synOperators sqlWhere codeSelect"><option value="" disabled selected hidden>Operator wählen</option><option value="=">=</option><option value="&gt;">&gt;</option><option value="&lt;">&lt;</option><option value="&gt;=">&gt;=</option><option value="=">&lt;=</option><option value="&lt;&gt;">&lt;&gt;</option><option value="BETWEEN">BETWEEN ___ AND ___</option><option value="LIKE">LIKE</option><option value="IN">IN (___)</option></select>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selOperators synOperators sqlWhere codeSelect"><option value="" disabled selected hidden>Operator wählen</option><option value="=">=</option><option value="&gt;">&gt;</option><option value="&lt;">&lt;</option><option value="&gt;=">&gt;=</option><option value="=">&lt;=</option><option value="&lt;&gt;">&lt;&gt;</option><option value="BETWEEN">BETWEEN ___ AND ___</option><option value="LIKE">LIKE</option><option value="IN">IN (___)</option></select>');
                 break;
             case ".inputValue":
-                $(".buttonArea.codeComponents").append('<input type="text" placeholder="Wert" class="inputValue synValue codeInput"> </input>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<input type="text" placeholder="Wert" class="inputValue synValue codeInput"> </input>');
                 break;
             case ".btnAsc":
-                $(".buttonArea.codeComponents").append('<button class="btnAsc synSQL sqlOrder codeButton">ASC</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAsc synSQL sqlOrder codeButton">ASC</button>');
                 break;
             case ".btnDesc":
-                $(".buttonArea.codeComponents").append('<button class="btnDesc synSQL sqlOrder codeButton">DESC</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnDesc synSQL sqlOrder codeButton">DESC</button>');
                 break;
             case ".btnHaving":
-                $(".buttonArea.codeComponents").append('<button class="btnHaving synSQL sqlGroup codeButton">HAVING ___ ___ ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnHaving synSQL sqlGroup codeButton">HAVING ___ ___ ___</button>');
                 break;
             case ".btnSQLDelete":
-                $(".buttonArea.codeComponents").append('<button class="btnSQLDelete synSQL sqlDelete">DELETE FROM ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnSQLDelete synSQL sqlDelete">DELETE FROM ___</button>');
                 break;
             case ".btnUpdate":
-                $(".buttonArea.codeComponents").append('<button class="btnUpdate synSQL sqlUpdate">UPDATE ___ SET ___ = ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnUpdate synSQL sqlUpdate">UPDATE ___ SET ___ = ___</button>');
                 break;
             case ".btnInsert":
-                $(".buttonArea.codeComponents").append('<button class="btnInsert synSQL sqlInsert">INSERT INTO ___ (___) VALUES (___)</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnInsert synSQL sqlInsert">INSERT INTO ___ (___) VALUES (___)</button>');
                 break;
             case ".btnDropTable":
-                $(".buttonArea.codeComponents").append('<button class="btnDropTable synSQL sqlDelete">DROP TABLE ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnDropTable synSQL sqlDelete">DROP TABLE ___</button>');
                 break;
             case ".btnAlterTable":
-                $(".buttonArea.codeComponents").append('<button class="btnAlterTable synSQL sqlDelete">ALTER TABLE ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAlterTable synSQL sqlDelete">ALTER TABLE ___</button>');
                 break;
             case ".btnDropColumn":
-                $(".buttonArea.codeComponents").append('<button class="btnDropColumn synSQL sqlDelete">DROP COLUMN ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnDropColumn synSQL sqlDelete">DROP COLUMN ___</button>');
                 break;
             case ".btnRenameTo":
-                $(".buttonArea.codeComponents").append('<button class="btnRenameTo synSQL sqlDelete">RENAME ___ TO ___</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnRenameTo synSQL sqlDelete">RENAME ___ TO ___</button>');
                 break;
             case ".btnAddColumn":
-                $(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD ___ TYP</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD ___ TYP</button>');
                 break;
             case ".selTyp":
-                $(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option></select>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option></select>');
                 break;
             case ".selConstraint":
-                $(".buttonArea.codeComponents").append('<select class="selConstraint synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="UNIQUE">UNIQUE</option><option value="PRIMARY KEY">PRIMARY KEY</option><option value="AUTOINCREMENT">AUTOINCREMENT</option><option value="FOREIGN KEY">FOREIGN KEY</option><option value="NOTT NULL">NOT NULL</option></select>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selConstraint synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="UNIQUE">UNIQUE</option><option value="PRIMARY KEY">PRIMARY KEY</option><option value="AUTOINCREMENT">AUTOINCREMENT</option><option value="FOREIGN KEY">FOREIGN KEY</option><option value="NOTT NULL">NOT NULL</option></select>');
                 break;
             case ".btnCreateTable":
-                $(".buttonArea.codeComponents").append('<button class="btnCreateTable synSQL sqlDelete">CREATE TABLE ___ ( )</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnCreateTable synSQL sqlDelete">CREATE TABLE ___ ( )</button>');
                 break;
             case ".btnCreateColumn":
-                $(".buttonArea.codeComponents").append('<button class="btnCreateColumn synSQL sqlDelete"> NEUE SPALTE ___ </button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnCreateColumn synSQL sqlDelete"> NEUE SPALTE ___ </button>');
                 break;
             case ".btnCreateForeignKey":
-                $(".buttonArea.codeComponents").append('<button class="btnCreateForeignKey synSQL sqlDelete"> FOREIGN KEY ___ REFERENCES ___ (___)</button>');
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnCreateForeignKey synSQL sqlDelete"> FOREIGN KEY ___ REFERENCES ___ (___)</button>');
                 break;
             default:
             //log("no component found")
         }
     }
 
-    //CodeComponent: SELECT ___ FROM ___
-    function createSelectButton() {
-
-        //button for Button Area
-        let selectButton = document.createElement('button');
-        selectButton.setAttribute("class", "btnSelect synSQL sqlSelect codeButton")
-        selectButton.innerHTML = 'SELECT ___ FROM ___';
-
-        //element for Code Editor
-        let elementSELECT_FROM = "";
-        let classesFromCodeComponent = getClassesFromElementAsString(selectButton);
-        CURRENT_SELECTED_ELEMENT = undefined;
-        elementSELECT_FROM += "<span class='codeline'>";
-        elementSELECT_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " start parent sqlIdentifier inputFields' data-sql-element='SELECT'>SELECT";
-        NR++;
-        elementSELECT_FROM += addLeerzeichen();
-        elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='SELECT_SELECT' data-next-element='" + (NR + 4) + "'>___</span>";
-        NR++;
-        elementSELECT_FROM += addLeerzeichen();
-        elementSELECT_FROM += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>FROM</span>";
-        NR++;
-        elementSELECT_FROM += addLeerzeichen();
-        elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier active' data-sql-element='SELECT_FROM' data-next-element='" + (NR - 4) + "'>___</span>";
-        NEXT_ELEMENT_NR = NR;
-        NR++;
-        elementSELECT_FROM += "</span></span>";
-
-        selectButton.onclick = event => {
-            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementSELECT_FROM);
+    //initialisiert die Events für die CodeComponents Buttons
+    function initCodeComponentsButtons() {
+        // Button: SELECT ___ FROM ___
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSelect', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            CURRENT_SELECTED_ELEMENT = undefined;
+            var elementSELECT_FROM = "<span class='codeline'>";
+            elementSELECT_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " start parent sqlIdentifier inputFields' data-sql-element='SELECT'>SELECT";
+            NR++;
+            elementSELECT_FROM += addLeerzeichen();
+            elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='SELECT_SELECT' data-next-element='" + (NR + 4) + "'>___</span>";
+            NR++;
+            elementSELECT_FROM += addLeerzeichen();
+            elementSELECT_FROM += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>FROM</span>";
+            NR++;
+            elementSELECT_FROM += addLeerzeichen();
+            elementSELECT_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier active' data-sql-element='SELECT_FROM' data-next-element='" + (NR - 4) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementSELECT_FROM += "</span></span>";
+            $('.codeArea.editor pre code').append(elementSELECT_FROM);
             setSelection(NEXT_ELEMENT_NR, false);
-        };
+        });
 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(selectButton);
-    }
+        // Button: WHERE ___ ___ ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnWhere', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementWHERE = "<span class='codeline'>";
+            elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
+            NR++;
+            elementWHERE += addLeerzeichen();
+            elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementWHERE += addLeerzeichen();
+            elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+            elementWHERE += addLeerzeichen();
+            elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_3' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementWHERE += "</span></span>";
 
-    // Button: WHERE ___ ___ ___ 
-    function createWhereButton() {
-
-        //button for Button Area
-        let whereButton = document.createElement('button');
-        whereButton.setAttribute("class", "btnWhere synSQL sqlWhere codeButton");
-        whereButton.innerHTML = 'WHERE ___ ___ ___';
-
-        //element for Code Editor
-        let classesFromCodeComponent = getClassesFromElementAsString(whereButton);
-        let elementWHERE = "<span class='codeline'>";
-        elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
-        NR++;
-        elementWHERE += addLeerzeichen();
-        elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_1' data-next-element='" + (NR + 2) + "'>___</span>";
-        NEXT_ELEMENT_NR = NR;
-        NR++;
-        elementWHERE += addLeerzeichen();
-        elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_2' data-next-element='" + (NR + 2) + "'>___</span>";
-        NR++;
-        elementWHERE += addLeerzeichen();
-        elementWHERE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='WHERE_3' data-next-element='" + (NR - 4) + "'>___</span>";
-        NR++;
-        elementWHERE += "</span></span>";
-
-        whereButton.onclick = event => {
             if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
                 CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementWHERE);
             } else {
                 CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementWHERE);
             }
-            setSelection(NEXT_ELEMENT_NR, false);
-        };
 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(whereButton);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: JOIN ___ ON ___ ___ ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnJoin', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementJOIN = "<span class='codeline'>";
+            elementJOIN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='JOIN'>JOIN";
+            NR++;
+            elementJOIN += addLeerzeichen();
+            elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementJOIN += addLeerzeichen();
+            elementJOIN += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>ON</span>";
+            NR++;
+            elementJOIN += addLeerzeichen();
+            elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+            elementJOIN += addLeerzeichen();
+            elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_3' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementJOIN += addLeerzeichen();
+            elementJOIN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='JOIN_4' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementJOIN += "</span></span>";
+
+            if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+                CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementJOIN);
+            } else {
+                CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementJOIN);
+            }
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        //Button: AND
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAND', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+            var elementWhereAND = "";
+            elementWhereAND += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='AND'>";
+            NR++;
+            elementWhereAND += addLeerzeichen();
+            elementWhereAND += "AND";
+            elementWhereAND += addLeerzeichen();
+            elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementWhereAND += addLeerzeichen();
+            elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+            elementWhereAND += addLeerzeichen();
+            elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_3' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementWhereAND += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementWhereAND);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        //Button: OR
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOR', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+            var elementWhereOR = "";
+            elementWhereOR += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OR'>";
+            NR++;
+            elementWhereOR += addLeerzeichen();
+            elementWhereOR += "OR";
+            elementWhereOR += addLeerzeichen();
+            elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementWhereOR += addLeerzeichen();
+            elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+            elementWhereOR += addLeerzeichen();
+            elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_3' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementWhereOR += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementWhereOR);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        //Button: LeftBracket
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
+                CURRENT_SELECTED_ELEMENT.before("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='LEFTBRACKET'> ( </span>");
+                NR++;
+            }
+        });
+        //Button: RightBracket
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRightBracket', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
+                CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='RIGHTBRACKET'> ) </span>");
+                NR++;
+            }
+        });
+
+        // Button: ORDER BY ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOrder', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementORDER = "";
+            elementORDER += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ORDER'>";
+            NR++;
+            elementORDER += addLeerzeichen();
+            elementORDER += "ORDER BY";
+            elementORDER += addLeerzeichen();
+            elementORDER += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ORDER_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementORDER += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementORDER);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        //Button: ASC
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAsc', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementOrderAsc = "";
+            elementOrderAsc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ASC'>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementOrderAsc += addLeerzeichen();
+            elementOrderAsc += "ASC";
+            elementOrderAsc += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOrderAsc);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        //Button: DESC
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDesc', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementOrderDesc = "";
+            elementOrderDesc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DESC'>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementOrderDesc += addLeerzeichen();
+            elementOrderDesc += "DESC";
+            elementOrderDesc += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOrderDesc);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: LIMIT ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLimit', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementLIMIT = "";
+            elementLIMIT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='LIMIT'>";
+            NR++;
+            elementLIMIT += addLeerzeichen();
+            elementLIMIT += "LIMIT";
+            elementLIMIT += addLeerzeichen();
+            elementLIMIT += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='LIMIT_1' >___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementLIMIT += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementLIMIT);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: OFFSET ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOffset', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementOFFSET = "";
+            elementOFFSET += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OFFSET'>";
+            NR++;
+            elementOFFSET += addLeerzeichen();
+            elementOFFSET += "OFFSET";
+            elementOFFSET += addLeerzeichen();
+            elementOFFSET += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='OFFSET_1' >___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementOFFSET += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOFFSET);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: GROUP BY ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnGroup', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementGROUP = "";
+            elementGROUP += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='GROUP'>";
+            NR++;
+            elementGROUP += addLeerzeichen();
+            elementGROUP += "GROUP BY";
+            elementGROUP += addLeerzeichen();
+            elementGROUP += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='GROUP_1'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementGROUP += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementGROUP);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: HAVING ___ ___ ___ = like WHERE but can handle Aggregate functions
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnHaving', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementHAVING = "<span class='codeline'>";
+            elementHAVING += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='HAVING'>";
+            NR++;
+            elementHAVING += "HAVING";
+            elementHAVING += addLeerzeichen();
+            elementHAVING += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='HAVING_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementHAVING += addLeerzeichen();
+            elementHAVING += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='HAVING_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+            elementHAVING += addLeerzeichen();
+            elementHAVING += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='HAVING_3' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementHAVING += "</span>";
+
+            if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+                CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementHAVING);
+            } else {
+                CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementHAVING);
+            }
+
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: DELETE FROM ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementDELETE_FROM = "<span class='codeline'>";
+            elementDELETE_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DELETE_FROM'>";
+            NR++;
+            elementDELETE_FROM += "DELETE FROM";
+            elementDELETE_FROM += addLeerzeichen();
+            elementDELETE_FROM += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DELETE_FROM_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementDELETE_FROM += "</span></span>";
+
+            $('.codeArea.editor pre code').append(elementDELETE_FROM);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: UPDATE ___ SET ___ = ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnUpdate', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementUPDATE = "<span class='codeline'>";
+            elementUPDATE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='UPDATE'>UPDATE";
+            NR++;
+            elementUPDATE += addLeerzeichen();
+            elementUPDATE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='UPDATE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementUPDATE += addLeerzeichen();
+            elementUPDATE += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 4) + "'>SET</span>";
+            NR++;
+            elementUPDATE += addLeerzeichen();
+            elementUPDATE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+            elementUPDATE += addLeerzeichen();
+            elementUPDATE += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 8) + "'> = </span>";
+            NR++;
+            elementUPDATE += addLeerzeichen();
+            elementUPDATE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='UPDATE_3' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementUPDATE += "</span></span>";
+
+            $('.codeArea.editor pre code').append(elementUPDATE);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: INSERT INTO ___ (___) VALUES (___) 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnInsert', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementINSERT = "<span class='codeline'>";
+            elementINSERT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='INSERT'>INSERT INTO";
+            NR++;
+            elementINSERT += addLeerzeichen();
+            elementINSERT += "<span class='codeElement_" + NR + " inputField unfilled root insert1 sqlIdentifier' data-sql-element='INSERT_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementINSERT += addLeerzeichen();
+
+            elementINSERT += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+            NR++;
+
+            elementINSERT += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 2) + "," + (NR - 1) + "," + (NR + 1) + "'>___</span>";
+            NR++;
+
+            elementINSERT += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+            NR++;
+
+            elementINSERT += addLeerzeichen();
+            elementINSERT += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 6) + "'>VALUES</span>";
+            NR++;
+            elementINSERT += addLeerzeichen();
+            elementINSERT += "(<span class='codeElement_" + NR + " inputField unfilled root insert3 sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (NR - 4) + "'>___</span>)";
+            NR++;
+            elementINSERT += "</span></span>";
+
+            $('.codeArea.editor pre code').append(elementINSERT);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: DROP TABLE ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDropTable', function () {
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementDROP_TABLE = "<span class='codeline'>";
+            elementDROP_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_TABLE'>";
+            NR++;
+            elementDROP_TABLE += "DROP TABLE";
+            elementDROP_TABLE += addLeerzeichen();
+            elementDROP_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DROP_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementDROP_TABLE += "</span></span>";
+
+            $('.codeArea.editor pre code').append(elementDROP_TABLE);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: ALTER TABLE ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAlterTable', function () {
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementALTER_TABLE = "<span class='codeline'>";
+            elementALTER_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ALTER_TABLE'>";
+            NR++;
+            elementALTER_TABLE += "ALTER TABLE";
+            elementALTER_TABLE += addLeerzeichen();
+            elementALTER_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ALTER_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementALTER_TABLE += "</span></span>";
+
+            $('.codeArea.editor pre code').append(elementALTER_TABLE);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: DROP COLUMN ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDropColumn', function () {
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementDROP_COLUMN = "";
+            elementDROP_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_COLUMN'>";
+            NR++;
+            elementDROP_COLUMN += addLeerzeichen();
+            elementDROP_COLUMN += "DROP COLUMN";
+            elementDROP_COLUMN += addLeerzeichen();
+            elementDROP_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='DROP_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementDROP_COLUMN += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementDROP_COLUMN);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: RENAME ___ TO ___ 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRenameTo', function () {
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementRENAME_TO = "";
+            elementRENAME_TO += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='RENAME_TO'>";
+            NR++;
+            elementRENAME_TO += addLeerzeichen();
+            elementRENAME_TO += "RENAME";
+            elementRENAME_TO += addLeerzeichen();
+            elementRENAME_TO += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='RENAME_TO_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementRENAME_TO += addLeerzeichen();
+            elementRENAME_TO += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 6) + "'>TO</span>";
+            NR++;
+            elementRENAME_TO += addLeerzeichen();
+            elementRENAME_TO += "<span class='codeElement_" + NR + " inputField unfilled root insert2 sqlIdentifier' data-sql-element='RENAME_TO_2' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementRENAME_TO += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementRENAME_TO);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: ADD ___ ___ (TYP) 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAddColumn', function () {
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementADD_COLUMN = "";
+            elementADD_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ADD_COLUMN'>";
+            NR++;
+            elementADD_COLUMN += addLeerzeichen();
+            elementADD_COLUMN += "ADD";
+            elementADD_COLUMN += addLeerzeichen();
+            elementADD_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='ADD_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementADD_COLUMN += addLeerzeichen();
+            elementADD_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root insert2 sqlIdentifier' data-sql-element='ADD_COLUMN_2' data-next-element='" + (NR - 4) + "'>___</span>";
+            NR++;
+            elementADD_COLUMN += "</span>";
+
+            CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementADD_COLUMN);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: CREATE TABLE ___ (
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateTable', function () {
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementCREATE_TABLE = "<span class='codeline'>";
+            elementCREATE_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_TABLE'>";
+            NR++;
+            elementCREATE_TABLE += "CREATE TABLE";
+            elementCREATE_TABLE += addLeerzeichen();
+            elementCREATE_TABLE += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_TABLE_1' data-next-element='" + (NR + 2) + "'>___</span> (";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementCREATE_TABLE += "</span></span>";
+
+            //
+            elementCREATE_TABLE += "<span class='codeline'>";
+            elementCREATE_TABLE += "<span class='codeElement_" + NR + " sqlIdentifier extended' data-sql-element='CREATE_END_BRACKET'>)</span>";
+            NR++;
+            elementCREATE_TABLE += "</span>";
+
+            $('.codeArea.editor pre code').append(elementCREATE_TABLE);
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+        // Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
+            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            var elementCREATE_COLUMN = "<span class='codeline'>";
+            elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_COLUMN'>";
+            NR++;
+            elementCREATE_COLUMN += addLeerzeichen();
+            elementCREATE_COLUMN += addLeerzeichen();
+            elementCREATE_COLUMN += addLeerzeichen();
+            elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+
+            elementCREATE_COLUMN += addLeerzeichen();
+            elementCREATE_COLUMN += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_COLUMN_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+
+            elementCREATE_COLUMN += addKomma();
+            elementCREATE_COLUMN += "</span>";
+            elementCREATE_COLUMN += "</span>";
+
+            if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+                CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementCREATE_COLUMN);
+            } else {
+                CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementCREATE_COLUMN);
+            }
+
+            //passt Kommas an
+            cleanSQLCode();
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: CREATE... FOREIGN KEY spalte REFERENCES tabelle (spalte) 
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function () {
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementFOREIGN_KEY = "<span class='codeline'>";;
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_FOREIGN_KEY'>";
+            NR++;
+            elementFOREIGN_KEY += addLeerzeichen();
+            elementFOREIGN_KEY += addLeerzeichen();
+            elementFOREIGN_KEY += addLeerzeichen();
+            elementFOREIGN_KEY += "FOREIGN KEY";
+            elementFOREIGN_KEY += addLeerzeichen();
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+            NR++;
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_1' data-next-element='" + (NR + 2) + "'>___</span>";
+            NEXT_ELEMENT_NR = NR;
+            NR++;
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+            NR++;
+            elementFOREIGN_KEY += addLeerzeichen();
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 9) + "'>REFERENCES</span>";
+            NR++;
+            elementFOREIGN_KEY += addLeerzeichen();
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_2' data-next-element='" + (NR + 2) + "'>___</span>";
+            NR++;
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>(</span>";
+            NR++;
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='CREATE_FOREIGN_KEY_3' data-next-element='" + (NR + 2) + "' data-element-group=''>___</span>";
+            NR++;
+            elementFOREIGN_KEY += "<span class='codeElement_" + NR + " sqlIdentifier extended'>)</span>";
+            NR++;
+            elementFOREIGN_KEY += addKomma();
+            elementFOREIGN_KEY += "</span>";
+            elementFOREIGN_KEY += "</span>";
+
+            if (CURRENT_SELECTED_ELEMENT.find(".codeline").first().length > 0) {
+                CURRENT_SELECTED_ELEMENT.find(".codeline").first().before(elementFOREIGN_KEY);
+            } else {
+                CURRENT_SELECTED_ELEMENT.closest(".codeline").after(elementFOREIGN_KEY);
+            }
+
+            //passt Kommas an
+            cleanSQLCode();
+            setSelection(NEXT_ELEMENT_NR, false);
+        });
+
     }
+
+
+
+
+
+
+
+
+
+
 
     // returns Editor Object
     return sqlVerineEditor;
