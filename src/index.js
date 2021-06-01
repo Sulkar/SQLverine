@@ -61,25 +61,7 @@ $(".tab-content #nav-mission").on("click", ".btnNextExercise", function () {
     }
 });
 
-//Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
-$("#btnCreateUrl").click(function () {
-    let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
-    let urlDatabase = CURRENT_VERINE_DATABASE.name;
-    let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
-    let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&maxElementNr=" + NR + "&code=" + urlCode;
-    let modal = new Modal(document.getElementById('universal-modal'));
-    modal.toggle();
-    $("#universal-modal .modal-title").html("Link zum aktuellen Code:");
-    $("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
-    $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
-});
-$("#universal-modal").on('click', '#btnCopyLink', function () {
-    let copyUrl = document.getElementById("inputCreateUrl");
-    copyUrl.select();
-    copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
-    //kopiert den selektierten Text in die Zwischenablage
-    document.execCommand("copy");
-});
+
 
 // Scrollfortschritt als Dots anzeigen
 $(".buttonArea.codeComponents").on('scroll', function () {
@@ -418,8 +400,7 @@ function handleUrlParameters() {
         }
         if (urlCode != null && urlCode != "") {
             //befüllt die Code Area mit Code aus der URL
-            $(".codeArea pre code").html(unescape(urlCode));
-            NR = urlMaxElementNr;
+            sqlVerineEditor.setUrlCodeParameters(urlCode, urlMaxElementNr);
         }
 
     } catch (err) {

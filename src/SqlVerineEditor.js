@@ -1,4 +1,5 @@
 import $ from "jquery";
+import { Modal } from "bootstrap";
 
 export default (function () {
 
@@ -16,6 +17,9 @@ export default (function () {
     var OUTPUT_CONTAINER;
     var OUTPUT_CONTAINER_MOBILE;
     var RUN_FUNCTIONS = [];
+    var urlCode = undefined;
+    var urlCurrentID = undefined;
+
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = (activeCodeViewData, currentVerineDatabase) => {
@@ -32,6 +36,11 @@ export default (function () {
         //
         initEvents();
         initCodeComponentsButtons();
+        //
+        if(urlCode != undefined){
+            fillCodeAreaWithCode();
+        }
+        
     }
 
     sqlVerineEditor.setEditorContainer = (editorContainer) => {
@@ -49,10 +58,20 @@ export default (function () {
     sqlVerineEditor.addRunFunction = (runFunction) => {
         RUN_FUNCTIONS.push(runFunction);
     }
+    sqlVerineEditor.setUrlCodeParameters = (code, currentID) => {
+        urlCode = code;
+        urlCurrentID = currentID;
+    }
+
+    function fillCodeAreaWithCode() {
+        $(EDITOR_CONTAINER).find('.codeArea.editor pre code').html(unescape(urlCode));
+        NR = urlCurrentID;
+    }
 
     function setupEditor() {
-        let sqlVerineEditor = setupCodeArea() + setupMainMenu() + setupButtonArea() + '<br><div id="sqlTest">Richi</div>';
+        let sqlVerineEditor = setupCodeArea() + setupMainMenu() + setupButtonArea() + setupCodeModal();
         EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
+        console.log("editor")
     }
 
     function setupCodeArea() {
@@ -108,6 +127,26 @@ export default (function () {
         let buttonArea = '<div class="buttonArea codeComponents"></div>';
 
         return buttonArea;
+    }
+
+    function setupCodeModal() {
+        let codeModal = '<div class="modal fade" id="universal-modal" tabindex="-1" aria-labelledby="universal-modal-label" aria-hidden="true">';
+        codeModal += '<div class="modal-dialog">';
+        codeModal += '<div class="modal-content">';
+        codeModal += '<div class="modal-header">';
+        codeModal += '<h5 class="modal-title" id="universal-modal-label">Modal title</h5>';
+        codeModal += '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>';
+        codeModal += '</div>';
+        codeModal += '<div class="modal-body"></div>';
+        codeModal += '<div class="modal-footer">';
+        codeModal += '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>';
+        codeModal += '<button type="button" class="btn btn-primary">Save changes</button>';
+        codeModal += '</div>';
+        codeModal += '</div>';
+        codeModal += '</div>';
+        codeModal += '</div>';
+
+        return codeModal;
     }
 
     //////////
@@ -280,6 +319,26 @@ export default (function () {
                     setSelection("next", false);
                 }
             }
+        });
+
+        //Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
+        $(EDITOR_CONTAINER).find("#btnCreateUrl").on("click", function () {
+            let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
+            let urlDatabase = CURRENT_VERINE_DATABASE.name;
+            let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
+            let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&maxElementNr=" + NR + "&code=" + urlCode;
+            let modal = new Modal(document.getElementById('universal-modal'));
+            modal.toggle();
+            $(EDITOR_CONTAINER).find("#universal-modal .modal-title").html("Link zum aktuellen Code:");
+            $(EDITOR_CONTAINER).find("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
+            $(EDITOR_CONTAINER).find("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
+        });
+        $(EDITOR_CONTAINER).find("#universal-modal").on('click', '#btnCopyLink', function () {
+            let copyUrl = document.getElementById("inputCreateUrl");
+            copyUrl.select();
+            copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
+            //kopiert den selektierten Text in die Zwischenablage
+            document.execCommand("copy");
         });
     }
 
@@ -987,7 +1046,7 @@ export default (function () {
             NEXT_ELEMENT_NR = NR;
             NR++;
             elementSELECT_FROM += "</span></span>";
-            $('.codeArea.editor pre code').append(elementSELECT_FROM);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementSELECT_FROM);
             setSelection(NEXT_ELEMENT_NR, false);
         });
 
@@ -1260,7 +1319,7 @@ export default (function () {
             NR++;
             elementDELETE_FROM += "</span></span>";
 
-            $('.codeArea.editor pre code').append(elementDELETE_FROM);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementDELETE_FROM);
             setSelection(NEXT_ELEMENT_NR, false);
         });
 
@@ -1288,7 +1347,7 @@ export default (function () {
             NR++;
             elementUPDATE += "</span></span>";
 
-            $('.codeArea.editor pre code').append(elementUPDATE);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementUPDATE);
             setSelection(NEXT_ELEMENT_NR, false);
         });
 
@@ -1321,7 +1380,7 @@ export default (function () {
             NR++;
             elementINSERT += "</span></span>";
 
-            $('.codeArea.editor pre code').append(elementINSERT);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementINSERT);
             setSelection(NEXT_ELEMENT_NR, false);
         });
 
@@ -1338,7 +1397,7 @@ export default (function () {
             NR++;
             elementDROP_TABLE += "</span></span>";
 
-            $('.codeArea.editor pre code').append(elementDROP_TABLE);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementDROP_TABLE);
             setSelection(NEXT_ELEMENT_NR, false);
         });
 
@@ -1355,7 +1414,7 @@ export default (function () {
             NR++;
             elementALTER_TABLE += "</span></span>";
 
-            $('.codeArea.editor pre code').append(elementALTER_TABLE);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementALTER_TABLE);
             setSelection(NEXT_ELEMENT_NR, false);
         });
 
@@ -1441,7 +1500,7 @@ export default (function () {
             NR++;
             elementCREATE_TABLE += "</span>";
 
-            $('.codeArea.editor pre code').append(elementCREATE_TABLE);
+            $(EDITOR_CONTAINER).find('.codeArea.editor pre code').append(elementCREATE_TABLE);
             setSelection(NEXT_ELEMENT_NR, false);
         });
         // Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
