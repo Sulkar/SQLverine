@@ -19,7 +19,8 @@ export default (function () {
     var RUN_FUNCTIONS = [];
     var urlCode = undefined;
     var urlCurrentID = undefined;
-
+    var SOLUTION_ALL_ARRAY = [];
+    var SOLUTION_ROW_COUNTER = 0;
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = (activeCodeViewData, currentVerineDatabase) => {
@@ -37,12 +38,11 @@ export default (function () {
         initEvents();
         initCodeComponentsButtons();
         //
-        if(urlCode != undefined){
+        if (urlCode != undefined) {
             fillCodeAreaWithCode();
         }
-        
     }
-
+   
     sqlVerineEditor.setEditorContainer = (editorContainer) => {
         EDITOR_CONTAINER = document.getElementById(editorContainer);
     }
@@ -58,9 +58,18 @@ export default (function () {
     sqlVerineEditor.addRunFunction = (runFunction) => {
         RUN_FUNCTIONS.push(runFunction);
     }
+    sqlVerineEditor.resetRunFunctions = () => {
+        RUN_FUNCTIONS = [];
+    }
     sqlVerineEditor.setUrlCodeParameters = (code, currentID) => {
         urlCode = code;
         urlCurrentID = currentID;
+    }
+    sqlVerineEditor.getSolutionAllArray = () => {
+        return SOLUTION_ALL_ARRAY;
+    }
+    sqlVerineEditor.getSolutionRowCounter = () => {
+        return SOLUTION_ROW_COUNTER;
     }
 
     function fillCodeAreaWithCode() {
@@ -69,6 +78,7 @@ export default (function () {
     }
 
     function setupEditor() {
+        EDITOR_CONTAINER.innerHTML = "";
         let sqlVerineEditor = setupCodeArea() + setupMainMenu() + setupButtonArea() + setupCodeModal();
         EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
         console.log("editor")
@@ -220,7 +230,6 @@ export default (function () {
             RUN_FUNCTIONS.forEach(runFunction => {
                 runFunction();
             });
-            //checkAnswer(CURRENT_EXERCISE.answerObject.input);
         });
         // Button: run sql command - mobile 
         $(EDITOR_CONTAINER).on('click', '.btnRunMobile', function (event) {
@@ -484,8 +493,8 @@ export default (function () {
     //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
     function createTableSql(columns, values) {
 
-        //SOLUTION_ALL_ARRAY = [];
-        //SOLUTION_ROW_COUNTER = 0;
+        SOLUTION_ALL_ARRAY = [];
+        SOLUTION_ROW_COUNTER = 0;
 
         var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
         newTable += "<thead>";
@@ -497,10 +506,10 @@ export default (function () {
         newTable += "<tbody>";
         values.forEach((value) => {
             newTable += "<tr>";
-            //SOLUTION_ROW_COUNTER++;
+            SOLUTION_ROW_COUNTER++;
             value.forEach((element, indexColumn) => {
                 //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
-                //checkElement(element, columns[indexColumn]);
+                checkElement(element, columns[indexColumn]);
                 if (element != null && element.length > 200) {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {
@@ -512,7 +521,42 @@ export default (function () {
         newTable += "</tbody>";
         newTable += "</table></div>"
 
+        console.log(SOLUTION_ROW_COUNTER)
+        console.log(SOLUTION_ALL_ARRAY)
         return newTable;
+    }
+
+    function checkElement(value, column) {
+        let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+        CURRENT_EXERCISE.answerObject.exerciseSolutionArray.forEach(solution => {
+            //ist vale im LösungsString
+            if (solution.loesungString == value) {
+                //ist eine Tabelle im Antwortobjekt definiert ?
+                if (solution.table != undefined) {
+                    //checkt ob der aktuelle Wert in der Tabelle des Antwortobjekt ist
+                    if (USED_TABLES.includes(solution.table)) {
+                        if (solution.column != undefined) {
+                            if (solution.column == column) {
+                                if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                            }
+                        } else {
+                            if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                        }
+                    }
+                }
+                //keine Tabelle nötig
+                else {
+                    //ist der aktuelle Wert in der richtigen Spalte?
+                    if (solution.column != undefined) {
+                        if (solution.column == column) {
+                            if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                        }
+                    } else {
+                        if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
+                    }
+                }
+            }
+        });
     }
 
     //function: erstellt neue select elemente basierend auf den gewählten Tabellen in der code area
@@ -848,6 +892,7 @@ export default (function () {
     //function: befüllt die .selColumn Element mit Feldern der genutzten Datenbanken
     function fillSelectionFields(tableName, selectFields) {
         let tempTableFields = getSqlTableFields(tableName);
+        console.log(tempTableFields)
         tempTableFields.forEach(element => {
             $(selectFields).append(new Option(element[1], element[1]));
         });
@@ -936,13 +981,13 @@ export default (function () {
                 $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnJoin synSQL sqlJoin codeButton">JOIN ___ ON ___ ___ ___</button>');
                 break;
             case ".selColumn":
-                var selColumn = "<select class='selColumn synColumns " + option + " codeSelect'>";
+                let selColumn = "<select class='selColumn synColumns " + option + " codeSelect'>";
                 selColumn += "<option value='0' disabled selected hidden>Spalten " + option + "</option>";
                 selColumn += "<option value='*'>*</option>";
                 selColumn += "</select>";
-                var selColumn = $.parseHTML(selColumn);
-                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(selColumn);
-                fillSelectionFields(option, selColumn);
+                let selColumnDom = $.parseHTML(selColumn);
+                $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append(selColumnDom);
+                fillSelectionFields(option, selColumnDom);
                 break;
             case ".selTable":
                 $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selTable synTables codeSelect"><option value="0" disabled selected hidden>Tabelle wählen</option></select>');

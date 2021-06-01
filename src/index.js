@@ -32,8 +32,9 @@ handleUrlParameters();
 
 $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
     //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
+    let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".input-check").val())) {
-        CURRENT_EXERCISE.geloest = 1;
+        CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
         if ($(".tab-pane.active").attr("id") != "nav-mission") {
             $("#outputInfo").html("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
         }
@@ -43,22 +44,19 @@ $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
     }
 });
 
-$(".outputArea").on("click", "#btnExerciseNext", function () {
+$("#outputArea").on("click", "#btnExerciseNext", function () {
     let tab = new Tab(document.querySelector('#nav-mission-tab'));
     tab.show();
 });
 
-$(".outputArea").on("click", "#btnExerciseSuccess", function () {
+$("#outputArea").on("click", "#btnExerciseSuccess", function () {
     let tab = new Tab(document.querySelector('#nav-mission-tab'));
     tab.show();
 });
 
 $(".tab-content #nav-mission").on("click", ".btnNextExercise", function () {
-    CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getNextExercise(CURRENT_EXERCISE_ID);
-    if (CURRENT_EXERCISE_ID != null) {
-        CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-        updateExercise();
-    }
+    CURRENT_VERINE_DATABASE.getNextExerciseId(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+    updateExercise();
 });
 
 
@@ -110,12 +108,29 @@ $(".codeComponentsScrolldots").on('click', 'a', function () {
 $('#selDbChooser').on('change', function () {
     $(".codeArea pre code").html("");
 
-    CURRENT_SELECTED_SQL_ELEMENT = "START";
     CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(this.value);
 
     // 1) Datenbank exisitiert und wurde bereits eingelesen
     if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database != null) {
         CURRENT_VERINE_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX];
+
+        ///////////
+        sqlVerineEditor.setEditorContainer("SqlVerineEditor");
+        sqlVerineEditor.setSchemaContainer("schemaArea");
+        sqlVerineEditor.setOutputContainer("outputArea");
+        sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+        sqlVerineEditor.resetRunFunctions();
+        sqlVerineEditor.addRunFunction(() => {
+            let someTabTriggerEl = document.querySelector('#nav-result-tab');
+            let tab = new Tab(someTabTriggerEl);
+            tab.show();
+        });
+        sqlVerineEditor.addRunFunction(() => {
+            let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+            checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+        });
+        sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
+        ////////////
 
         updateDbChooser(CURRENT_VERINE_DATABASE.name);
         //updateActiveCodeView();
@@ -123,12 +138,9 @@ $('#selDbChooser').on('change', function () {
         // zeigt das Datenbankschema an
         $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
-        let exercises = CURRENT_VERINE_DATABASE.getExercises();
-        if (exercises.length > 0) {
+        if (CURRENT_VERINE_DATABASE.getCurrentExerciseId() != undefined) {
             //$("#nav-mission").show();
             $("#nav-mission-tab").show();
-            CURRENT_EXERCISE_ID = 1;
-            CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
             updateExercise();
         } else {
             //$("#nav-mission").hide();
@@ -162,22 +174,35 @@ $("#fileDbUpload").on('change', function () {
             DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_VERINE_DATABASE, "local"));
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
-            updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
-            $(".codeArea pre code").html("");
-            CURRENT_SELECTED_SQL_ELEMENT = "START";
+            ///////////
+            sqlVerineEditor.setEditorContainer("SqlVerineEditor");
+            sqlVerineEditor.setSchemaContainer("schemaArea");
+            sqlVerineEditor.setOutputContainer("outputArea");
+            sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+            sqlVerineEditor.resetRunFunctions();
+            sqlVerineEditor.addRunFunction(() => {
+                let someTabTriggerEl = document.querySelector('#nav-result-tab');
+                let tab = new Tab(someTabTriggerEl);
+                tab.show();
+            });
+            sqlVerineEditor.addRunFunction(() => {
+                let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+                checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+            });
+            sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
+            ////////////
 
-            //updateActiveCodeView();
+            updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
 
             // zeigt das Datenbankschema an
             $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
-            let exercises = CURRENT_VERINE_DATABASE.getExercises();
-            if (exercises.length > 0) {
+            if (CURRENT_VERINE_DATABASE.getCurrentExerciseId() != undefined) {
+                //$("#nav-mission").show();
                 $("#nav-mission-tab").show();
-                CURRENT_EXERCISE_ID = 1;
-                CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
                 updateExercise();
             } else {
+                //$("#nav-mission").hide();
                 $("#nav-mission-tab").hide();
             }
 
@@ -185,9 +210,6 @@ $("#fileDbUpload").on('change', function () {
             let someTabTriggerEl = document.querySelector('#nav-info-tab')
             let tab = new Tab(someTabTriggerEl)
             tab.show()
-
-            //debug:
-            $("#jquery-code").html(loadFromLocalStorage("tempSqlCommand"));
 
         }, function (error) { console.log(error) });
     }
@@ -259,6 +281,7 @@ async function init(dataPromise) {
 
 //function: Aktualisierung der Übungen und der Progressbar
 function updateExercise() {
+    let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
     let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
 
@@ -284,8 +307,7 @@ function updateExercise() {
     $(".exercise-output").html("");
 
     $(".exercise-feedback").hide();
-    if (CURRENT_EXERCISE.geloest == 1) {
-
+    if (CURRENT_EXERCISE.geloest) {
         $(".exercise-feedback").show();
         $(".exercise-feedback div").html(CURRENT_EXERCISE.feedback);
         $(".exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
@@ -304,22 +326,22 @@ function removeEmptyTags(stringToTest) {
 }
 
 //function: Überprüft ob die Antwort richtig ist
-function checkAnswer(answerInput) {
+function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
+    let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let solutionRows = CURRENT_EXERCISE.answerObject.rows;
     let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;
     //check solution
     // 1) ausgegebene Zeilen gleich in der Übung angegebenen Zeilen
     // 2) gefundene Values/Elemente größer gleich in der Übung angegebenen Zeilen
     // z.B.: gesucht wird Richard Mayer -> "Richard(lehrer.vornamen)|Mayer(lehrer.nachnamen)&rows=1"
-    if (solutionRows == SOLUTION_ROW_COUNTER && solutionStrings == SOLUTION_ALL_ARRAY.length && !answerInput) {
-        CURRENT_EXERCISE.geloest = 1;
-        $(".outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
-
+    if (solutionRows == solutionRowCounter && solutionStrings == solutionAllArray.length && !answerInput) {
+        CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
+        $("#outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
         updateExercise();
     }
     //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
     else if (answerInput) {
-        $(".outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        $("#outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
     }
 
 }
@@ -330,32 +352,28 @@ function loadDbFromServer(dbName) {
     init(fetch("data/" + dbName).then(res => res.arrayBuffer())).then(function (initObject) {
 
         CURRENT_VERINE_DATABASE = new VerineDatabase(dbName, initObject[0], "server");
+        CURRENT_VERINE_DATABASE.setupExercises();
         ACTIVE_CODE_VIEW_DATA = initObject[1];
         CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(CURRENT_VERINE_DATABASE.name);
         DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = CURRENT_VERINE_DATABASE;
 
 
         ///////////
-
-
-
-
         sqlVerineEditor.setEditorContainer("SqlVerineEditor");
         sqlVerineEditor.setSchemaContainer("schemaArea");
         sqlVerineEditor.setOutputContainer("outputArea");
         sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
-
+        sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunction(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
             let tab = new Tab(someTabTriggerEl);
             tab.show();
         });
-
+        sqlVerineEditor.addRunFunction(() => {
+            let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+            checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+        });
         sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
-
-
-
-
         ////////////
 
         updateDbChooser(CURRENT_VERINE_DATABASE.name);
@@ -364,12 +382,9 @@ function loadDbFromServer(dbName) {
         // zeigt das Datenbankschema an
         $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
-        let exercises = CURRENT_VERINE_DATABASE.getExercises();
-        if (exercises.length > 0) {
+        if (CURRENT_VERINE_DATABASE.getCurrentExerciseId() != undefined) {
             //$("#nav-mission").show();
             $("#nav-mission-tab").show();
-            CURRENT_EXERCISE_ID = 1;
-            CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
             updateExercise();
         } else {
             //$("#nav-mission").hide();
@@ -414,38 +429,7 @@ function handleUrlParameters() {
 
 
 
-function checkElement(value, column) {
 
-    CURRENT_EXERCISE.answerObject.exerciseSolutionArray.forEach(solution => {
-        //ist vale im LösungsString
-        if (solution.loesungString == value) {
-            //ist eine Tabelle im Antwortobjekt definiert ?
-            if (solution.table != undefined) {
-                //checkt ob der aktuelle Wert in der Tabelle des Antwortobjekt ist
-                if (USED_TABLES.includes(solution.table)) {
-                    if (solution.column != undefined) {
-                        if (solution.column == column) {
-                            if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
-                        }
-                    } else {
-                        if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
-                    }
-                }
-            }
-            //keine Tabelle nötig
-            else {
-                //ist der aktuelle Wert in der richtigen Spalte?
-                if (solution.column != undefined) {
-                    if (solution.column == column) {
-                        if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
-                    }
-                } else {
-                    if (!SOLUTION_ALL_ARRAY.includes(String(value))) SOLUTION_ALL_ARRAY.push(String(value));
-                }
-            }
-        }
-    });
-}
 
 
 

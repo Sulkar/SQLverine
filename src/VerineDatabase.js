@@ -14,6 +14,7 @@ export class VerineDatabase {
         if (this.database != null) {
             this.exerciseTable = this.getExerciseTable();
             this.exerciseOrder = this.getExerciseOrder();
+            this.exerciseArray = this.getExercises();
         }
 
         this.updateValues = []; //[sql_id, Spalte, Wert]
@@ -22,6 +23,22 @@ export class VerineDatabase {
 
         this.colorArray = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightoral"];
 
+
+
+    }
+
+    setupExercises() {
+        if (this.getExercises().length > 0) {
+            this.currentExcersiseId = this.getNextExerciseId(null);
+        } else {
+            this.currentExcersiseId = undefined;
+        }
+    }
+    getCurrentExerciseId() {
+        return this.currentExcersiseId;
+    }
+    setCurrentExerciseId(currentExcersiseId) {
+        this.currentExcersiseId = currentExcersiseId;
     }
 
     runSqlCode(sqlCode) {
@@ -60,17 +77,22 @@ export class VerineDatabase {
         });
         return exerciseOrderArray;
     }
-    getNextExercise(currentId) {
+    getNextExerciseId(currentId) {
         let nextExerciseId = undefined;
-        this.exerciseOrder.forEach((order, index) => {
-            if (order[0] == currentId) {
-                if (this.exerciseOrder[index + 1] != null) {
-                    nextExerciseId = this.exerciseOrder[index + 1][0];
-                } else {
-                    nextExerciseId = this.exerciseOrder[0][0];
+        if (currentId != null) {
+            this.exerciseOrder.forEach((order, index) => {
+                if (order[0] == currentId) {
+                    if (this.exerciseOrder[index + 1] != null) {
+                        nextExerciseId = this.exerciseOrder[index + 1][0];
+                    } else {
+                        nextExerciseId = this.exerciseOrder[0][0];
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            nextExerciseId = this.exerciseOrder[0][0];
+        }
+        this.currentExcersiseId = nextExerciseId;
         return nextExerciseId;
     }
 
@@ -160,7 +182,7 @@ export class VerineDatabase {
 
     getExerciseById(exerciseId) {
         let exerciseObject = {};
-        this.getExercises().forEach(exercise => {
+        this.exerciseArray.forEach(exercise => {
             if (exercise[0] == exerciseId) {
                 exerciseObject.id = exercise[0];
                 exerciseObject.reihenfolge = exercise[1];
@@ -175,6 +197,14 @@ export class VerineDatabase {
             }
         });
         return exerciseObject;
+    }
+
+    setCurrentExerciseAsSolved(){
+        this.exerciseArray.forEach(exercise => {
+            if(exercise[0] == this.currentExcersiseId){
+                exercise[8] = true;
+            }
+        });
     }
 
     getExerciseAnswerObject(exerciseAnswerString) {
