@@ -3,6 +3,7 @@ import { Tab } from "bootstrap";
 import initSqlJs from "sql.js";
 import { VerineDatabase } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
+import "./css/index.css"
 
 //global variables
 var ACTIVE_CODE_VIEW_DATA; // JSON Data holder

@@ -1,5 +1,6 @@
 import $ from "jquery";
 import { Modal } from "bootstrap";
+import "./css/SqlVerineEditor.css"
 
 export default (function () {
 
@@ -93,8 +94,7 @@ export default (function () {
     }
 
     function setupEditor() {
-        EDITOR_CONTAINER.innerHTML = "";
-        let sqlVerineEditor = setupCodeArea() + setupMainMenu() + setupButtonArea() + setupCodeModal();
+        let sqlVerineEditor = setupCodeArea() + setupMainMenu() + setupButtonArea() + setupScrollDots() + setupCodeModal();
         EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
     }
 
@@ -173,6 +173,20 @@ export default (function () {
         return codeModal;
     }
 
+    function setupScrollDots() {
+        let scrollDots = '<div class="row codeComponentsScrolldots d-md-none">'
+        scrollDots += '<span><a class="activeDot">';
+        scrollDots += '<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /></svg>';
+        scrollDots += '</a><a>';
+        scrollDots += '<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /></svg>';
+        scrollDots += '</a><a>';
+        scrollDots += '<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" /></svg>';
+        scrollDots += '</a></span>';
+        scrollDots += '</div>';
+
+        return scrollDots;
+    }
+
     //////////
     //EVENTS//
     function initEvents() {
@@ -219,7 +233,6 @@ export default (function () {
                         setSelection("next", false);
 
                     } else if (CURRENT_SELECTED_ELEMENT.hasClass("root")) { //Feld normal ___
-                        console.log("in")
                         returnObject = addSelectValue(tempSelectField);
                         CURRENT_SELECTED_ELEMENT.replaceWith(returnObject.tempSelectValue);
                         CURRENT_SELECTED_ELEMENT = $(returnObject.thisCodeElement);
@@ -233,7 +246,6 @@ export default (function () {
                     setSelection(NEXT_ELEMENT_NR, false);
                 }
             }
-            console.log("selected")
             // aktualisiert alle .selColumn <select>
             updateSelectCodeComponents();
             //reset select option
@@ -906,7 +918,6 @@ export default (function () {
     //function: befüllt die .selColumn Element mit Feldern der genutzten Datenbanken
     function fillSelectionFields(tableName, selectFields) {
         let tempTableFields = getSqlTableFields(tableName);
-        console.log(tempTableFields)
         tempTableFields.forEach(element => {
             $(selectFields).append(new Option(element[1], element[1]));
         });
@@ -1640,7 +1651,7 @@ export default (function () {
         });
 
     }
-    
+
     // returns Editor Object
     return sqlVerineEditor;
 
