@@ -1,8 +1,8 @@
 
-
-class VerineDatabase {
+export class VerineDatabase {
 
     constructor(name, currentDatabase, type) {
+
         this.name = name;
         this.database = currentDatabase;
         this.type = type;
@@ -14,11 +14,38 @@ class VerineDatabase {
         if (this.database != null) {
             this.exerciseTable = this.getExerciseTable();
             this.exerciseOrder = this.getExerciseOrder();
+            this.exerciseArray = this.getExercises();
         }
 
         this.updateValues = []; //[sql_id, Spalte, Wert]
         this.insertValues = []; //[auto, Spalte1, Spalte2, ...]
         this.deleteValues = []; //[sql_id, sql_id, ...]
+
+        this.colorArray = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightoral"];
+
+
+
+    }
+
+    hasExercises() {
+        if (this.exerciseArray.length > 0) return true;
+        else return false;
+    }
+
+    setupExercises() {
+        if (this.getExercises().length > 0) {
+            this.currentExcersiseId = this.getNextExerciseId(null);
+        } else {
+            this.currentExcersiseId = undefined;
+        }
+    }
+
+    getCurrentExerciseId() {
+        return this.currentExcersiseId;
+    }
+
+    setCurrentExerciseId(currentExcersiseId) {
+        this.currentExcersiseId = currentExcersiseId;
     }
 
     runSqlCode(sqlCode) {
@@ -33,6 +60,7 @@ class VerineDatabase {
             return result;
         }
     }
+
     runSqlCodeDirect(sqlCode) {
         let result = {};
         result.error = undefined;
@@ -57,17 +85,23 @@ class VerineDatabase {
         });
         return exerciseOrderArray;
     }
-    getNextExercise(currentId) {
+
+    getNextExerciseId(currentId) {
         let nextExerciseId = undefined;
-        this.exerciseOrder.forEach((order, index) => {
-            if (order[0] == currentId) {
-                if (this.exerciseOrder[index + 1] != null) {
-                    nextExerciseId = this.exerciseOrder[index + 1][0];
-                } else {
-                    nextExerciseId = this.exerciseOrder[0][0];
+        if (currentId != null) {
+            this.exerciseOrder.forEach((order, index) => {
+                if (order[0] == currentId) {
+                    if (this.exerciseOrder[index + 1] != null) {
+                        nextExerciseId = this.exerciseOrder[index + 1][0];
+                    } else {
+                        nextExerciseId = this.exerciseOrder[0][0];
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            nextExerciseId = this.exerciseOrder[0][0];
+        }
+        this.currentExcersiseId = nextExerciseId;
         return nextExerciseId;
     }
 
@@ -131,7 +165,7 @@ class VerineDatabase {
         }
     }
 
-    getTables() {
+    getTableNames() {
         let tableNamesArray = [];
         let ececuteSQL = this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'");
         if (ececuteSQL.length > 0) {
@@ -146,7 +180,7 @@ class VerineDatabase {
     }
 
     getExerciseTable() {
-        let databaseTables = this.getTables();
+        let databaseTables = this.getTableNames();
         if (databaseTables.includes("verine_exercises")) {
             return "verine_exercises";
         } else {
@@ -157,7 +191,7 @@ class VerineDatabase {
 
     getExerciseById(exerciseId) {
         let exerciseObject = {};
-        this.getExercises().forEach(exercise => {
+        this.exerciseArray.forEach(exercise => {
             if (exercise[0] == exerciseId) {
                 exerciseObject.id = exercise[0];
                 exerciseObject.reihenfolge = exercise[1];
@@ -172,6 +206,14 @@ class VerineDatabase {
             }
         });
         return exerciseObject;
+    }
+
+    setCurrentExerciseAsSolved() {
+        this.exerciseArray.forEach(exercise => {
+            if (exercise[0] == this.currentExcersiseId) {
+                exercise[8] = true;
+            }
+        });
     }
 
     getExerciseAnswerObject(exerciseAnswerString) {
@@ -261,8 +303,6 @@ class VerineDatabase {
             console.log(err);
         }
     }
-
-
 
     deleteExercise(exerciseId) {
         this.exerciseOrder = this.getExerciseOrder();
@@ -460,5 +500,161 @@ class VerineDatabase {
 
         });
         return columnObject;
+    }
+
+    //function: Erstellt eine Tabelle mit den Informationen der Tabellen einer SQL Datenbank
+    createTableInfo(indexesToDisplay) {
+
+        let tables = this.getTables();
+        let tableCounter = 1;
+        let htmlTableInfo = "";
+        let databaseForeignKeyInformationArray = [];
+        let tableColorArray = [];
+
+        tables.forEach(table => {
+            if (table != "verine_exercises") {
+                let tableColor = this.colorArray[tableCounter % this.colorArray.length];
+
+                if (tableCounter % 3 == 0) {
+                    htmlTableInfo += "</div><div class='row'>";
+                } else if (tableCounter == 1) {
+                    htmlTableInfo += "<div class='row'>";
+                }
+
+                let currentTableData = this.database.exec("PRAGMA table_info(" + table + ")");
+
+                htmlTableInfo += "<div class='col-sm'>";
+
+                //ForeignKey Informationen der Tabelle je Spalte wird abgerufen
+                let tableForeignKeyInformationArray = this.getTableForeignKeyInformation(table);
+                let indexesToDisplayArray = [];
+
+                //erstellt eine Tabelle mit dem Datenbankschema
+                for (let i = 0; i < currentTableData.length; i++) {
+
+                    if (indexesToDisplay != null) {
+
+                        indexesToDisplayArray = indexesToDisplay.split(",");
+                        indexesToDisplayArray = indexesToDisplayArray.map(Number);
+                    }
+
+                    htmlTableInfo += "<table class='table table-bordered schemaTable' style='max-width: 20em;'>";
+                    htmlTableInfo += "<thead>";
+
+                    if (indexesToDisplay == null) {
+                        htmlTableInfo += "<tr><th colspan='" + currentTableData[i].columns.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
+                    } else {
+                        htmlTableInfo += "<tr><th colspan='" + indexesToDisplayArray.length + "' style='background-color: " + tableColor + "'>" + table + "</th></tr>";
+                    }
+
+                    //speichert den Tabellennamen und die gewählte Farbe, um "foreignKeys" zu referenzieren
+                    let newTableColor = {};
+                    newTableColor.tableName = table;
+                    newTableColor.tableColor = tableColor;
+                    tableColorArray.push(newTableColor);
+
+                    htmlTableInfo += "</thead>";
+                    htmlTableInfo += "<tbody>";
+                    currentTableData[i].values.forEach((value) => {
+                        htmlTableInfo += "<tr>";
+                        value.forEach((element, index2) => {
+
+
+                            //sucht nach "foreign Keys" (z.B.: mitarbeiter_id -> tabellenname + _id) und aktualisiert die Einträge im tableForeignKeyInformationArray                    
+                            if (element != null) {
+                                let foundForeignKeyReference = element.toString().match(/\_id|\_ID/g);
+                                if (foundForeignKeyReference != null) {
+                                    tableForeignKeyInformationArray.forEach(column => {
+                                        if (column.name == element && column.tableTarget == null) {
+                                            column.columnSelf = element;
+                                            column.tableSelf = table[0];
+                                            column.columnTarget = foundForeignKeyReference.toString().replace("_", "");
+                                            column.tableTarget = element.toString().replace(/\_id|\_ID/g, "");
+                                        }
+                                    });
+                                }
+                            }
+
+                            if (indexesToDisplay == null) {
+                                htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
+                            } else if (indexesToDisplayArray.includes(index2)) {
+                                htmlTableInfo += "<td id='" + table + "-" + element + "'>" + element + "</td>";
+                            }
+                        });
+                        htmlTableInfo += "</tr>";
+                    });
+                    htmlTableInfo += "</tbody>";
+                    htmlTableInfo += "</table>"
+                }
+                htmlTableInfo += "</div>";
+
+                tableCounter++;
+                //Foreign Key Informationen der Tabelle wird dem Foreign Key Database Array hinzugefügt.
+                databaseForeignKeyInformationArray.push(tableForeignKeyInformationArray);
+            }
+        });
+
+        //kennzeichne ForeignKey Verbindungen farblich
+        databaseForeignKeyInformationArray.forEach(tableForeignKeyInformationArray => {
+            tableForeignKeyInformationArray.forEach(tableColumn => {
+                tableColorArray.forEach(tableColor => {
+                    if (tableColor.tableName == tableColumn.tableTarget) {
+                        var foreignKeyElementId = "id='" + tableColumn.tableSelf + "-" + tableColumn.columnSelf + "'";
+                        var backgroundGradient = "background: linear-gradient(90deg, " + tableColor.tableColor + ", " + tableColor.tableColor + " 0.6em, white 0.6em);";
+                        var leftBorderColor = "border-left: " + tableColor.tableColor + " 1px solid;";
+                        htmlTableInfo = htmlTableInfo.replace(foreignKeyElementId, foreignKeyElementId + " style='" + backgroundGradient + " " + leftBorderColor + "' ");
+                    }
+                });
+            });
+        });
+
+        return htmlTableInfo;
+    }
+
+    getTables() {
+        return this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
+    }
+
+    //function: parst anhand des SQL CREATE Befehls die Foreign Keys 
+    getTableForeignKeyInformation(tableName) {
+
+        let tableForeignKeyInformationArray = [];
+        let currentTableColumns = this.getColumns(tableName);
+        let currentTableCreateStatement = this.database.exec("SELECT sql FROM sqlite_master WHERE name = '" + tableName + "'")[0].values[0][0];
+
+        currentTableColumns.forEach(column => { //id, name, vorname, klasse_id, ...
+            let foreignKeyfound = false;
+            let newColumnObject = {};
+            newColumnObject.name = column[1];
+            newColumnObject.tableSelf = tableName;
+
+            let newArray = currentTableCreateStatement.split(",");
+            newArray.forEach(element => {
+                let regexForeignKeyColumnSelf = element.match(/FOREIGN KEY(\s\(|\()(.*?)\)/); //sucht nach FOREIGN KEY ( )
+                if (regexForeignKeyColumnSelf != null) {
+
+                    let columnWithForeignKey = regexForeignKeyColumnSelf[2].replaceAll(/"|\s/g, ""); //entfernt alle Anführungszeichen und Leerzeichen 
+                    if (newColumnObject.name == columnWithForeignKey) { //Informationen werden nur ergänzt, wenn es sich um die richtige Spalte handelt
+
+                        newColumnObject.columnSelf = columnWithForeignKey;
+                        let regexForeignKeyColumnTarget = element.split("REFERENCES")[1].match(/\((.*?)\)/); //sucht nach ( ) 
+                        let regexForeignKeyTableTarget = element.split("REFERENCES")[1].match(/^(.*?)\(/); //sucht von vorne bis zur ersten (
+                        if (regexForeignKeyColumnTarget != null && regexForeignKeyTableTarget != null) {
+                            newColumnObject.columnTarget = regexForeignKeyColumnTarget[1].replaceAll(/"|\s/g, "");
+                            newColumnObject.tableTarget = regexForeignKeyTableTarget[1].replaceAll(/"|\s/g, "");
+                            foreignKeyfound = true;
+                        }
+                    }
+                }
+            });
+
+            if (!foreignKeyfound) {
+                newColumnObject.columnSelf = null;
+                newColumnObject.columnTarget = null;
+                newColumnObject.tableTarget = null;
+            }
+            tableForeignKeyInformationArray.push(newColumnObject);
+        });
+        return tableForeignKeyInformationArray;
     }
 }
