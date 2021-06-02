@@ -3,7 +3,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 
 
 module.exports = {
-    mode: 'development', // oder production
+    mode: 'production', // development oder production
 
     entry: './src/index.js',
 
