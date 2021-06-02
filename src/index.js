@@ -159,9 +159,9 @@ $("#fileDbUpload").on('change', function () {
             var uploadedFileName = buildDatabaseName(uploadedFile.name, null);
 
             CURRENT_VERINE_DATABASE = new VerineDatabase(uploadedFileName, initObject[0], "local");
+            CURRENT_VERINE_DATABASE.setupExercises();
             ACTIVE_CODE_VIEW_DATA = initObject[1];
-
-            DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_VERINE_DATABASE, "local"));
+            DATABASE_ARRAY.push(CURRENT_VERINE_DATABASE);
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
             //reinit SqlVerineEditor       
@@ -173,7 +173,10 @@ $("#fileDbUpload").on('change', function () {
             });
             sqlVerineEditor.addRunFunction(() => {            
                 if (CURRENT_VERINE_DATABASE.hasExercises()) {
+                    console.log("ddd")
+
                     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+                    console.log(CURRENT_EXERCISE)
                     checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
                 }
             });

@@ -90,16 +90,16 @@ export class VerineDatabase {
         let nextExerciseId = undefined;
         if (currentId != null) {
             this.exerciseOrder.forEach((order, index) => {
-                if (order[0] == currentId) {
+                if (order[1] == currentId) {
                     if (this.exerciseOrder[index + 1] != null) {
-                        nextExerciseId = this.exerciseOrder[index + 1][0];
+                        nextExerciseId = this.exerciseOrder[index + 1][1];
                     } else {
-                        nextExerciseId = this.exerciseOrder[0][0];
+                        nextExerciseId = this.exerciseOrder[0][1];
                     }
                 }
             });
         } else {
-            nextExerciseId = this.exerciseOrder[0][0];
+            nextExerciseId = this.exerciseOrder[0][1];
         }
         this.currentExcersiseId = nextExerciseId;
         return nextExerciseId;
@@ -217,7 +217,6 @@ export class VerineDatabase {
     }
 
     getExerciseAnswerObject(exerciseAnswerString) {
-
         let answerObject = {};
         answerObject.exerciseSolutionArray = [];
 
