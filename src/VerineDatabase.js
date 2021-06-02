@@ -27,6 +27,11 @@ export class VerineDatabase {
 
     }
 
+    hasExercises() {
+        if (this.exerciseArray.length > 0) return true;
+        else return false;
+    }
+
     setupExercises() {
         if (this.getExercises().length > 0) {
             this.currentExcersiseId = this.getNextExerciseId(null);
@@ -34,9 +39,11 @@ export class VerineDatabase {
             this.currentExcersiseId = undefined;
         }
     }
+
     getCurrentExerciseId() {
         return this.currentExcersiseId;
     }
+
     setCurrentExerciseId(currentExcersiseId) {
         this.currentExcersiseId = currentExcersiseId;
     }
@@ -53,6 +60,7 @@ export class VerineDatabase {
             return result;
         }
     }
+
     runSqlCodeDirect(sqlCode) {
         let result = {};
         result.error = undefined;
@@ -77,6 +85,7 @@ export class VerineDatabase {
         });
         return exerciseOrderArray;
     }
+
     getNextExerciseId(currentId) {
         let nextExerciseId = undefined;
         if (currentId != null) {
@@ -199,9 +208,9 @@ export class VerineDatabase {
         return exerciseObject;
     }
 
-    setCurrentExerciseAsSolved(){
+    setCurrentExerciseAsSolved() {
         this.exerciseArray.forEach(exercise => {
-            if(exercise[0] == this.currentExcersiseId){
+            if (exercise[0] == this.currentExcersiseId) {
                 exercise[8] = true;
             }
         });
@@ -294,8 +303,6 @@ export class VerineDatabase {
             console.log(err);
         }
     }
-
-
 
     deleteExercise(exerciseId) {
         this.exerciseOrder = this.getExerciseOrder();
@@ -639,7 +646,6 @@ export class VerineDatabase {
                         }
                     }
                 }
-
             });
 
             if (!foreignKeyfound) {
@@ -650,6 +656,5 @@ export class VerineDatabase {
             tableForeignKeyInformationArray.push(newColumnObject);
         });
         return tableForeignKeyInformationArray;
-
     }
 }

@@ -23,26 +23,41 @@ export default (function () {
     var SOLUTION_ROW_COUNTER = 0;
 
     //Initialisierung des SqlVerineEditors
-    sqlVerineEditor.init = (activeCodeViewData, currentVerineDatabase) => {
+    sqlVerineEditor.init = () => {
         NR = 0;
         NEXT_ELEMENT_NR = 0;
         CURRENT_SELECTED_ELEMENT = undefined;
         CURRENT_SELECTED_SQL_ELEMENT = "START";
-        ACTIVE_CODE_VIEW_DATA = activeCodeViewData;
-        CURRENT_VERINE_DATABASE = currentVerineDatabase;
         USED_TABLES = [];
         //
         setupEditor();
-        updateActiveCodeView();
         //
         initEvents();
         initCodeComponentsButtons();
         //
+
+    }
+    //Initialisierung des SqlVerineEditors
+    sqlVerineEditor.reinit = () => {
+        NR = 0;
+        NEXT_ELEMENT_NR = 0;
+        CURRENT_SELECTED_ELEMENT = undefined;
+        CURRENT_SELECTED_SQL_ELEMENT = "START";
+        USED_TABLES = [];
+        //
+        updateActiveCodeView();
         if (urlCode != undefined) {
             fillCodeAreaWithCode();
         }
     }
-   
+
+
+    sqlVerineEditor.setActiveCodeViewData = (activeCodeViewData) => {
+        ACTIVE_CODE_VIEW_DATA = activeCodeViewData;
+    }
+    sqlVerineEditor.setVerineDatabase = (verineDatabase) => {
+        CURRENT_VERINE_DATABASE = verineDatabase;
+    }
     sqlVerineEditor.setEditorContainer = (editorContainer) => {
         EDITOR_CONTAINER = document.getElementById(editorContainer);
     }
@@ -81,7 +96,6 @@ export default (function () {
         EDITOR_CONTAINER.innerHTML = "";
         let sqlVerineEditor = setupCodeArea() + setupMainMenu() + setupButtonArea() + setupCodeModal();
         EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
-        console.log("editor")
     }
 
     function setupCodeArea() {
@@ -182,11 +196,11 @@ export default (function () {
         });
 
         // Select: change dbField, dbTable, Aggregatsfunktion
-        $(EDITOR_CONTAINER).on('change', '.buttonArea.codeComponents .codeSelect', function () {
+        $(EDITOR_CONTAINER).on('change', '.codeSelect', function () {
 
             if (CURRENT_SELECTED_ELEMENT != undefined) {
-                var tempSelectField = this;
-                var returnObject = {};
+                let tempSelectField = this;
+                let returnObject = {};
                 // wich select is triggering?
                 // -> selColumn, selTable
                 if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators") || $(tempSelectField).hasClass("selTyp") || $(tempSelectField).hasClass("selConstraint") || $(tempSelectField).hasClass("selColumnCreate")) {
@@ -205,6 +219,7 @@ export default (function () {
                         setSelection("next", false);
 
                     } else if (CURRENT_SELECTED_ELEMENT.hasClass("root")) { //Feld normal ___
+                        console.log("in")
                         returnObject = addSelectValue(tempSelectField);
                         CURRENT_SELECTED_ELEMENT.replaceWith(returnObject.tempSelectValue);
                         CURRENT_SELECTED_ELEMENT = $(returnObject.thisCodeElement);
@@ -218,6 +233,7 @@ export default (function () {
                     setSelection(NEXT_ELEMENT_NR, false);
                 }
             }
+            console.log("selected")
             // aktualisiert alle .selColumn <select>
             updateSelectCodeComponents();
             //reset select option
@@ -233,7 +249,7 @@ export default (function () {
         });
         // Button: run sql command - mobile 
         $(EDITOR_CONTAINER).on('click', '.btnRunMobile', function (event) {
-            var tempCode = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
+            let tempCode = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
             execSqlCommand(null, "mobile");
         });
@@ -288,8 +304,8 @@ export default (function () {
 
             // UPDATE: fügt ", ___ = ___" hinzu
             else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "UPDATE")) {
-                var lastUpdateField = findElementBySqlData(CURRENT_SELECTED_ELEMENT.children(), "UPDATE_3", "last");
-                var updateFields = addLeerzeichenMitKomma();
+                let lastUpdateField = findElementBySqlData(CURRENT_SELECTED_ELEMENT.children(), "UPDATE_3", "last");
+                let updateFields = addLeerzeichenMitKomma();
                 updateFields += "<span class='codeElement_" + NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 1) + "," + (NR + 1) + "," + (NR + 2) + "," + (NR + 3) + "," + (NR + 4) + "'>___</span>";
                 NR++;
                 updateFields += addLeerzeichen();
@@ -305,7 +321,7 @@ export default (function () {
         // Input: add text to Selected Element span
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
             if (CURRENT_SELECTED_ELEMENT != undefined) {
-                var tempValue = $(this).val();
+                let tempValue = $(this).val();
                 if (tempValue != "") {
                     if (isNaN(tempValue)) {
                         CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
@@ -317,7 +333,7 @@ export default (function () {
                 }
                 CURRENT_SELECTED_ELEMENT.addClass("input");
                 if (e.key === 'Enter' || e.keyCode === 13) {
-                    var classesFromCodeComponent = getClassesFromElementAsString(this);
+                    let classesFromCodeComponent = getClassesFromElementAsString(this);
                     if (tempValue != "") {
                         CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
                         CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
@@ -356,7 +372,7 @@ export default (function () {
 
     //funtion: Sucht ein Element mit sql-element data attribut
     function findElementBySqlData(elements, attributeValue, position) {
-        var tempElement;
+        let tempElement;
         if (position == "first") {
             $(elements).each(function () {
                 tempElement = this;
@@ -382,32 +398,32 @@ export default (function () {
 
     //function: add new line <span>
     function addNewLine() {
-        var tempLeerzeichen = "<span class='codeElement_" + NR + " newline'><br></span>";
+        let tempLeerzeichen = "<span class='codeElement_" + NR + " newline'><br></span>";
         NR++;
         return tempLeerzeichen;
     }
 
     //function: add Leerzeichen, Leerzeichen mit Komma, Komma <span>
     function addLeerzeichen() {
-        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
+        let tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
         NR++;
         return tempLeerzeichen;
     }
     function addLeerzeichenMitKomma() {
-        var tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
+        let tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
         NR++;
         return tempLeerzeichen;
     }
     function addKomma() {
-        var tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
+        let tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
         NR++;
         return tempKomma;
     }
 
     //function: checks if data-sql-element contains string i.e. "WHERE_3, OR_3, AND_3"
     function hasCurrentSelectedElementSqlDataString(currentSelectedElement, sqlDataIdentifier) {
-        var sqlStringFound = false;
-        var tempSqlDataArray = sqlDataIdentifier.replaceAll(" ", "").split(",");
+        let sqlStringFound = false;
+        let tempSqlDataArray = sqlDataIdentifier.replaceAll(" ", "").split(",");
         tempSqlDataArray.forEach(element => {
             if (currentSelectedElement.data("sql-element").includes(element)) {
                 sqlStringFound = true;
@@ -419,7 +435,7 @@ export default (function () {
     //function: run sql command, type = desktop or mobile
     function execSqlCommand(tempSqlCommand, type) {
         //bereitet den sql Befehl vor
-        var re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
+        let re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
         if (tempSqlCommand == null) {
             tempSqlCommand = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
             tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
@@ -431,7 +447,7 @@ export default (function () {
             $(OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
             $(OUTPUT_CONTAINER).html("");
 
-            var result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+            let result = CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = CURRENT_VERINE_DATABASE.database.getRowsModified();
             if (modifiedRows > 0) {
@@ -475,7 +491,7 @@ export default (function () {
             }
 
             //erstellt eine Tabelle mit den Ergebnissen
-            for (var i = 0; i < result.length; i++) {
+            for (let i = 0; i < result.length; i++) {
                 if (type == "mobile") $(OUTPUT_CONTAINER_MOBILE).find(".resultArea").append(createTableSql(result[i].columns, result[i].values));
                 else if (type == "desktop") {
                     $(OUTPUT_CONTAINER).append("" + createTableSql(result[i].columns, result[i].values) + "");
@@ -496,7 +512,7 @@ export default (function () {
         SOLUTION_ALL_ARRAY = [];
         SOLUTION_ROW_COUNTER = 0;
 
-        var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
+        let newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
         newTable += "<thead>";
         columns.forEach((column) => {
             newTable += "<th scope='col'>" + column + "</th>";
@@ -509,7 +525,7 @@ export default (function () {
             SOLUTION_ROW_COUNTER++;
             value.forEach((element, indexColumn) => {
                 //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
-                checkElement(element, columns[indexColumn]);
+                if (CURRENT_VERINE_DATABASE.hasExercises()) checkElement(element, columns[indexColumn]);
                 if (element != null && element.length > 200) {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {
@@ -521,8 +537,6 @@ export default (function () {
         newTable += "</tbody>";
         newTable += "</table></div>"
 
-        console.log(SOLUTION_ROW_COUNTER)
-        console.log(SOLUTION_ALL_ARRAY)
         return newTable;
     }
 
@@ -595,9 +609,9 @@ export default (function () {
         }
         // spezielle Behandlung des inputFields von INSERT_2
         else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("extended") && hasCurrentSelectedElementSqlDataString(elementToDelete, "INSERT_2, UPDATE_2, UPDATE_3")) {
-            var elementGroup = elementToDelete.data("element-group");
+            let elementGroup = elementToDelete.data("element-group");
             if (elementGroup != undefined) {
-                var idsToDelete = elementGroup.toString().split(",");
+                let idsToDelete = elementGroup.toString().split(",");
                 idsToDelete.forEach(element => {
                     deleteElementById(element);
                 });
@@ -611,13 +625,13 @@ export default (function () {
         }
         // root inputField remove old Element and create new one
         else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("root")) {
-            var dataSqlElement = elementToDelete.data("sql-element");
+            let dataSqlElement = elementToDelete.data("sql-element");
             elementToDelete.replaceWith(addInputField(dataSqlElement, "root"));
             setSelection(NEXT_ELEMENT_NR, false);
         }
         // don´t delete, select parent Element
         else {
-            var elementNr = getElementNr(elementToDelete.parent().attr('class'));
+            let elementNr = getElementNr(elementToDelete.parent().attr('class'));
             setSelection(elementNr, false);
         }
 
@@ -628,21 +642,21 @@ export default (function () {
     //function: returns a normal or extended inputField ( ___ or ,___ )
     function addInputField(tempSqlElement, type) {
         if (type == "root") {
-            var tempInputField = "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier root' data-sql-element='" + tempSqlElement + "'>___</span>";
+            let tempInputField = "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier root' data-sql-element='" + tempSqlElement + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
             NR++;
         } else if (type == "extendedComma") {
-            var tempInputField = addLeerzeichenMitKomma();
+            let tempInputField = addLeerzeichenMitKomma();
             tempInputField += "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier extended comma' data-sql-element='" + tempSqlElement + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
             NR++;
         } else if (type == "extendedSpace") {
-            var tempInputField = addLeerzeichen();
+            let tempInputField = addLeerzeichen();
             tempInputField += "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
             NR++;
         } else if (type == "insertInto") {
-            var tempInputField = addLeerzeichen();
+            let tempInputField = addLeerzeichen();
             tempInputField += "<span class='codeElement_" + NR + " sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>(</span>";
             NR++;
             tempInputField += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 2) + "," + (NR - 1) + "," + (NR + 1) + "'>___</span>";
@@ -656,9 +670,9 @@ export default (function () {
 
     //function: adds an Aggregat <span> with inputField
     function addAggregat(tempSelectField) {
-        var classesFromCodeComponent = getClassesFromElementAsString(tempSelectField);
-        var tempSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
-        var tempAggregat = "";
+        let classesFromCodeComponent = getClassesFromElementAsString(tempSelectField);
+        let tempSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
+        let tempAggregat = "";
         if (CURRENT_SELECTED_ELEMENT.hasClass("extended")) {
             tempAggregat += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " inputField sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>" + tempSelectField.value + "(";
         } else {
@@ -821,9 +835,9 @@ export default (function () {
             if (element.selectedSQLElement == CURRENT_SELECTED_SQL_ELEMENT) {
 
                 //Code Components: sollen auf max x (3) Zeilen verteilt werden
-                var maxZeilen = 3;
-                var maxComponents = element.visibleCodeComponents.length;
-                var componentCounter = 0;
+                let maxZeilen = 3;
+                let maxComponents = element.visibleCodeComponents.length;
+                let componentCounter = 0;
 
                 element.visibleCodeComponents.forEach(element => {
 
@@ -1075,9 +1089,9 @@ export default (function () {
     function initCodeComponentsButtons() {
         // Button: SELECT ___ FROM ___
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSelect', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
             CURRENT_SELECTED_ELEMENT = undefined;
-            var elementSELECT_FROM = "<span class='codeline'>";
+            let elementSELECT_FROM = "<span class='codeline'>";
             elementSELECT_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " start parent sqlIdentifier inputFields' data-sql-element='SELECT'>SELECT";
             NR++;
             elementSELECT_FROM += addLeerzeichen();
@@ -1097,8 +1111,8 @@ export default (function () {
 
         // Button: WHERE ___ ___ ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnWhere', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementWHERE = "<span class='codeline'>";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementWHERE = "<span class='codeline'>";
             elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
             NR++;
             elementWHERE += addLeerzeichen();
@@ -1124,8 +1138,8 @@ export default (function () {
 
         // Button: JOIN ___ ON ___ ___ ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnJoin', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementJOIN = "<span class='codeline'>";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementJOIN = "<span class='codeline'>";
             elementJOIN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='JOIN'>JOIN";
             NR++;
             elementJOIN += addLeerzeichen();
@@ -1156,9 +1170,9 @@ export default (function () {
 
         //Button: AND
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAND', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
-            var elementWhereAND = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+            let elementWhereAND = "";
             elementWhereAND += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='AND'>";
             NR++;
             elementWhereAND += addLeerzeichen();
@@ -1181,9 +1195,9 @@ export default (function () {
 
         //Button: OR
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOR', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
-            var elementWhereOR = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+            let elementWhereOR = "";
             elementWhereOR += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OR'>";
             NR++;
             elementWhereOR += addLeerzeichen();
@@ -1206,7 +1220,7 @@ export default (function () {
 
         //Button: LeftBracket
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
             if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
                 CURRENT_SELECTED_ELEMENT.before("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='LEFTBRACKET'> ( </span>");
                 NR++;
@@ -1214,7 +1228,7 @@ export default (function () {
         });
         //Button: RightBracket
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRightBracket', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
             if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
                 CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='RIGHTBRACKET'> ) </span>");
                 NR++;
@@ -1223,8 +1237,8 @@ export default (function () {
 
         // Button: ORDER BY ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOrder', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementORDER = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementORDER = "";
             elementORDER += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ORDER'>";
             NR++;
             elementORDER += addLeerzeichen();
@@ -1241,8 +1255,8 @@ export default (function () {
 
         //Button: ASC
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAsc', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementOrderAsc = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementOrderAsc = "";
             elementOrderAsc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ASC'>";
             NEXT_ELEMENT_NR = NR;
             NR++;
@@ -1256,8 +1270,8 @@ export default (function () {
 
         //Button: DESC
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDesc', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementOrderDesc = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementOrderDesc = "";
             elementOrderDesc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DESC'>";
             NEXT_ELEMENT_NR = NR;
             NR++;
@@ -1271,8 +1285,8 @@ export default (function () {
 
         // Button: LIMIT ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLimit', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementLIMIT = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementLIMIT = "";
             elementLIMIT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='LIMIT'>";
             NR++;
             elementLIMIT += addLeerzeichen();
@@ -1289,8 +1303,8 @@ export default (function () {
 
         // Button: OFFSET ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOffset', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementOFFSET = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementOFFSET = "";
             elementOFFSET += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OFFSET'>";
             NR++;
             elementOFFSET += addLeerzeichen();
@@ -1307,8 +1321,8 @@ export default (function () {
 
         // Button: GROUP BY ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnGroup', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementGROUP = "";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementGROUP = "";
             elementGROUP += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='GROUP'>";
             NR++;
             elementGROUP += addLeerzeichen();
@@ -1325,8 +1339,8 @@ export default (function () {
 
         // Button: HAVING ___ ___ ___ = like WHERE but can handle Aggregate functions
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnHaving', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementHAVING = "<span class='codeline'>";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementHAVING = "<span class='codeline'>";
             elementHAVING += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='HAVING'>";
             NR++;
             elementHAVING += "HAVING";
@@ -1353,8 +1367,8 @@ export default (function () {
 
         // Button: DELETE FROM ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementDELETE_FROM = "<span class='codeline'>";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementDELETE_FROM = "<span class='codeline'>";
             elementDELETE_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DELETE_FROM'>";
             NR++;
             elementDELETE_FROM += "DELETE FROM";
@@ -1370,8 +1384,8 @@ export default (function () {
 
         // Button: UPDATE ___ SET ___ = ___ 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnUpdate', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementUPDATE = "<span class='codeline'>";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementUPDATE = "<span class='codeline'>";
             elementUPDATE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='UPDATE'>UPDATE";
             NR++;
             elementUPDATE += addLeerzeichen();
@@ -1398,8 +1412,8 @@ export default (function () {
 
         // Button: INSERT INTO ___ (___) VALUES (___) 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnInsert', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementINSERT = "<span class='codeline'>";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementINSERT = "<span class='codeline'>";
             elementINSERT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='INSERT'>INSERT INTO";
             NR++;
             elementINSERT += addLeerzeichen();
@@ -1550,8 +1564,8 @@ export default (function () {
         });
         // Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
-            var classesFromCodeComponent = getClassesFromElementAsString(this);
-            var elementCREATE_COLUMN = "<span class='codeline'>";
+            let classesFromCodeComponent = getClassesFromElementAsString(this);
+            let elementCREATE_COLUMN = "<span class='codeline'>";
             elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_COLUMN'>";
             NR++;
             elementCREATE_COLUMN += addLeerzeichen();
@@ -1626,17 +1640,7 @@ export default (function () {
         });
 
     }
-
-
-
-
-
-
-
-
-
-
-
+    
     // returns Editor Object
     return sqlVerineEditor;
 

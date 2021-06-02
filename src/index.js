@@ -1,30 +1,29 @@
 import $ from "jquery";
-import { Tab, Modal } from "bootstrap";
+import { Tab } from "bootstrap";
 import initSqlJs from "sql.js";
 import { VerineDatabase } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
 
 //global variables
 var ACTIVE_CODE_VIEW_DATA; // JSON Data holder
-var USED_TABLES = []; // listet alle genutzten Tabellen einer DB auf, um SELECTs entsprechend zu befüllen
 var CURRENT_VERINE_DATABASE;
 var DATABASE_ARRAY = [];
-var CURRENT_EXERCISE_ID;
-var CURRENT_EXERCISE;
-
 
 var CURRENT_DATABASE_INDEX = 0;
 DATABASE_ARRAY.push(new VerineDatabase("Grundschule.db", null, "server"));
 DATABASE_ARRAY.push(new VerineDatabase("SchuleInfo.db", null, "server"));
 
-
-// für Übungen zum Überprüfen der Eingaben
-var SOLUTION_ALL_ARRAY = [];
-var SOLUTION_ROW_COUNTER = 0;
-
-
 //////////
 // INIT //
+
+//setup SqlVerineEditor
+sqlVerineEditor.setEditorContainer("SqlVerineEditor");
+sqlVerineEditor.setSchemaContainer("schemaArea");
+sqlVerineEditor.setOutputContainer("outputArea");
+sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+sqlVerineEditor.init();
+
+//start
 handleUrlParameters();
 
 ////////////
@@ -58,8 +57,6 @@ $(".tab-content #nav-mission").on("click", ".btnNextExercise", function () {
     CURRENT_VERINE_DATABASE.getNextExerciseId(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     updateExercise();
 });
-
-
 
 // Scrollfortschritt als Dots anzeigen
 $(".buttonArea.codeComponents").on('scroll', function () {
@@ -95,15 +92,6 @@ $(".codeComponentsScrolldots").on('click', 'a', function () {
     $(".buttonArea.codeComponents").scrollLeft(scrollPos);
 });
 
-
-
-
-
-
-
-
-
-
 // Select: Datenbank wird ausgewählt
 $('#selDbChooser').on('change', function () {
     $(".codeArea pre code").html("");
@@ -114,22 +102,23 @@ $('#selDbChooser').on('change', function () {
     if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database != null) {
         CURRENT_VERINE_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX];
 
-        ///////////
-        sqlVerineEditor.setEditorContainer("SqlVerineEditor");
-        sqlVerineEditor.setSchemaContainer("schemaArea");
-        sqlVerineEditor.setOutputContainer("outputArea");
-        sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+        //reinit SqlVerineEditor       
         sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunction(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
             let tab = new Tab(someTabTriggerEl);
             tab.show();
         });
-        sqlVerineEditor.addRunFunction(() => {
-            let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-            checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+        sqlVerineEditor.addRunFunction(() => {            
+            if (CURRENT_VERINE_DATABASE.hasExercises()) {
+                let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+                checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+            }
         });
-        sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
+
+        sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
+        sqlVerineEditor.setActiveCodeViewData(ACTIVE_CODE_VIEW_DATA);
+        sqlVerineEditor.reinit();
         ////////////
 
         updateDbChooser(CURRENT_VERINE_DATABASE.name);
@@ -174,22 +163,23 @@ $("#fileDbUpload").on('change', function () {
             DATABASE_ARRAY.push(createDatabaseObject(uploadedFileName, CURRENT_VERINE_DATABASE, "local"));
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
-            ///////////
-            sqlVerineEditor.setEditorContainer("SqlVerineEditor");
-            sqlVerineEditor.setSchemaContainer("schemaArea");
-            sqlVerineEditor.setOutputContainer("outputArea");
-            sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+            //reinit SqlVerineEditor       
             sqlVerineEditor.resetRunFunctions();
             sqlVerineEditor.addRunFunction(() => {
                 let someTabTriggerEl = document.querySelector('#nav-result-tab');
                 let tab = new Tab(someTabTriggerEl);
                 tab.show();
             });
-            sqlVerineEditor.addRunFunction(() => {
-                let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-                checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+            sqlVerineEditor.addRunFunction(() => {            
+                if (CURRENT_VERINE_DATABASE.hasExercises()) {
+                    let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+                    checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+                }
             });
-            sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
+
+            sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
+            sqlVerineEditor.setActiveCodeViewData(ACTIVE_CODE_VIEW_DATA);
+            sqlVerineEditor.reinit();
             ////////////
 
             updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
@@ -277,8 +267,6 @@ async function init(dataPromise) {
     return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
 }
 
-
-
 //function: Aktualisierung der Übungen und der Progressbar
 function updateExercise() {
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
@@ -343,9 +331,7 @@ function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
     else if (answerInput) {
         $("#outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
     }
-
 }
-
 
 //function: lädt eine DB vom Server
 function loadDbFromServer(dbName) {
@@ -357,23 +343,23 @@ function loadDbFromServer(dbName) {
         CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(CURRENT_VERINE_DATABASE.name);
         DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = CURRENT_VERINE_DATABASE;
 
-
-        ///////////
-        sqlVerineEditor.setEditorContainer("SqlVerineEditor");
-        sqlVerineEditor.setSchemaContainer("schemaArea");
-        sqlVerineEditor.setOutputContainer("outputArea");
-        sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+        //reinit SqlVerineEditor       
         sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunction(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
             let tab = new Tab(someTabTriggerEl);
             tab.show();
         });
-        sqlVerineEditor.addRunFunction(() => {
-            let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-            checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+        sqlVerineEditor.addRunFunction(() => {            
+            if (CURRENT_VERINE_DATABASE.hasExercises()) {
+                let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+                checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
+            }
         });
-        sqlVerineEditor.init(ACTIVE_CODE_VIEW_DATA, CURRENT_VERINE_DATABASE);
+
+        sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
+        sqlVerineEditor.setActiveCodeViewData(ACTIVE_CODE_VIEW_DATA);
+        sqlVerineEditor.reinit();
         ////////////
 
         updateDbChooser(CURRENT_VERINE_DATABASE.name);
@@ -422,16 +408,6 @@ function handleUrlParameters() {
         loadDbFromServer("Grundschule.db");
     };
 }
-
-
-
-
-
-
-
-
-
-
 
 //function: aktualisiert das #selDbChooser select Feld
 function updateDbChooser(selected) {
@@ -495,5 +471,4 @@ function buildDatabaseName(name, appendix) {
 
     }
 }
-
 
