@@ -46,7 +46,7 @@ Erfolgt die Bereitstellung außerhalb einer öffentlichen Bildungseinrichtung od
 
 ## Links
 - :pencil2: [SQLverine authoring tool](https://github.com/Sulkar/SQLverine-authoring-tool)
-- :open_book: [SQLite Dokumentation](https://github.com/Sulkar/sqlite-dokumentation/)
+- :open_book: [SQLverine Webseite mit Dokumentation](https://github.com/Sulkar/SQLverine-website)
 - [SQL.JS](https://sql.js.org/)
 - [jQuery](https://jquery.com/)
 - [Bootstrap](https://getbootstrap.com/)
