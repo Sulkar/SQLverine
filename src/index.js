@@ -3,6 +3,7 @@ import { Tab } from "bootstrap";
 import initSqlJs from "sql.js";
 import { VerineDatabase } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
+//import { SqlVerineEditor } from "./SqlVerineEditor2"
 import "./css/index.css"
 
 //global variables
@@ -18,6 +19,7 @@ DATABASE_ARRAY.push(new VerineDatabase("SchuleInfo.db", null, "server"));
 // INIT //
 
 //setup SqlVerineEditor
+//var sqlVerineEditor = new SqlVerineEditor();
 sqlVerineEditor.setEditorContainer("SqlVerineEditor");
 sqlVerineEditor.setSchemaContainer("schemaArea");
 sqlVerineEditor.setOutputContainer("outputArea");
@@ -110,7 +112,7 @@ $('#selDbChooser').on('change', function () {
             let tab = new Tab(someTabTriggerEl);
             tab.show();
         });
-        sqlVerineEditor.addRunFunction(() => {            
+        sqlVerineEditor.addRunFunction(() => {
             if (CURRENT_VERINE_DATABASE.hasExercises()) {
                 let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
                 checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
@@ -171,7 +173,7 @@ $("#fileDbUpload").on('change', function () {
                 let tab = new Tab(someTabTriggerEl);
                 tab.show();
             });
-            sqlVerineEditor.addRunFunction(() => {            
+            sqlVerineEditor.addRunFunction(() => {
                 if (CURRENT_VERINE_DATABASE.hasExercises()) {
                     console.log("ddd")
 
@@ -354,7 +356,7 @@ function loadDbFromServer(dbName) {
             let tab = new Tab(someTabTriggerEl);
             tab.show();
         });
-        sqlVerineEditor.addRunFunction(() => {            
+        sqlVerineEditor.addRunFunction(() => {
             if (CURRENT_VERINE_DATABASE.hasExercises()) {
                 let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
                 checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
