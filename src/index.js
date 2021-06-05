@@ -4,6 +4,7 @@ import initSqlJs from "sql.js";
 import { VerineDatabase } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
 //import { SqlVerineEditor } from "./SqlVerineEditor2"
+import 'bootstrap/dist/css/bootstrap.min.css';
 import "./css/index.css"
 
 //global variables
@@ -24,6 +25,7 @@ sqlVerineEditor.setEditorContainer("SqlVerineEditor");
 sqlVerineEditor.setSchemaContainer("schemaArea");
 sqlVerineEditor.setOutputContainer("outputArea");
 sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
+sqlVerineEditor.showCodeButton(true);
 sqlVerineEditor.init();
 
 //start
@@ -118,9 +120,9 @@ $('#selDbChooser').on('change', function () {
                 checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
             }
         });
-
+        if (CURRENT_VERINE_DATABASE.hasExercises()) sqlVerineEditor.activateExercises(true);
+        else sqlVerineEditor.activateExercises(false);
         sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
-        sqlVerineEditor.setActiveCodeViewData(ACTIVE_CODE_VIEW_DATA);
         sqlVerineEditor.reinit();
         ////////////
 
@@ -175,16 +177,13 @@ $("#fileDbUpload").on('change', function () {
             });
             sqlVerineEditor.addRunFunction(() => {
                 if (CURRENT_VERINE_DATABASE.hasExercises()) {
-                    console.log("ddd")
-
                     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-                    console.log(CURRENT_EXERCISE)
                     checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
                 }
             });
-
+            if (CURRENT_VERINE_DATABASE.hasExercises()) sqlVerineEditor.activateExercises(true);
+            else sqlVerineEditor.activateExercises(false);
             sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
-            sqlVerineEditor.setActiveCodeViewData(ACTIVE_CODE_VIEW_DATA);
             sqlVerineEditor.reinit();
             ////////////
 
@@ -303,7 +302,7 @@ function updateExercise() {
     $(".exercise-feedback").hide();
     if (CURRENT_EXERCISE.geloest) {
         $(".exercise-feedback").show();
-        $(".exercise-feedback div").html(CURRENT_EXERCISE.feedback);
+        $(".exercise-feedback-text").html(CURRENT_EXERCISE.feedback);
         $(".exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
     } else if (CURRENT_EXERCISE.answerObject.input) {
@@ -362,9 +361,9 @@ function loadDbFromServer(dbName) {
                 checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
             }
         });
-
+        if (CURRENT_VERINE_DATABASE.hasExercises()) sqlVerineEditor.activateExercises(true);
+        else sqlVerineEditor.activateExercises(false);
         sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
-        sqlVerineEditor.setActiveCodeViewData(ACTIVE_CODE_VIEW_DATA);
         sqlVerineEditor.reinit();
         ////////////
 

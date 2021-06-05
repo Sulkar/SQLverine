@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "build": "webpack",
-    "start": "webpack serve --open"
+    "build": "webpack --mode production",
+    "start": "webpack serve --open --mode development"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^9.0.0",

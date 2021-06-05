@@ -18,10 +18,12 @@ export default (function () {
     var OUTPUT_CONTAINER;
     var OUTPUT_CONTAINER_MOBILE;
     var RUN_FUNCTIONS = [];
-    var urlCode = undefined;
-    var urlCurrentID = undefined;
+    var URLCODE = undefined;
+    var URL_CURRENT_ID = undefined;
     var SOLUTION_ALL_ARRAY = [];
     var SOLUTION_ROW_COUNTER = 0;
+    var ACTIVATE_EXERCISES = false;
+    var SHOW_CODE_BTN = true;
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = () => {
@@ -31,6 +33,7 @@ export default (function () {
         CURRENT_SELECTED_SQL_ELEMENT = "START";
         USED_TABLES = [];
         //
+        loadActiveCodeViewData();
         setupEditor();
         //
         initEvents();
@@ -47,15 +50,11 @@ export default (function () {
         USED_TABLES = [];
         //
         updateActiveCodeView();
-        if (urlCode != undefined) {
+        if (URLCODE != undefined) {
             fillCodeAreaWithCode();
         }
     }
 
-
-    sqlVerineEditor.setActiveCodeViewData = (activeCodeViewData) => {
-        ACTIVE_CODE_VIEW_DATA = activeCodeViewData;
-    }
     sqlVerineEditor.setVerineDatabase = (verineDatabase) => {
         CURRENT_VERINE_DATABASE = verineDatabase;
     }
@@ -78,8 +77,8 @@ export default (function () {
         RUN_FUNCTIONS = [];
     }
     sqlVerineEditor.setUrlCodeParameters = (code, currentID) => {
-        urlCode = code;
-        urlCurrentID = currentID;
+        URLCODE = code;
+        URL_CURRENT_ID = currentID;
     }
     sqlVerineEditor.getSolutionAllArray = () => {
         return SOLUTION_ALL_ARRAY;
@@ -87,10 +86,22 @@ export default (function () {
     sqlVerineEditor.getSolutionRowCounter = () => {
         return SOLUTION_ROW_COUNTER;
     }
+    sqlVerineEditor.activateExercises = (activate) => {
+        ACTIVATE_EXERCISES = activate;
+    }
+    sqlVerineEditor.showCodeButton = (showCodeButton) => {
+        SHOW_CODE_BTN = showCodeButton;
+    }
+
+    function loadActiveCodeViewData() {
+        $.getJSON("data/activeCodeViewData.json", function (json) {
+            ACTIVE_CODE_VIEW_DATA = json; // this will show the info it in firebug console
+        });
+    }
 
     function fillCodeAreaWithCode() {
-        $(EDITOR_CONTAINER).find('.codeArea.editor pre code').html(unescape(urlCode));
-        NR = urlCurrentID;
+        $(EDITOR_CONTAINER).find('.codeArea.editor pre code').html(unescape(URLCODE));
+        NR = URL_CURRENT_ID;
     }
 
     function setupEditor() {
@@ -100,12 +111,14 @@ export default (function () {
 
     function setupCodeArea() {
         let codeArea = '<div class="codeAreaWrapper">';
-        codeArea += '<button id="btnCreateUrl" class="btnCreateUrl d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">'
-        codeArea += '<svg xmlns="http://www.w3.org/2000/svg" width="1.6em" height="1.6em" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">';
-        codeArea += '<path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />';
-        codeArea += '<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z" />';
-        codeArea += '</svg>';
-        codeArea += '</button>';
+        if (SHOW_CODE_BTN) {
+            codeArea += '<button id="btnCreateUrl" class="btnCreateUrl d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">'
+            codeArea += '<svg xmlns="http://www.w3.org/2000/svg" width="1.6em" height="1.6em" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">';
+            codeArea += '<path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />';
+            codeArea += '<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z" />';
+            codeArea += '</svg>';
+            codeArea += '</button>';
+        }
         codeArea += '<div class="codeArea editor">';
         codeArea += '<pre><code></code></pre>';
         codeArea += '</div>';
@@ -537,7 +550,7 @@ export default (function () {
             SOLUTION_ROW_COUNTER++;
             value.forEach((element, indexColumn) => {
                 //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
-                if (CURRENT_VERINE_DATABASE.hasExercises()) checkElement(element, columns[indexColumn]);
+                if (ACTIVATE_EXERCISES) checkElement(element, columns[indexColumn]);
                 if (element != null && element.length > 200) {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {
@@ -653,22 +666,23 @@ export default (function () {
 
     //function: returns a normal or extended inputField ( ___ or ,___ )
     function addInputField(tempSqlElement, type) {
+        let tempInputField = "";
         if (type == "root") {
-            let tempInputField = "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier root' data-sql-element='" + tempSqlElement + "'>___</span>";
+            tempInputField = "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier root' data-sql-element='" + tempSqlElement + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
             NR++;
         } else if (type == "extendedComma") {
-            let tempInputField = addLeerzeichenMitKomma();
+            tempInputField = addLeerzeichenMitKomma();
             tempInputField += "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier extended comma' data-sql-element='" + tempSqlElement + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
             NR++;
         } else if (type == "extendedSpace") {
-            let tempInputField = addLeerzeichen();
+            tempInputField = addLeerzeichen();
             tempInputField += "<span class='codeElement_" + NR + " inputField unfilled sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
             NR++;
         } else if (type == "insertInto") {
-            let tempInputField = addLeerzeichen();
+            tempInputField = addLeerzeichen();
             tempInputField += "<span class='codeElement_" + NR + " sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>(</span>";
             NR++;
             tempInputField += "<span class='codeElement_" + NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (NR + 2) + "' data-element-group='" + (NR - 2) + "," + (NR - 1) + "," + (NR + 1) + "'>___</span>";
