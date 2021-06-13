@@ -151,7 +151,7 @@ export default (function () {
         mainMenu += '</button>';
         mainMenu += '</div>';
         mainMenu += '<div class="col rightMenu d-md-none">';
-        mainMenu += '<button class="btnRunMobile" data-toggle="modal" data-bs-toggle="modal" data-bs-target="#resultModal">';
+        mainMenu += '<button class="btnRunMobile">';
         mainMenu += '<svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16"><path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" /><path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" /> </svg>';
         mainMenu += '</button>';
         mainMenu += '</div>';
@@ -277,6 +277,9 @@ export default (function () {
             let tempCode = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
             execSqlCommand(null, "mobile");
+            RUN_FUNCTIONS.forEach(runFunction => {
+                runFunction();
+            });
         });
         // Button: Delete Element
         $(EDITOR_CONTAINER).on('click', '.btnDelete', function (event) {
@@ -390,6 +393,34 @@ export default (function () {
             //kopiert den selektierten Text in die Zwischenablage
             document.execCommand("copy");
         });
+
+        // Scrollfortschritt als Dots anzeigen
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('scroll', function () {
+            let maxWidth = $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth;
+            let dotCount = Math.ceil($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth / $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth);
+            let scrollIndex = Math.ceil(($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft() + ($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth / 2)) / ((maxWidth / dotCount)))-1;
+            $(EDITOR_CONTAINER).find(".codeComponentsScrolldots a").removeClass("activeDot");
+            $(EDITOR_CONTAINER).find(".codeComponentsScrolldots a").eq(scrollIndex).addClass("activeDot");
+        });
+
+        // Scrolldots bei Klick an Position springen lassen
+        $(EDITOR_CONTAINER).find(".codeComponentsScrolldots").on('click', 'a', function () {
+            let dotCountBefore = $(this).prevAll().length;
+            let dotCountAfter = $(this).nextAll().length;
+            let maxWidth = $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth;
+            let scrollPos = 0;
+
+            if (dotCountBefore == 0) {
+                scrollPos = 0;
+            } else if (dotCountAfter == 0) {
+                scrollPos = maxWidth;
+            } else {
+                scrollPos = $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth * dotCountBefore;
+            }
+            $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft(scrollPos);
+        });
+
+
     }
 
     /////////////

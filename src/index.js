@@ -1,11 +1,12 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "./css/index.css"
 import $ from "jquery";
-import { Tab } from "bootstrap";
+import { Tab, Modal } from "bootstrap";
 import initSqlJs from "sql.js";
 import { VerineDatabase } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
 //import { SqlVerineEditor } from "./SqlVerineEditor2"
-import 'bootstrap/dist/css/bootstrap.min.css';
-import "./css/index.css"
+
 
 //global variables
 var ACTIVE_CODE_VIEW_DATA; // JSON Data holder
@@ -16,6 +17,7 @@ var CURRENT_DATABASE_INDEX = 0;
 DATABASE_ARRAY.push(new VerineDatabase("Grundschule.db", null, "server"));
 DATABASE_ARRAY.push(new VerineDatabase("SchuleInfo.db", null, "server"));
 
+var mobileResultModal = new Modal(document.getElementById('resultModal'));
 //////////
 // INIT //
 
@@ -57,44 +59,28 @@ $("#outputArea").on("click", "#btnExerciseSuccess", function () {
     let tab = new Tab(document.querySelector('#nav-mission-tab'));
     tab.show();
 });
+$("#resultModal").on("click", "#btnExerciseSuccess", function () {    
+    mobileResultModal.hide();
+    let scrollHeight = $(".exerciseMobileView").get(0).scrollHeight;
+    $(".exerciseMobileView").scrollTop(scrollHeight);
+});
+
 
 $(".tab-content #nav-mission").on("click", ".btnNextExercise", function () {
     CURRENT_VERINE_DATABASE.getNextExerciseId(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     updateExercise();
 });
 
-// Scrollfortschritt als Dots anzeigen
-$(".buttonArea.codeComponents").on('scroll', function () {
-    let maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
-    let dotCount = Math.ceil($(".buttonArea.codeComponents").get(0).scrollWidth / $(".buttonArea.codeComponents").get(0).clientWidth);
-    let scrollIndex = Math.ceil(($(".buttonArea.codeComponents").scrollLeft() + ($(".buttonArea.codeComponents").get(0).clientWidth / 2)) / ((maxWidth / dotCount)));
-    $(".codeComponentsScrolldots a").removeClass("activeDot");
-    $(".codeComponentsScrolldots a").eq(scrollIndex).addClass("activeDot");
-
+$(".exerciseMobileView").on("click", ".btnNextExercise", function () {
+    CURRENT_VERINE_DATABASE.getNextExerciseId(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+    updateExercise();
+    $(".exerciseMobileView").scrollTop(0);
 });
 
 //Button ist im Infotab und navigiert den Nutzer zum Aufgabentab
 $("#btnGotoExerciseTab").on('click', function () {
     let tab = new Tab(document.querySelector('#nav-mission-tab'));
     tab.show();
-});
-
-
-// Scrolldots bei Klick an Position springen lassen
-$(".codeComponentsScrolldots").on('click', 'a', function () {
-    var dotCountBefore = $(this).prevAll().length;
-    var dotCountAfter = $(this).nextAll().length;
-    var maxWidth = $(".buttonArea.codeComponents").get(0).scrollWidth;
-    var scrollPos = 0;
-
-    if (dotCountBefore == 0) {
-        scrollPos = 0;
-    } else if (dotCountAfter == 0) {
-        scrollPos = maxWidth;
-    } else {
-        scrollPos = $(".buttonArea.codeComponents").get(0).clientWidth * dotCountBefore;
-    }
-    $(".buttonArea.codeComponents").scrollLeft(scrollPos);
 });
 
 // Select: Datenbank wird ausgewählt
@@ -113,6 +99,9 @@ $('#selDbChooser').on('change', function () {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
             let tab = new Tab(someTabTriggerEl);
             tab.show();
+        });
+        sqlVerineEditor.addRunFunction(() => {
+            mobileResultModal.show();
         });
         sqlVerineEditor.addRunFunction(() => {
             if (CURRENT_VERINE_DATABASE.hasExercises()) {
@@ -174,6 +163,9 @@ $("#fileDbUpload").on('change', function () {
                 let someTabTriggerEl = document.querySelector('#nav-result-tab');
                 let tab = new Tab(someTabTriggerEl);
                 tab.show();
+            });
+            sqlVerineEditor.addRunFunction(() => {
+                mobileResultModal.show();
             });
             sqlVerineEditor.addRunFunction(() => {
                 if (CURRENT_VERINE_DATABASE.hasExercises()) {
@@ -277,7 +269,7 @@ function updateExercise() {
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
     let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
-
+    console.log("updateExercise")
     $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
     $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
     //Beschreibung
@@ -320,6 +312,7 @@ function removeEmptyTags(stringToTest) {
 
 //function: Überprüft ob die Antwort richtig ist
 function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
+    console.log("checked")
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let solutionRows = CURRENT_EXERCISE.answerObject.rows;
     let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;
@@ -330,6 +323,7 @@ function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
     if (solutionRows == solutionRowCounter && solutionStrings == solutionAllArray.length && !answerInput) {
         CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
         $("#outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+        $("#resultModal .modal-body").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
         updateExercise();
     }
     //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
@@ -351,9 +345,12 @@ function loadDbFromServer(dbName) {
         //reinit SqlVerineEditor       
         sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunction(() => {
-            let someTabTriggerEl = document.querySelector('#nav-result-tab');
+            let someTabTriggerEl = document.getElementById('nav-result-tab');
             let tab = new Tab(someTabTriggerEl);
             tab.show();
+        });
+        sqlVerineEditor.addRunFunction(() => {
+            mobileResultModal.show();
         });
         sqlVerineEditor.addRunFunction(() => {
             if (CURRENT_VERINE_DATABASE.hasExercises()) {

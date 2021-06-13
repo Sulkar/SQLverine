@@ -85,7 +85,7 @@
                         <select id="selDbChooser">
                             <option value="init">Datenbank</option>
                         </select>
-                    
+
                         <!-- button file Upload -->
                         <label for="fileDbUpload" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip"
                             data-placement="top" title="Upload Database">
@@ -201,9 +201,11 @@
 
                     </div>
 
-                    <!-- Aufgabenanzeige für Mobileview -->
-                    <div class="row d-md-none exerciseMobileView">
+                </div>
 
+                <!-- Aufgabenanzeige für Mobileview -->
+                <div class="row d-md-none exerciseMobileView">
+                    <div class="col">
                         <div class="progress">
                             <div class="progress-bar progress-bar-exercise" id="progress-bar-exercise"
                                 role="progressbar" aria-valuemin="0" aria-valuemax="100">
@@ -228,8 +230,8 @@
                                         <h2 class="accordion-header" id="headingOne">
                                             <button class="accordion-button collapsed" type="button"
                                                 data-bs-toggle="collapse"
-                                                data-bs-target="#accordionExerciseMetaCollapse" aria-expanded="false"
-                                                aria-controls="accordionExerciseMetaCollapse">
+                                                data-bs-target="#accordionExerciseMetaCollapse"
+                                                aria-expanded="false" aria-controls="accordionExerciseMetaCollapse">
                                                 Hilfreiche Informationen
                                             </button>
                                         </h2>
@@ -246,23 +248,22 @@
                                 <br>
                                 <div class="exercise-feedback">
                                     <h3 class="">Richtig!</h3>
-                                    <div class="exercise-feedback-text"></div>                                    
+                                    <div class="exercise-feedback-text"></div>
                                 </div>
 
 
                             </div>
 
-                            <div class="exercise-output" style="margin-top: 5px;">
+                            <div class="exercise-output" style="margin-top: 5px; margin-bottom: 5px;">
 
                             </div>
                         </div>
-
                     </div>
-                    
                 </div>
+
                 <div class="row">
                     <div class="col">
-                                                                
+
                     </div>
                 </div>
                 <div class="row">
@@ -486,7 +487,7 @@
     </div>
 
     <!-- Modal -->
-   
+
 
 
     <script type="text/javascript" src="main.js"></script>
