@@ -17,7 +17,8 @@ export default (function () {
     var SCHEMA_CONTAINER;
     var OUTPUT_CONTAINER;
     var OUTPUT_CONTAINER_MOBILE;
-    var RUN_FUNCTIONS = [];
+    var RUN_FUNCTIONS_DESKTOP = [];
+    var RUN_FUNCTIONS_MOBILE = [];
     var URLCODE = undefined;
     var URL_CURRENT_ID = undefined;
     var SOLUTION_ALL_ARRAY = [];
@@ -72,11 +73,15 @@ export default (function () {
     sqlVerineEditor.setOutputContainerMobile = (outputContainerMobile) => {
         OUTPUT_CONTAINER_MOBILE = document.getElementById(outputContainerMobile);
     }
-    sqlVerineEditor.addRunFunction = (runFunction) => {
-        RUN_FUNCTIONS.push(runFunction);
+    sqlVerineEditor.addRunFunctionDesktop = (runFunction) => {
+        RUN_FUNCTIONS_DESKTOP.push(runFunction);
+    }
+    sqlVerineEditor.addRunFunctionMobile = (runFunction) => {
+        RUN_FUNCTIONS_MOBILE.push(runFunction);
     }
     sqlVerineEditor.resetRunFunctions = () => {
-        RUN_FUNCTIONS = [];
+        RUN_FUNCTIONS_DESKTOP = [];
+        RUN_FUNCTIONS_MOBILE = [];
     }
     sqlVerineEditor.setUrlCodeParameters = (code, currentID) => {
         URLCODE = code;
@@ -276,7 +281,7 @@ export default (function () {
         // Button: run sql command - desktop
         $(EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
             execSqlCommand(null, "desktop");
-            RUN_FUNCTIONS.forEach(runFunction => {
+            RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                 runFunction();
             });
         });
@@ -285,7 +290,7 @@ export default (function () {
             let tempCode = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
             execSqlCommand(null, "mobile");
-            RUN_FUNCTIONS.forEach(runFunction => {
+            RUN_FUNCTIONS_MOBILE.forEach(runFunction => {
                 runFunction();
             });
         });
