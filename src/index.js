@@ -322,7 +322,7 @@ function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
     if (solutionRows == solutionRowCounter && solutionStrings == solutionAllArray.length && !answerInput) {
         CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
         $("#outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
-        $("#resultModal .modal-body").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+        $("#resultModal .modal-body").find(".resultArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
         updateExercise();
     }
     //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
