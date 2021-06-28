@@ -5,7 +5,6 @@ import { Tab, Modal } from "bootstrap";
 import initSqlJs from "sql.js";
 import { VerineDatabase } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
-//import { SqlVerineEditor } from "./SqlVerineEditor2"
 
 
 //global variables
@@ -59,7 +58,7 @@ $("#outputArea").on("click", "#btnExerciseSuccess", function () {
     let tab = new Tab(document.querySelector('#nav-mission-tab'));
     tab.show();
 });
-$("#resultModal").on("click", "#btnExerciseSuccess", function () {    
+$("#resultModal").on("click", "#btnExerciseSuccess", function () {
     mobileResultModal.hide();
     let scrollHeight = $(".exerciseMobileView").get(0).scrollHeight;
     $(".exerciseMobileView").scrollTop(scrollHeight);
@@ -95,20 +94,22 @@ $('#selDbChooser').on('change', function () {
 
         //reinit SqlVerineEditor       
         sqlVerineEditor.resetRunFunctions();
-        sqlVerineEditor.addRunFunction(() => {
+        sqlVerineEditor.addRunFunctionDesktop(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
             let tab = new Tab(someTabTriggerEl);
             tab.show();
         });
-        sqlVerineEditor.addRunFunction(() => {
+        sqlVerineEditor.addRunFunctionMobile(() => {
             mobileResultModal.show();
         });
-        sqlVerineEditor.addRunFunction(() => {
+        let runFunctionExercises = () => {
             if (CURRENT_VERINE_DATABASE.hasExercises()) {
                 let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
                 checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
             }
-        });
+        }
+        sqlVerineEditor.addRunFunctionDesktop(runFunctionExercises);
+        sqlVerineEditor.addRunFunctionMobile(runFunctionExercises);
         if (CURRENT_VERINE_DATABASE.hasExercises()) sqlVerineEditor.activateExercises(true);
         else sqlVerineEditor.activateExercises(false);
         sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
@@ -159,20 +160,22 @@ $("#fileDbUpload").on('change', function () {
 
             //reinit SqlVerineEditor       
             sqlVerineEditor.resetRunFunctions();
-            sqlVerineEditor.addRunFunction(() => {
+            sqlVerineEditor.addRunFunctionDesktop(() => {
                 let someTabTriggerEl = document.querySelector('#nav-result-tab');
                 let tab = new Tab(someTabTriggerEl);
                 tab.show();
             });
-            sqlVerineEditor.addRunFunction(() => {
+            sqlVerineEditor.addRunFunctionMobile(() => {
                 mobileResultModal.show();
             });
-            sqlVerineEditor.addRunFunction(() => {
+            let runFunctionExercises = () => {
                 if (CURRENT_VERINE_DATABASE.hasExercises()) {
                     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
                     checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
                 }
-            });
+            }
+            sqlVerineEditor.addRunFunctionDesktop(runFunctionExercises);
+            sqlVerineEditor.addRunFunctionMobile(runFunctionExercises);
             if (CURRENT_VERINE_DATABASE.hasExercises()) sqlVerineEditor.activateExercises(true);
             else sqlVerineEditor.activateExercises(false);
             sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
@@ -323,7 +326,7 @@ function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
     if (solutionRows == solutionRowCounter && solutionStrings == solutionAllArray.length && !answerInput) {
         CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
         $("#outputArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
-        $("#resultModal .modal-body").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
+        $("#resultModal .modal-body").find(".resultArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
         updateExercise();
     }
     //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
@@ -344,20 +347,22 @@ function loadDbFromServer(dbName) {
 
         //reinit SqlVerineEditor       
         sqlVerineEditor.resetRunFunctions();
-        sqlVerineEditor.addRunFunction(() => {
-            let someTabTriggerEl = document.getElementById('nav-result-tab');
+        sqlVerineEditor.addRunFunctionDesktop(() => {
+            let someTabTriggerEl = document.querySelector('#nav-result-tab');
             let tab = new Tab(someTabTriggerEl);
             tab.show();
         });
-        sqlVerineEditor.addRunFunction(() => {
+        sqlVerineEditor.addRunFunctionMobile(() => {
             mobileResultModal.show();
         });
-        sqlVerineEditor.addRunFunction(() => {
+        let runFunctionExercises = () => {
             if (CURRENT_VERINE_DATABASE.hasExercises()) {
                 let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
                 checkAnswer(CURRENT_EXERCISE.answerObject.input, sqlVerineEditor.getSolutionAllArray(), sqlVerineEditor.getSolutionRowCounter());
             }
-        });
+        }
+        sqlVerineEditor.addRunFunctionDesktop(runFunctionExercises);
+        sqlVerineEditor.addRunFunctionMobile(runFunctionExercises);
         if (CURRENT_VERINE_DATABASE.hasExercises()) sqlVerineEditor.activateExercises(true);
         else sqlVerineEditor.activateExercises(false);
         sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);

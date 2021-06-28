@@ -17,13 +17,15 @@ export default (function() {
     var SCHEMA_CONTAINER;
     var OUTPUT_CONTAINER;
     var OUTPUT_CONTAINER_MOBILE;
-    var RUN_FUNCTIONS = [];
+    var RUN_FUNCTIONS_DESKTOP = [];
+    var RUN_FUNCTIONS_MOBILE = [];
     var URLCODE = undefined;
     var URL_CURRENT_ID = undefined;
     var SOLUTION_ALL_ARRAY = [];
     var SOLUTION_ROW_COUNTER = 0;
     var ACTIVATE_EXERCISES = false;
     var SHOW_CODE_BTN = true;
+    var SHOW_EXERCISE_TABLE = false;
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = () => {
@@ -49,6 +51,7 @@ export default (function() {
         CURRENT_SELECTED_SQL_ELEMENT = "START";
         USED_TABLES = [];
         //
+        $(EDITOR_CONTAINER).find('.codeArea.editor pre code').html("");
         updateActiveCodeView();
         if (URLCODE != undefined) {
             fillCodeAreaWithCode();
@@ -70,11 +73,15 @@ export default (function() {
     sqlVerineEditor.setOutputContainerMobile = (outputContainerMobile) => {
         OUTPUT_CONTAINER_MOBILE = document.getElementById(outputContainerMobile);
     }
-    sqlVerineEditor.addRunFunction = (runFunction) => {
-        RUN_FUNCTIONS.push(runFunction);
+    sqlVerineEditor.addRunFunctionDesktop = (runFunction) => {
+        RUN_FUNCTIONS_DESKTOP.push(runFunction);
+    }
+    sqlVerineEditor.addRunFunctionMobile = (runFunction) => {
+        RUN_FUNCTIONS_MOBILE.push(runFunction);
     }
     sqlVerineEditor.resetRunFunctions = () => {
-        RUN_FUNCTIONS = [];
+        RUN_FUNCTIONS_DESKTOP = [];
+        RUN_FUNCTIONS_MOBILE = [];
     }
     sqlVerineEditor.setUrlCodeParameters = (code, currentID) => {
         URLCODE = code;
@@ -91,6 +98,12 @@ export default (function() {
     }
     sqlVerineEditor.showCodeButton = (showCodeButton) => {
         SHOW_CODE_BTN = showCodeButton;
+    }
+    sqlVerineEditor.showExerciseTable = () => {
+        SHOW_EXERCISE_TABLE = true;
+    }
+    sqlVerineEditor.hideExerciseTable = () => {
+        SHOW_EXERCISE_TABLE = false;
     }
 
     function loadActiveCodeViewData() {
@@ -273,7 +286,7 @@ export default (function() {
         // Button: run sql command - desktop
         $(EDITOR_CONTAINER).on('click', '.btnRun', function(event) {
             execSqlCommand(null, "desktop");
-            RUN_FUNCTIONS.forEach(runFunction => {
+            RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                 runFunction();
             });
         });
@@ -282,7 +295,7 @@ export default (function() {
             let tempCode = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
             execSqlCommand(null, "mobile");
-            RUN_FUNCTIONS.forEach(runFunction => {
+            RUN_FUNCTIONS_MOBILE.forEach(runFunction => {
                 runFunction();
             });
         });
@@ -424,8 +437,6 @@ export default (function() {
             }
             $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft(scrollPos);
         });
-
-
     }
 
     /////////////
@@ -961,7 +972,7 @@ export default (function() {
         clearSelectionOptions(".buttonArea .selTable");
         let databaseTables = getSqlTables();
         for (let i = 0; i < databaseTables.length; i++) {
-            if (databaseTables[i] != "verine_exercises") {
+            if (databaseTables[i] != "verine_exercises" || SHOW_EXERCISE_TABLE) {
                 $(EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
             }
         }
