@@ -5,7 +5,6 @@ import { Tab, Modal } from "bootstrap";
 import initSqlJs from "sql.js";
 import { VerineDatabase } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
-//import { SqlVerineEditor } from "./SqlVerineEditor2"
 
 
 //global variables
