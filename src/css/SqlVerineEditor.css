@@ -34,7 +34,7 @@ div.col.centerMenu {
     width: 5em;
 }
 
-.buttonArea select{
+.buttonArea select {
     appearance: none;
     -webkit-appearance: button;
     -moz-appearance: button;
@@ -136,8 +136,6 @@ div.col.centerMenu {
     color: goldenrod;
 }
 
-
-
 .buttonArea select.synOperators {
     background-image: url("data:image/svg+xml;utf8,<svg fill='goldenrod' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
 }
@@ -168,7 +166,6 @@ div.col.centerMenu {
 .buttonArea select.synTyp {
     background-image: url("data:image/svg+xml;utf8,<svg fill='grey' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
 }
-
 
 
 /* Löschen, Hinzufügen, Run Button*/
@@ -204,11 +201,11 @@ div.col.centerMenu {
 
 #btnCreateUrl {
     position: absolute;
-    top: 0.3em;
-    right: 1em;
+    top: 1.7em;
+    right: 0.3em;
     color: slategrey;
     border: none;
-    background: #fff;
+    background: transparent none;
 }
 
 
@@ -220,7 +217,6 @@ div.col.centerMenu {
     border: 1px solid lightgrey;
     min-height: 3.1em;
 }
-
 
 code {
     font-family: monospace;
@@ -246,12 +242,9 @@ pre span.codeline {
     line-height: 1.5rem;
 }
 
-
-
 pre span.codeline span:first {
     padding-left: 2em;
 }
-
 
 .codeComponentsScrolldots {
     text-align: center;

@@ -2,7 +2,7 @@ import $ from "jquery";
 import { Modal } from "bootstrap";
 import "./css/SqlVerineEditor.css"
 
-export default (function () {
+export default (function() {
 
     var sqlVerineEditor = {};
 
@@ -27,21 +27,21 @@ export default (function () {
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = () => {
-        NR = 0;
-        NEXT_ELEMENT_NR = 0;
-        CURRENT_SELECTED_ELEMENT = undefined;
-        CURRENT_SELECTED_SQL_ELEMENT = "START";
-        USED_TABLES = [];
-        //
-        loadActiveCodeViewData();
-        setupEditor();
-        //
-        initEvents();
-        initCodeComponentsButtons();
-        //
+            NR = 0;
+            NEXT_ELEMENT_NR = 0;
+            CURRENT_SELECTED_ELEMENT = undefined;
+            CURRENT_SELECTED_SQL_ELEMENT = "START";
+            USED_TABLES = [];
+            //
+            loadActiveCodeViewData();
+            setupEditor();
+            //
+            initEvents();
+            initCodeComponentsButtons();
+            //
 
-    }
-    //Initialisierung des SqlVerineEditors
+        }
+        //Initialisierung des SqlVerineEditors
     sqlVerineEditor.reinit = () => {
         NR = 0;
         NEXT_ELEMENT_NR = 0;
@@ -94,7 +94,7 @@ export default (function () {
     }
 
     function loadActiveCodeViewData() {
-        $.getJSON("data/activeCodeViewData.json", function (json) {
+        $.getJSON("data/activeCodeViewData.json", function(json) {
             ACTIVE_CODE_VIEW_DATA = json; // this will show the info it in firebug console
         });
     }
@@ -111,6 +111,9 @@ export default (function () {
 
     function setupCodeArea() {
         let codeArea = '<div class="codeAreaWrapper">';
+        codeArea += '<div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="sqlVerineSwitch" checked><label class="form-check-label" for="sqlVerineSwitch">SQLverine</label></div>';
+
+
         if (SHOW_CODE_BTN) {
             codeArea += '<button id="btnCreateUrl" class="btnCreateUrl d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">'
             codeArea += '<svg xmlns="http://www.w3.org/2000/svg" width="1.6em" height="1.6em" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">';
@@ -119,6 +122,8 @@ export default (function () {
             codeArea += '</svg>';
             codeArea += '</button>';
         }
+
+
         codeArea += '<div class="codeArea editor">';
         codeArea += '<pre><code></code></pre>';
         codeArea += '</div>';
@@ -204,7 +209,7 @@ export default (function () {
     //EVENTS//
     function initEvents() {
         //span click
-        $(EDITOR_CONTAINER).on('click', '.codeArea.editor span', function (event) {
+        $(EDITOR_CONTAINER).on('click', '.codeArea.editor span', function(event) {
 
             event.stopPropagation();
             let elementNr;
@@ -223,7 +228,7 @@ export default (function () {
         });
 
         // Select: change dbField, dbTable, Aggregatsfunktion
-        $(EDITOR_CONTAINER).on('change', '.codeSelect', function () {
+        $(EDITOR_CONTAINER).on('change', '.codeSelect', function() {
 
             if (CURRENT_SELECTED_ELEMENT != undefined) {
                 let tempSelectField = this;
@@ -266,14 +271,14 @@ export default (function () {
         });
 
         // Button: run sql command - desktop
-        $(EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
+        $(EDITOR_CONTAINER).on('click', '.btnRun', function(event) {
             execSqlCommand(null, "desktop");
             RUN_FUNCTIONS.forEach(runFunction => {
                 runFunction();
             });
         });
         // Button: run sql command - mobile 
-        $(EDITOR_CONTAINER).on('click', '.btnRunMobile', function (event) {
+        $(EDITOR_CONTAINER).on('click', '.btnRunMobile', function(event) {
             let tempCode = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
             execSqlCommand(null, "mobile");
@@ -282,14 +287,14 @@ export default (function () {
             });
         });
         // Button: Delete Element
-        $(EDITOR_CONTAINER).on('click', '.btnDelete', function (event) {
+        $(EDITOR_CONTAINER).on('click', '.btnDelete', function(event) {
             deleteElement(CURRENT_SELECTED_ELEMENT);
             // aktualisiert alle .selColumn <select>
             updateSelectCodeComponents();
         });
 
         //Button: Add Element "inputField"
-        $(EDITOR_CONTAINER).on('click', '.btnAdd', function (event) {
+        $(EDITOR_CONTAINER).on('click', '.btnAdd', function(event) {
             let dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
 
             if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
@@ -347,7 +352,7 @@ export default (function () {
         });
 
         // Input: add text to Selected Element span
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('keyup', '.codeInput', function(e) {
             if (CURRENT_SELECTED_ELEMENT != undefined) {
                 let tempValue = $(this).val();
                 if (tempValue != "") {
@@ -375,7 +380,7 @@ export default (function () {
         });
 
         //Button: öffnet ein Modal für das anzeigen des atkuellen URLStrings.    
-        $(EDITOR_CONTAINER).find("#btnCreateUrl").on("click", function () {
+        $(EDITOR_CONTAINER).find("#btnCreateUrl").on("click", function() {
             let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
             let urlDatabase = CURRENT_VERINE_DATABASE.name;
             let urlCode = escape($(".codeArea pre code").html().replaceAll("active", ""));
@@ -386,7 +391,7 @@ export default (function () {
             $(EDITOR_CONTAINER).find("#universal-modal .modal-body").html("<textarea type='text' id='inputCreateUrl' class='form-control input-check' aria-label='' aria-describedby=''>" + urlParameterString + "</textarea>");
             $(EDITOR_CONTAINER).find("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button> <button type="button" id="btnCopyLink" class="btn btn-primary">Link kopieren</button>');
         });
-        $(EDITOR_CONTAINER).find("#universal-modal").on('click', '#btnCopyLink', function () {
+        $(EDITOR_CONTAINER).find("#universal-modal").on('click', '#btnCopyLink', function() {
             let copyUrl = document.getElementById("inputCreateUrl");
             copyUrl.select();
             copyUrl.setSelectionRange(0, 99999); /* For mobile devices */
@@ -395,16 +400,16 @@ export default (function () {
         });
 
         // Scrollfortschritt als Dots anzeigen
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('scroll', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('scroll', function() {
             let maxWidth = $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth;
             let dotCount = Math.ceil($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth / $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth);
-            let scrollIndex = Math.ceil(($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft() + ($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth / 2)) / ((maxWidth / dotCount)))-1;
+            let scrollIndex = Math.ceil(($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft() + ($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth / 2)) / ((maxWidth / dotCount))) - 1;
             $(EDITOR_CONTAINER).find(".codeComponentsScrolldots a").removeClass("activeDot");
             $(EDITOR_CONTAINER).find(".codeComponentsScrolldots a").eq(scrollIndex).addClass("activeDot");
         });
 
         // Scrolldots bei Klick an Position springen lassen
-        $(EDITOR_CONTAINER).find(".codeComponentsScrolldots").on('click', 'a', function () {
+        $(EDITOR_CONTAINER).find(".codeComponentsScrolldots").on('click', 'a', function() {
             let dotCountBefore = $(this).prevAll().length;
             let dotCountAfter = $(this).nextAll().length;
             let maxWidth = $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth;
@@ -430,14 +435,14 @@ export default (function () {
     function findElementBySqlData(elements, attributeValue, position) {
         let tempElement;
         if (position == "first") {
-            $(elements).each(function () {
+            $(elements).each(function() {
                 tempElement = this;
                 if ($(tempElement).data("sql-element") == attributeValue) {
                     return false; //found element -> stop loop
                 }
             });
         } else if (position == "last") {
-            $(elements.get().reverse()).each(function () {
+            $(elements.get().reverse()).each(function() {
                 tempElement = this;
                 if ($(tempElement).data("sql-element") == attributeValue) {
                     return false; //found element -> stop loop
@@ -465,11 +470,13 @@ export default (function () {
         NR++;
         return tempLeerzeichen;
     }
+
     function addLeerzeichenMitKomma() {
         let tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
         NR++;
         return tempLeerzeichen;
     }
+
     function addKomma() {
         let tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
         NR++;
@@ -634,7 +641,7 @@ export default (function () {
         //check all used tables in code area
         updateUsedTables();
         //entfernt alle .inputField die ein Feld einer gelöscht Tabelle haben
-        $(EDITOR_CONTAINER).find(".codeArea.editor .selColumn").each(function () {
+        $(EDITOR_CONTAINER).find(".codeArea.editor .selColumn").each(function() {
             let isTableActive = false;
             USED_TABLES.forEach(element => {
                 if ($(this).hasClass(element)) {
@@ -745,14 +752,14 @@ export default (function () {
     //function: überprüft den eingegebenen Code und passt diesen ggf. an
     function cleanSQLCode() {
         //sucht alle Elemente mit Klasse .createComma und fügt im .komma span ein Komma hinzu
-        $(EDITOR_CONTAINER).find('.createComma').each(function () {
+        $(EDITOR_CONTAINER).find('.createComma').each(function() {
             $(this).find(".komma").html(",")
         });
         //entfernt das letzte Komma der .createComma Klassen
         $(EDITOR_CONTAINER).find(".codeArea pre code").find(".createComma .komma").last().html("");
 
         // deletes all empty <span class="codeline">
-        $(EDITOR_CONTAINER).find(".codeline").each(function () {
+        $(EDITOR_CONTAINER).find(".codeline").each(function() {
             if ($(this).children().length == 0) $(this).remove();
         });
     }
@@ -1012,7 +1019,7 @@ export default (function () {
     //function: get all used db tables in code area
     function updateUsedTables() {
         USED_TABLES = [];
-        $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
+        $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function() {
             if (!USED_TABLES.includes($(this).html())) {
                 USED_TABLES.push($(this).html());
             }
@@ -1137,14 +1144,14 @@ export default (function () {
                 $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnCreateForeignKey synSQL sqlDelete"> FOREIGN KEY ___ REFERENCES ___ (___)</button>');
                 break;
             default:
-            //log("no component found")
+                //log("no component found")
         }
     }
 
     //initialisiert die Events für die CodeComponents Buttons
     function initCodeComponentsButtons() {
         // Button: SELECT ___ FROM ___
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSelect', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSelect', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             CURRENT_SELECTED_ELEMENT = undefined;
             let elementSELECT_FROM = "<span class='codeline'>";
@@ -1166,7 +1173,7 @@ export default (function () {
         });
 
         // Button: WHERE ___ ___ ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnWhere', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnWhere', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementWHERE = "<span class='codeline'>";
             elementWHERE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='WHERE'>WHERE";
@@ -1193,7 +1200,7 @@ export default (function () {
         });
 
         // Button: JOIN ___ ON ___ ___ ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnJoin', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnJoin', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementJOIN = "<span class='codeline'>";
             elementJOIN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='JOIN'>JOIN";
@@ -1225,7 +1232,7 @@ export default (function () {
         });
 
         //Button: AND
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAND', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAND', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
             let elementWhereAND = "";
@@ -1250,7 +1257,7 @@ export default (function () {
         });
 
         //Button: OR
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOR', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOR', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
             let elementWhereOR = "";
@@ -1275,7 +1282,7 @@ export default (function () {
         });
 
         //Button: LeftBracket
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLeftBracket', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
                 CURRENT_SELECTED_ELEMENT.before("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='LEFTBRACKET'> ( </span>");
@@ -1283,7 +1290,7 @@ export default (function () {
             }
         });
         //Button: RightBracket
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRightBracket', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRightBracket', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
                 CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='RIGHTBRACKET'> ) </span>");
@@ -1292,7 +1299,7 @@ export default (function () {
         });
 
         // Button: ORDER BY ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOrder', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOrder', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementORDER = "";
             elementORDER += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ORDER'>";
@@ -1310,7 +1317,7 @@ export default (function () {
         });
 
         //Button: ASC
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAsc', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAsc', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementOrderAsc = "";
             elementOrderAsc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ASC'>";
@@ -1325,7 +1332,7 @@ export default (function () {
         });
 
         //Button: DESC
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDesc', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDesc', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementOrderDesc = "";
             elementOrderDesc += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DESC'>";
@@ -1340,7 +1347,7 @@ export default (function () {
         });
 
         // Button: LIMIT ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLimit', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnLimit', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementLIMIT = "";
             elementLIMIT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='LIMIT'>";
@@ -1358,7 +1365,7 @@ export default (function () {
         });
 
         // Button: OFFSET ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOffset', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOffset', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementOFFSET = "";
             elementOFFSET += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OFFSET'>";
@@ -1376,7 +1383,7 @@ export default (function () {
         });
 
         // Button: GROUP BY ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnGroup', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnGroup', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementGROUP = "";
             elementGROUP += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='GROUP'>";
@@ -1394,7 +1401,7 @@ export default (function () {
         });
 
         // Button: HAVING ___ ___ ___ = like WHERE but can handle Aggregate functions
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnHaving', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnHaving', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementHAVING = "<span class='codeline'>";
             elementHAVING += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='HAVING'>";
@@ -1422,7 +1429,7 @@ export default (function () {
         });
 
         // Button: DELETE FROM ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnSQLDelete', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementDELETE_FROM = "<span class='codeline'>";
             elementDELETE_FROM += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DELETE_FROM'>";
@@ -1439,7 +1446,7 @@ export default (function () {
         });
 
         // Button: UPDATE ___ SET ___ = ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnUpdate', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnUpdate', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementUPDATE = "<span class='codeline'>";
             elementUPDATE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='UPDATE'>UPDATE";
@@ -1467,7 +1474,7 @@ export default (function () {
         });
 
         // Button: INSERT INTO ___ (___) VALUES (___) 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnInsert', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnInsert', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementINSERT = "<span class='codeline'>";
             elementINSERT += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='INSERT'>INSERT INTO";
@@ -1500,7 +1507,7 @@ export default (function () {
         });
 
         // Button: DROP TABLE ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDropTable', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDropTable', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementDROP_TABLE = "<span class='codeline'>";
             elementDROP_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_TABLE'>";
@@ -1517,7 +1524,7 @@ export default (function () {
         });
 
         // Button: ALTER TABLE ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAlterTable', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAlterTable', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementALTER_TABLE = "<span class='codeline'>";
             elementALTER_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ALTER_TABLE'>";
@@ -1534,7 +1541,7 @@ export default (function () {
         });
 
         // Button: DROP COLUMN ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDropColumn', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnDropColumn', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementDROP_COLUMN = "";
             elementDROP_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DROP_COLUMN'>";
@@ -1552,7 +1559,7 @@ export default (function () {
         });
 
         // Button: RENAME ___ TO ___ 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRenameTo', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRenameTo', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementRENAME_TO = "";
             elementRENAME_TO += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='RENAME_TO'>";
@@ -1576,7 +1583,7 @@ export default (function () {
         });
 
         // Button: ADD ___ ___ (TYP) 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAddColumn', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAddColumn', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementADD_COLUMN = "";
             elementADD_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ADD_COLUMN'>";
@@ -1597,7 +1604,7 @@ export default (function () {
         });
 
         // Button: CREATE TABLE ___ (
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateTable', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateTable', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementCREATE_TABLE = "<span class='codeline'>";
             elementCREATE_TABLE += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='CREATE_TABLE'>";
@@ -1619,7 +1626,7 @@ export default (function () {
             setSelection(NEXT_ELEMENT_NR, false);
         });
         // Button: CREATE... spaltenname TYP EINSCHRÄNKUNG 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateColumn', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementCREATE_COLUMN = "<span class='codeline'>";
             elementCREATE_COLUMN += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_COLUMN'>";
@@ -1651,7 +1658,7 @@ export default (function () {
         });
 
         // Button: CREATE... FOREIGN KEY spalte REFERENCES tabelle (spalte) 
-        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function () {
+        $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnCreateForeignKey', function() {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
             let elementFOREIGN_KEY = "<span class='codeline'>";;
             elementFOREIGN_KEY += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields createComma' data-sql-element='CREATE_FOREIGN_KEY'>";
