@@ -201,12 +201,19 @@ div.col.centerMenu {
 
 #btnCreateUrl {
     position: absolute;
-    top: 1.7em;
+    top: 0em;
     right: 0.3em;
     color: slategrey;
     border: none;
     background: transparent none;
 }
+
+#sqlVerineSwitchForm {
+    position: absolute;
+    right: 0em;
+    top: -1.7em;
+}
+
 
 
 /* Linenumbers */
@@ -279,6 +286,7 @@ pre span.codeline span:first {
 }
 
 @media (min-width: 768px) {
+
     /* bootstrap md breakpoint */
     pre span.codeline:before {
         counter-increment: line;
@@ -292,6 +300,7 @@ pre span.codeline span:first {
 }
 
 @media (max-width: 768px) {
+
     /* bootstrap md breakpoint */
     .buttonArea {
         overflow-x: auto;

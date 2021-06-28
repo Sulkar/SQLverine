@@ -1,4 +1,3 @@
-
 export class VerineDatabase {
 
     constructor(name, currentDatabase, type) {

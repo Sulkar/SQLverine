@@ -1,9 +1,14 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import "./css/index.css"
 import $ from "jquery";
-import { Tab, Modal } from "bootstrap";
+import {
+    Tab,
+    Modal
+} from "bootstrap";
 import initSqlJs from "sql.js";
-import { VerineDatabase } from "./VerineDatabase";
+import {
+    VerineDatabase
+} from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
 
 
@@ -137,7 +142,7 @@ $('#selDbChooser').on('change', function () {
         tab.show()
     }
     // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
-    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
+    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/ ) {
         loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
     }
 });
@@ -201,7 +206,9 @@ $("#fileDbUpload").on('change', function () {
             let tab = new Tab(someTabTriggerEl)
             tab.show()
 
-        }, function (error) { console.log(error) });
+        }, function (error) {
+            console.log(error)
+        });
     }
     fileReader.readAsArrayBuffer(uploadedFile);
 
@@ -389,7 +396,9 @@ function loadDbFromServer(dbName) {
         let tab = new Tab(someTabTriggerEl)
         tab.show()
 
-    }, function (error) { console.log(error) });
+    }, function (error) {
+        console.log(error)
+    });
 }
 
 //function: sucht nach Parametern in der URL, wenn gefunden wird zur DB gewechselt und Code geladen
@@ -478,4 +487,3 @@ function buildDatabaseName(name, appendix) {
 
     }
 }
-
