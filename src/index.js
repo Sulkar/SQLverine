@@ -322,7 +322,6 @@ function removeEmptyTags(stringToTest) {
 
 //function: Überprüft ob die Antwort richtig ist
 function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
-    console.log("checked")
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let solutionRows = CURRENT_EXERCISE.answerObject.rows;
     let solutionStrings = CURRENT_EXERCISE.answerObject.exerciseSolutionArray.length;

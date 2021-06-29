@@ -126,9 +126,10 @@ export default (function () {
 
     function setupCodeArea() {
         let codeArea = '<div class="codeAreaWrapper">';
-        codeArea += '<div id="sqlVerineSwitchForm" class="form-check form-switch d-none d-lg-inline-block"><input class="form-check-input" type="checkbox" id="sqlVerineSwitch" checked><label class="form-check-label" for="sqlVerineSwitch">Aa</label></div>';
+        //text to code switch
+        codeArea += '<div id="sqlVerineSwitchForm" class="form-check form-switch d-none d-lg-inline-block"><input class="form-check-input" type="checkbox" id="sqlVerineSwitch"><label class="form-check-label" for="sqlVerineSwitch">Aa</label></div>';
 
-
+        //button create url
         if (SHOW_CODE_BTN) {
             codeArea += '<button id="btnCreateUrl" class="btnCreateUrl d-none d-lg-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">'
             codeArea += '<svg xmlns="http://www.w3.org/2000/svg" width="1.6em" height="1.6em" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">';
@@ -138,7 +139,9 @@ export default (function () {
             codeArea += '</button>';
         }
 
+        codeArea += '<div id="codeAreaText"><textarea class="form-control" rows="3"></textarea></div>';
 
+        //code area
         codeArea += '<div class="codeArea editor">';
         codeArea += '<pre><code></code></pre>';
         codeArea += '</div>';
@@ -223,6 +226,23 @@ export default (function () {
     //////////
     //EVENTS//
     function initEvents() {
+
+        //Switch codeAreaText -> Codearea
+        $(EDITOR_CONTAINER).find('#sqlVerineSwitchForm').on('change', '#sqlVerineSwitch', function (event) {
+            $(EDITOR_CONTAINER).find("#codeAreaText").toggle();
+            $(EDITOR_CONTAINER).find(".codeArea").toggle();
+        });
+
+        //codeAreaText: strg + enter führt sql Code aus
+        $(EDITOR_CONTAINER).find("#codeAreaText").on('keydown', 'textarea', function (event) {
+            if (event.ctrlKey && event.keyCode === 13) {
+                execSqlCommand(null, "desktop");
+                RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
+                    runFunction();
+                });
+            }
+        });
+
         //span click
         $(EDITOR_CONTAINER).on('click', '.codeArea.editor span', function (event) {
 
@@ -513,9 +533,18 @@ export default (function () {
         //bereitet den sql Befehl vor
         let re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
         if (tempSqlCommand == null) {
-            tempSqlCommand = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
-            tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
-            tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
+
+            //Nutze Code aus der Codeare oder aus der Textare, je nachdem welches Element gerade sichtbar ist
+            if ($(EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {
+                tempSqlCommand = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
+                tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
+                tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
+            } else {
+                tempSqlCommand = $(EDITOR_CONTAINER).find("#codeAreaText textarea");
+                tempSqlCommand = tempSqlCommand.val().replaceAll(re, " ").trim();
+                updateUsedTables();
+            }
+
         }
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
@@ -1032,11 +1061,26 @@ export default (function () {
     //function: get all used db tables in code area
     function updateUsedTables() {
         USED_TABLES = [];
-        $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
-            if (!USED_TABLES.includes($(this).html())) {
-                USED_TABLES.push($(this).html());
-            }
-        });
+
+        if ($(EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {
+            //check used tables -> codeArea
+            $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
+                if (!USED_TABLES.includes($(this).html())) {
+                    USED_TABLES.push($(this).html());
+                }
+            });
+        } else {
+            //check used tables -> codeAreaText
+            let databaseTables = getSqlTables();
+            let codeAreaTextValue = $(EDITOR_CONTAINER).find("#codeAreaText textarea").val();
+            databaseTables.forEach(table => {
+                if (codeAreaTextValue.includes(table.toString())) {
+                    if (!USED_TABLES.includes(table.toString())) {
+                        USED_TABLES.push(table.toString());
+                    }
+                }
+            });
+        }
     }
 
 
