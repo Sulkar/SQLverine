@@ -203,6 +203,26 @@
         ]
     },
     {
+        "selectedSQLElement": "WHERE_3_IN",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }
+        ]
+    },
+    {
         "selectedSQLElement": "WHERE_AND_1",
         "level": 1,
         "visibleMainControls": [
