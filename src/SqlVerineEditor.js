@@ -1,4 +1,6 @@
-import $, { parseHTML } from "jquery";
+import $, {
+    parseHTML
+} from "jquery";
 import {
     Modal
 } from "bootstrap";
@@ -302,30 +304,40 @@ export default (function () {
                     CURRENT_SELECTED_ELEMENT = $(returnObject.thisCodeElement);
 
                     if (tempSelectField.value == "IN") {
-                        let where3 = document.querySelector("[data-sql-element='WHERE_3']");
-                        where3.dataset.sqlElement = "WHERE_3_IN";
+                        let where3 = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+
+                        console.log(where3)
+                        if (where3 != null) {
+
+                        }
+                        where3.attr('data-sql-element', 'WHERE_3_IN')
 
                         //Klammern                                          
                         CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + " btnLeftBracket synBrackets sqlIdentifier extended' data-sql-element='WHERE_3_IN_BRACKET'> (</span>");
                         NR++;
-                        $(where3).after("<span class='codeElement_" + NR + " btnRightBracket synBrackets sqlIdentifier extended' data-sql-element='WHERE_3_IN_BRACKET'> )</span>");
-                        NR++; 
-                                
-                        setSelection("next", false);
-                    }else{
-                        let where3In = document.querySelector("[data-sql-element='WHERE_3_IN']");
-                        where3In.dataset.sqlElement = "WHERE_3";
+                        where3.after("<span class='codeElement_" + NR + " btnRightBracket synBrackets sqlIdentifier extended' data-sql-element='WHERE_3_IN_BRACKET'> )</span>");
+                        NR++;
 
-                        document.querySelectorAll("[data-sql-element='WHERE_3_IN']").forEach(e => {
-                            let prevElement = $(e).prev();
+                        setSelection("next", false);
+                    } else {
+                        let where3 = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                        if (where3 != null)
+                            where3.attr('data-sql-element', 'WHERE_3');
+
+                        CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="WHERE_3_IN"]').each(function () {
+
+                            let prevElement = $(this).prev();
                             //Komma entfernen, wenn vorhanden
-                            if(prevElement.text() == ", "){
+                            if (prevElement.text() == ", ") {
                                 prevElement.remove();
                             }
-                            e.remove();  
+                            $(this).remove();
 
                         });
-                        document.querySelectorAll("[data-sql-element='WHERE_3_IN_BRACKET']").forEach(e => e.remove());
+
+                        CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="WHERE_3_IN_BRACKET"]').each(function () {
+                            $(this).remove();
+                        });
                         setSelection("next", false);
                     }
                 }
@@ -374,7 +386,7 @@ export default (function () {
                 if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "_AGGREGAT")) { //...
                     CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
 
-                }else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "WHERE_3_IN")) { //...
+                } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "WHERE_3_IN")) { //...
                     CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedComma"));
 
 
@@ -956,9 +968,6 @@ export default (function () {
             element.addClass("active");
             CURRENT_SELECTED_ELEMENT = element;
             CURRENT_SELECTED_SQL_ELEMENT = element.attr("data-sql-element");
-            //console.log(element.getAttribute("data-sql-element"))
-            console.log(element)
-            console.log(CURRENT_SELECTED_SQL_ELEMENT) //where_3_in
         } else {
             CURRENT_SELECTED_SQL_ELEMENT = "START";
         }
@@ -984,7 +993,7 @@ export default (function () {
 
         ACTIVE_CODE_VIEW_DATA.forEach(element => {
             if (element.selectedSQLElement == CURRENT_SELECTED_SQL_ELEMENT) {
-                
+
                 //Code Components: sollen auf max x (3) Zeilen verteilt werden
                 let maxZeilen = 3;
                 let maxComponents = element.visibleCodeComponents.length;
