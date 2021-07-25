@@ -1,6 +1,4 @@
-import $, {
-    parseHTML
-} from "jquery";
+import $ from "jquery";
 import {
     Modal
 } from "bootstrap";
@@ -405,12 +403,6 @@ export default (function () {
                 if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "_AGGREGAT")) { //...
                     CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
 
-                } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "WHERE_3_IN")) { //...
-                    CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedComma"));
-
-
-
-
                 } else if (hasCurrentSelectedElementSqlDataString(CURRENT_SELECTED_ELEMENT, "WHERE_3, OR_3, AND_3")) { //...
                     CURRENT_SELECTED_ELEMENT.after(addInputField(dataSqlElement, "extendedSpace"));
 
@@ -649,7 +641,7 @@ export default (function () {
 
             //wurde drop, create, alter table ausgeführt?
             let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(.*?)/);
-            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s'(.*?)'/);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](.*?)['"]/);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(.*?)/);
             let tablesChanged = false;
 

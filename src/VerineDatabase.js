@@ -207,6 +207,24 @@ export class VerineDatabase {
         return exerciseObject;
     }
 
+    getInfo() {
+        let verine_info;
+        try {
+            verine_info = this.database.exec("SELECT * FROM verine_info;")[0].values[0];
+        } catch (err) {
+            verine_info = [];
+        }
+
+        let infoObject = {};
+        infoObject.id = verine_info[0];
+        infoObject.autor_name = verine_info[1];
+        infoObject.autor_url = verine_info[2];
+        infoObject.lizenz = verine_info[3];
+        infoObject.informationen = verine_info[4];
+
+        return infoObject;
+    }
+
     setCurrentExerciseAsSolved() {
         this.exerciseArray.forEach(exercise => {
             if (exercise[0] == this.currentExcersiseId) {
@@ -272,6 +290,7 @@ export class VerineDatabase {
         let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, aufgabenstellung, informationen, antworten, feedback, geloest) VALUES (' + exerciseValues + ');';
         try {
             this.database.exec(addExerciseQuery);
+            this.exerciseArray = this.getExercises();
         } catch (err) {
             errorLogArray.push(err);
             console.log(err);
@@ -296,6 +315,21 @@ export class VerineDatabase {
         });
         try {
             this.database.exec(updateQuery);
+            this.exerciseArray = this.getExercises();
+            return true;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    updateInfo(infoUpdateArray) {
+        let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
+        infoUpdateArray.forEach(updateValue => {
+            updateQuery += "UPDATE verine_info SET " + updateValue[0] + " = '" + updateValue[1] + "' WHERE id = 1;";
+        });
+
+        try {
+            this.database.exec(updateQuery);
             return true;
         } catch (err) {
             console.log(err);
@@ -310,6 +344,7 @@ export class VerineDatabase {
         let deleteExerciseQuery = 'DELETE FROM ' + this.exerciseTable + ' WHERE id = ' + exerciseId + ';';
         try {
             this.database.exec(deleteExerciseQuery);
+            this.exerciseArray = this.getExercises();
         } catch (err) {
             errorLogArray.push(err);
             console.log(err);
@@ -475,11 +510,14 @@ export class VerineDatabase {
         columnObject.type = "";
 
         //untersucht das Table Create Statement
+        console.log(tableCreateStatement)
+        tableCreateStatement = tableCreateStatement.replace(/CREATE TABLE [^\(]+\(/g, ""); //removes CREATE TABLE ... (
         let tableCreateStatementArray = tableCreateStatement.split(",");
+        console.log(tableCreateStatement)
         tableCreateStatementArray.forEach(createStatementLine => {
 
             //find types
-            let foundColumnName = createStatementLine.match(/\n(\s+|)"([\wöäüß]+)"/); // z.B.: "id" INTEGER NOT NULL UNIQUE,
+            let foundColumnName = createStatementLine.match(/(\s+|)["']([\wöäüß]+)["']/); // z.B.: "id" INTEGER NOT NULL UNIQUE,
             if (foundColumnName != null && foundColumnName[2] == columnName) {
                 typeArray.forEach(sqlType => {
                     var re = new RegExp("\\b" + sqlType + "\\b", "");
@@ -490,7 +528,7 @@ export class VerineDatabase {
                 });
             }
             //check for primary key, ...
-            let foundPrimaryKey = createStatementLine.match(/(PRIMARY KEY\(")(\w+)"/);
+            let foundPrimaryKey = createStatementLine.match(/(PRIMARY KEY\(["'])(\w+)["']/);
             if (foundPrimaryKey != null && foundPrimaryKey[2] == columnName) {
                 if (columnObject.type == "") columnObject.type += "PRIMARY KEY";
                 else columnObject.type += "|" + "PRIMARY KEY";
