@@ -203,7 +203,7 @@
         ]
     },
     {
-        "selectedSQLElement": "WHERE_3_IN",
+        "selectedSQLElement": "EXP_IN",
         "level": 1,
         "visibleMainControls": [
             {
@@ -212,6 +212,22 @@
             },
             {
                 "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "EXP_BETWEEN",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
                 "codeComponentType": "button"
             }
         ],

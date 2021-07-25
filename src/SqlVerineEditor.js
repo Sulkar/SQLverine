@@ -298,46 +298,65 @@ export default (function () {
 
                 // -> selOperators
                 else if ($(tempSelectField).hasClass("selOperators")) {
-
                     returnObject = addSelectValue(tempSelectField);
                     CURRENT_SELECTED_ELEMENT.replaceWith(returnObject.tempSelectValue);
                     CURRENT_SELECTED_ELEMENT = $(returnObject.thisCodeElement);
 
-                    if (tempSelectField.value == "IN") {
-                        let where3 = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                    // Remove all special expression modifiers
+                    let where3 = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                    where3.attr('data-sql-element', 'WHERE_3');
 
-                        console.log(where3)
-                        if (where3 != null) {
-
+                    //remove all EXP_IN
+                    CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN"]').each(function () {
+                        let prevElement = $(this).prev();
+                        //Komma entfernen, wenn vorhanden
+                        if (prevElement.text() == ", ") {
+                            prevElement.remove();
                         }
-                        where3.attr('data-sql-element', 'WHERE_3_IN')
+                        $(this).remove();
+                        NR--;
+                    });
+                    CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN_BRACKET"]').each(function () {
+                        $(this).remove();
+                        NR--;
+                    });
+
+                    //remove all EXP_BETWEEN
+                    CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_BETWEEN"]').each(function () {                            
+                        $(this).remove();
+                        NR--;
+                    });
+
+                    // Operator IN ( ___, ___ ) 
+                    if (tempSelectField.value == "IN") {
+                        let expressionIN = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                        expressionIN.attr('data-sql-element', 'EXP_IN')
 
                         //Klammern                                          
-                        CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + " btnLeftBracket synBrackets sqlIdentifier extended' data-sql-element='WHERE_3_IN_BRACKET'> (</span>");
+                        CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + " btnLeftBracket synBrackets sqlIdentifier extended' data-sql-element='EXP_IN_BRACKET'> (</span>");
                         NR++;
-                        where3.after("<span class='codeElement_" + NR + " btnRightBracket synBrackets sqlIdentifier extended' data-sql-element='WHERE_3_IN_BRACKET'> )</span>");
+                        expressionIN.after("<span class='codeElement_" + NR + " btnRightBracket synBrackets sqlIdentifier extended' data-sql-element='EXP_IN_BRACKET'> )</span>");
+                        NR++;
+                        setSelection("next", false);                        
+                    }
+                    // Operator BETWEEN ___ AND ___
+                    else if (tempSelectField.value == "BETWEEN") {
+                        let expressionBETWEEN = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                        expressionBETWEEN.attr('data-sql-element', 'EXP_BETWEEN');
+
+                        // AND ___
+                        let betweenStructure = "";
+                        betweenStructure += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 7) + "' data-sql-element='EXP_BETWEEN'> AND </span>";
+                        NR++;
+                        betweenStructure += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-next-element='" + (NR - 4) + "' data-sql-element='EXP_BETWEEN'>___</span>";
                         NR++;
 
+                        expressionBETWEEN.after(betweenStructure);
                         setSelection("next", false);
-                    } else {
-                        let where3 = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
-                        if (where3 != null)
-                            where3.attr('data-sql-element', 'WHERE_3');
 
-                        CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="WHERE_3_IN"]').each(function () {
-
-                            let prevElement = $(this).prev();
-                            //Komma entfernen, wenn vorhanden
-                            if (prevElement.text() == ", ") {
-                                prevElement.remove();
-                            }
-                            $(this).remove();
-
-                        });
-
-                        CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="WHERE_3_IN_BRACKET"]').each(function () {
-                            $(this).remove();
-                        });
+                    } 
+                    // 
+                    else {
                         setSelection("next", false);
                     }
                 }
@@ -1348,8 +1367,8 @@ export default (function () {
             let elementWhereAND = "";
             elementWhereAND += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='AND'>";
             NR++;
-            elementWhereAND += addLeerzeichen();
-            elementWhereAND += "AND";
+            //elementWhereAND += addLeerzeichen();
+            elementWhereAND += " AND";
             elementWhereAND += addLeerzeichen();
             elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_1' data-next-element='" + (NR + 2) + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
@@ -1373,8 +1392,8 @@ export default (function () {
             let elementWhereOR = "";
             elementWhereOR += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OR'>";
             NR++;
-            elementWhereOR += addLeerzeichen();
-            elementWhereOR += "OR";
+            //elementWhereOR += addLeerzeichen();
+            elementWhereOR += " OR";
             elementWhereOR += addLeerzeichen();
             elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_1' data-next-element='" + (NR + 2) + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
