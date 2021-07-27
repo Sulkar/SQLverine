@@ -43,14 +43,14 @@ handleUrlParameters();
 $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
     //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".input-check").val())) {
+    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".tab-pane .input-check").val())) {
         CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
-        if ($(".tab-pane.active").attr("id") != "nav-mission") {
-            $("#outputInfo").html("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
-        }
+        $(".outputInfo").html("");
         updateExercise();
+        let tab = new Tab(document.querySelector('#nav-mission-tab'));
+        tab.show();
     } else {
-        $("#outputInfo").html("<p style='color:red;'>Leider falsch! Probiere es nochmal!</p>");
+        $(".outputInfo").html("<p style='color:red;'>Leider falsch! Probiere es nochmal!</p>");
     }
 });
 
@@ -279,7 +279,7 @@ function updateExercise() {
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
     let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
-    console.log("updateExercise")
+
     $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
     $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
     //Beschreibung
@@ -308,7 +308,7 @@ function updateExercise() {
         $(".exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
 
     } else if (CURRENT_EXERCISE.answerObject.input) {
-        $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button'>check</button></div></div><div class='text-center outputInfo'></div>");
     } //next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
     else if (CURRENT_EXERCISE.answerObject.next) {
         $(".exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
@@ -337,7 +337,7 @@ function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
     }
     //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
     else if (answerInput) {
-        $("#outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' id='input-check' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button' id='btnInputCheckExercise'>check</button></div></div><div id='outputInfo' class='text-center'></div>");
+        $("#outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button'>check</button></div></div><div class='text-center outputInfo'></div>");
     }
 }
 
