@@ -54,6 +54,23 @@ $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
     }
 });
 
+$(".exerciseMobileView").on("click", ".btnInputCheckExercise", function () {
+    console.log("in")
+    //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
+    let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".exerciseMobileView .input-check").val())) {
+        CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
+        $(".outputInfo").html("");
+        updateExercise();
+        let scrollHeight = $(".exerciseMobileView").get(0).scrollHeight;
+        $(".exerciseMobileView").scrollTop(scrollHeight);
+    } else {
+        $(".outputInfo").html("<p style='color:red;'>Leider falsch! Probiere es nochmal!</p>");
+        let scrollHeight = $(".exerciseMobileView").get(0).scrollHeight;
+        $(".exerciseMobileView").scrollTop(scrollHeight);
+    }
+});
+
 $("#outputArea").on("click", "#btnExerciseNext", function () {
     let tab = new Tab(document.querySelector('#nav-mission-tab'));
     tab.show();
