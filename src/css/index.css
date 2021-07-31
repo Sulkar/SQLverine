@@ -50,12 +50,14 @@ footer {
 
 
 
-.dbHandlingMenu {
+.dbHandlingMenu,
+.formHandlingMenu {
     display: inline-block;
     width: 100%;
 }
 
-.dbHandlingMenu select {
+.dbHandlingMenu select, 
+.formHandlingMenu select {
     appearance: none;
     -webkit-appearance: button;
     -moz-appearance: button;
@@ -77,26 +79,34 @@ footer {
     width: min-content;
 }
 
-.dbHandlingMenu select {
+.dbHandlingMenu select,
+.formHandlingMenu select {
     background-image: url("data:image/svg+xml;utf8,<svg fill='slategrey' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
     border-bottom: 0.15em solid slategrey;
     font-size: 1.2rem;
     color: slategrey;
 }
 
-.dbHandlingMenu input[type="file"] {
+.dbHandlingMenu input[type="file"], 
+.formHandlingMenu input[type="file"] {
     display: none;
 }
 
-.dbHandlingMenu button.btnHamburgerNav {
+.dbHandlingMenu button.btnHamburgerNav, 
+.formHandlingMenu button.btnHamburgerNav {
     float: right;
 }
-
+formHandlingMenu
 .dbHandlingMenu button.btnDbInfo,
 .dbHandlingMenu label.fileUpload,
 .dbHandlingMenu button.btnDbDownload,
 .dbHandlingMenu button.btnDbNew,
-.dbHandlingMenu button.btnHamburgerNav {
+.dbHandlingMenu button.btnHamburgerNav,
+.formHandlingMenu button.btnDbInfo,
+.formHandlingMenu label.fileUpload,
+.formHandlingMenu button.btnFormDownload,
+.formHandlingMenu button.btnFormNew,
+.formHandlingMenu button.btnHamburgerNav  {
     display: inline-block;
     padding: 0.35em 1.0em 0.15em;
     border: 0;
@@ -110,6 +120,11 @@ footer {
     font-size: 1.2rem;
 }
 
+.formHandlingMenu .hamburgerNav button.btnDbInfo,
+.formHandlingMenu .hamburgerNav label.fileUpload,
+.formHandlingMenu .hamburgerNav button.btnDbDownload,
+.formHandlingMenu .hamburgerNav button.btnFormNew,
+.formHandlingMenu .hamburgerNav button.btnHamburgerNav, 
 .dbHandlingMenu .hamburgerNav button.btnDbInfo,
 .dbHandlingMenu .hamburgerNav label.fileUpload,
 .dbHandlingMenu .hamburgerNav button.btnDbDownload,
@@ -127,11 +142,13 @@ footer {
     font-size: 1em;
 }
 
+.formHandlingMenu .hamburgerNav label.fileUpload,
 .dbHandlingMenu .hamburgerNav label.fileUpload {
     padding: 0;
     margin: 0;
 }
 
+.formHandlingMenu .hamburgerNav .nav-link,
 .dbHandlingMenu .hamburgerNav .nav-link {
     color: slategrey;
 }
@@ -140,11 +157,17 @@ footer {
 .dbHandlingMenu label.fileUpload:hover,
 .dbHandlingMenu button.btnDbDownload:hover,
 .dbHandlingMenu select:hover,
-.dbHandlingMenu button.btnDbNew:hover {
+.dbHandlingMenu button.btnDbNew:hover,
+.formHandlingMenu button.btnDbInfo:hover,
+.formHandlingMenu label.fileUpload:hover,
+.formHandlingMenu button.btnFormDownload:hover,
+.formHandlingMenu select:hover,
+.formHandlingMenu button.btnFormNew:hover  {
     background-color: aliceblue;
 }
 
-.dbHandlingMenu .hamburgerNav label.fileUpload:hover {
+.dbHandlingMenu .hamburgerNav label.fileUpload:hover,
+.formHandlingMenu .hamburgerNav label.fileUpload:hover {
     background-color: #fff;
 }
 

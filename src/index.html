@@ -293,6 +293,10 @@
                         <button class="nav-link" id="nav-schema-tab" data-bs-toggle="tab" data-bs-target="#nav-schema"
                             type="button" role="tab" aria-controls="nav-schema" aria-selected="false">Schema</button>
 
+                        <!-- Formular Editor -->
+                        <button class="nav-link" id="nav-forms-tab" data-bs-toggle="tab" data-bs-target="#nav-forms"
+                            type="button" role="tab" aria-controls="nav-forms" aria-selected="false">Formulare</button>
+
                         <!-- Hilfe Tab -->
                         <button class="nav-link" id="nav-help-tab" data-bs-toggle="tab" data-bs-target="#nav-help"
                             type="button" role="tab" aria-controls="nav-help" aria-selected="false"
@@ -383,8 +387,55 @@
                         </div>
 
                     </div>
+                    <!-- Formular Editor Tab -->
+                    <div class="tab-pane fade" id="nav-forms" role="tabpanel" aria-labelledby="nav-forms-tab">
+
+                        <div id="forms-menu" class="formHandlingMenu">
+                            <div class="row">
+                                <div class="col-auto">
+                                    <select class="form-select form-select-sm" aria-label=".form-select-sm example"
+                                        id="form-chooser">
+                                        <option selected>Formular wählen</option>
+                                        <option value="1">Formular 1</option>
+                                    </select>
+                                </div>
+                                <div class="col-auto">
+
+                                    <button id="btnFormNew" class="btnFormNew d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Neues Formular">
+                                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1.2em" height="1.2em" fill="currentColor" viewBox="0,0,12,16">
+                                            <g transform="translate(-294,-191.02041)">
+                                                <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
+                                                <path d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z"></path>
+                                                <path d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z"></path>
+                                            </g>
+                                        </svg>
+                                    </button>
+
+                                    <label for="uploadForm" class="fileUpload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Upload Form">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
+                                            <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z"></path>
+                                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"></path>
+                                        </svg>
+                                    </label>
+                                    <input id="uploadForm" type="file">
+                                    <button id="btnFormDownload" class="btnFormDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Form">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor" class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
+                                            <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293V6.5z"></path>
+                                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="forms-editor">
+
+                        </div>
+                        <div id="forms-execution">
 
 
+                        </div>
+
+                    </div>
 
 
                     <!-- Hilfe Tab -->
