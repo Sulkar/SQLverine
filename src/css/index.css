@@ -19,6 +19,19 @@ h1 {
     font-size: 1em;
 }
 
+.btn-outline-secondary{
+    color: slategray;
+    border-color: slategray;
+}
+
+.btn-group .red:hover {
+    background-color: tomato;
+}
+
+.btn-group .green:hover {
+    background-color: forestgreen;
+}
+
 .button:active {
     background: linear-gradient(#ddd, #eee);
 }
@@ -96,7 +109,7 @@ footer {
 .formHandlingMenu button.btnHamburgerNav {
     float: right;
 }
-formHandlingMenu
+
 .dbHandlingMenu button.btnDbInfo,
 .dbHandlingMenu label.fileUpload,
 .dbHandlingMenu button.btnDbDownload,
@@ -171,6 +184,18 @@ formHandlingMenu
     background-color: #fff;
 }
 
+
+.form-param {
+    font-family: monospace;
+    font-size: 1.2em;
+    vertical-align: middle;
+}
+
+.form-params li {
+    list-style: none;
+    padding: 0.3em;
+    margin: 0.4em 0;
+}
 
 /* Gilt nur für Chrome, nötig um den Pfeil im Dropdown hinzubekommen */
 
