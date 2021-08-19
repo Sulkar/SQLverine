@@ -1067,7 +1067,7 @@ export default (function () {
         clearSelectionOptions(".buttonArea .selTable");
         let databaseTables = getSqlTables();
         for (let i = 0; i < databaseTables.length; i++) {
-            if (databaseTables[i] != "verine_exercises" || SHOW_EXERCISE_TABLE) {
+            if ((databaseTables[i] != "verine_exercises" && databaseTables[i] != "verine_info") || SHOW_EXERCISE_TABLE) {
                 $(EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
             }
         }
