@@ -10,6 +10,7 @@ import {
     VerineDatabase
 } from "./VerineDatabase";
 import sqlVerineEditor from "./SqlVerineEditor"
+import { SqlVerineForms } from "./SqlVerineForms"
 
 
 //global variables
@@ -33,6 +34,10 @@ sqlVerineEditor.setOutputContainer("outputArea");
 sqlVerineEditor.setOutputContainerMobile("outputAreaMobile");
 sqlVerineEditor.showCodeButton(true);
 sqlVerineEditor.init();
+
+//setup VerineForms
+var sqlVerineForms = new SqlVerineForms();
+sqlVerineForms.createUI();
 
 //start
 handleUrlParameters();
