@@ -14,12 +14,9 @@ export class SqlVerineForms {
 
         formsEditorRow.append(this.createTitleUI());
 
-        this.formsParameterListElement = this.createParameterListUI();
-        formsEditorRow.append(this.formsParameterListElement);
 
-
-
-
+        this.formsParameterList = this.createParameterListUI();
+        formsEditorRow.append(this.formsParameterList);
 
         this.formsEditor.append(formsEditorRow);
 
@@ -92,10 +89,12 @@ export class SqlVerineForms {
         const buttonsUpDown = [{
             btnClass: 'btnFormElementUp',
             btnColorClass: 'blue',
+            btnFunction: this.moveParameterUp,
             btnHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"></path></svg>'
         }, {
             btnClass: 'btnFormElementDown',
             btnColorClass: 'blue',
+            btnFunction: this.moveParameterDown,
             btnHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"></path></svg>'
         }];
         parameterCol3.append(this.createBtnGroup(buttonsUpDown));
@@ -109,17 +108,37 @@ export class SqlVerineForms {
         const buttonsAddRemove = [{
             btnClass: 'btnFormElementAdd',
             btnColorClass: 'green',
+            btnFunction: this.addParameter,
             btnHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path></svg>'
         }, {
             btnClass: 'btnFormElementRemove',
             btnColorClass: 'red',
+            btnFunction: this.deleteParameter,
             btnHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path></svg>'
         }];
         parameterCol4.append(this.createBtnGroup(buttonsAddRemove));
 
     }
 
+    addParameter(event) {
+        alert("add - ToDo: Hinzufügen von Parameter in Datenstruktur und Datenbank");
+        this.createParameterListitemUI(this.formsParameterListElement);
 
+    }
+    deleteParameter(event) {
+        var buttonClicked = event.target || event.srcElement;
+        var paramListElement=buttonClicked.closest("li");
+
+        alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank"+ paramListElement);
+        paramListElement.remove();
+
+    }
+    moveParameterUp(event) {
+        alert("up");
+    }
+    moveParameterDown(event) {
+        alert("down");
+    }
     createBtnGroup(buttons) {
         const btnGroup = document.createElement("div");
         btnGroup.classList.add("btn-group", "mb-3");
@@ -128,6 +147,13 @@ export class SqlVerineForms {
             button.type = "button";
             button.classList.add("btn", "btn-outline-secondary", btn.btnColorClass, btn.btnClass);
             button.innerHTML = btn.btnHTML;
+            button.addEventListener("click",btn.btnFunction);
+
+            const hiddenSpan = document.createElement("span");
+            hiddenSpan.classList.add("visually-hidden");
+            hiddenSpan.innerHTML = "Button";
+            button.append(hiddenSpan);
+
             btnGroup.append(button);
         });
         return btnGroup;
