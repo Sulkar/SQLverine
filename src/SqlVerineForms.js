@@ -99,12 +99,12 @@ export class SqlVerineForms {
         const buttonsUpDown = [{
             btnClass: 'btnFormElementUp',
             btnColorClass: 'blue',
-            btnFunction: this.moveParameterUp,
+            btnFunction: this.moveParameterUp.bind(this),
             btnHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"></path></svg>'
         }, {
             btnClass: 'btnFormElementDown',
             btnColorClass: 'blue',
-            btnFunction: this.moveParameterDown,
+            btnFunction: this.moveParameterDown.bind(this),
             btnHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"></path></svg>'
         }];
         parameterCol3.append(this.createBtnGroup(buttonsUpDown));
@@ -123,7 +123,7 @@ export class SqlVerineForms {
         }, {
             btnClass: 'btnFormElementRemove',
             btnColorClass: 'red',
-            btnFunction: this.deleteParameter,
+            btnFunction: this.deleteParameter.bind(this),
             btnHTML: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"></path><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"></path></svg>'
         }];
         parameterCol4.append(this.createBtnGroup(buttonsAddRemove));
@@ -138,25 +138,39 @@ export class SqlVerineForms {
         
         const listItem = this.createParameterListitemUI();
         
-        var buttonClicked = event.target || event.srcElement;
-        var paramListElement=buttonClicked.closest("li");
+        let buttonClicked = event.target || event.srcElement;
+        let paramListElement=buttonClicked.closest("li");
 
         paramListElement.after(listItem);
 
     }
     deleteParameter(event) {
-        var buttonClicked = event.target || event.srcElement;
-        var paramListElement=buttonClicked.closest("li");
+        let buttonClicked = event.target || event.srcElement;
+        let paramListElement=buttonClicked.closest("li");
 
         alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank"+ paramListElement);
         paramListElement.remove();
 
     }
     moveParameterUp(event) {
-        alert("up");
+        alert("up - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
+
+        let buttonClicked = event.target || event.srcElement;
+        let paramListElement=buttonClicked.closest("li");
+    
+		if (paramListElement.previousElementSibling){
+            paramListElement.parentNode.insertBefore(paramListElement, paramListElement.previousElementSibling);
+        }
     }
     moveParameterDown(event) {
-        alert("down");
+        alert("down - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
+
+        let buttonClicked = event.target || event.srcElement;
+        let paramListElement=buttonClicked.closest("li");
+    
+		if (paramListElement.nextElementSibling){
+            paramListElement.parentNode.insertBefore(paramListElement.nextElementSibling, paramListElement);
+        }
     }
 
 
