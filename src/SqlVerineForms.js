@@ -1,7 +1,35 @@
+const EMPTY_FORM_PARAMETER = 
+{
+    name: "paramXX",
+    label: "",
+    position: -1
+};
 
-
+/*
+const TEST_FORMULAR_DATA = {
+    id: 1,
+    name: "Test Formular",
+    parameters:[
+        {
+            name: "param01",
+            label: "Parameter 1",
+            position: 1
+        },
+        {
+            name: "param02",
+            label: "Parameter 2",
+            position: 2
+        },
+        {
+            name: "param03",
+            label: "Parameter 3",
+            position: 3
+        },
+    ]
+}*/
 export class SqlVerineForms {
-      
+
+
     constructor() {
 
         this.formsEditor = document.querySelector('#forms-editor');
@@ -10,6 +38,7 @@ export class SqlVerineForms {
         this.formsParameterList = null;
 
     }
+
 
     createUI() {
 
@@ -22,7 +51,7 @@ export class SqlVerineForms {
         this.formsParameterList = this.createParameterListUI();
 
         const listItem = this.createParameterListitemUI();
-        
+
         this.formsParameterList.append(listItem);
 
         formsEditorRow.append(this.formsParameterList);
@@ -132,23 +161,23 @@ export class SqlVerineForms {
     }
 
     addParameter(event) {
-        
-   
-        alert("add - ToDo: Hinzufügen von Parameter in Datenstruktur und Datenbank"+this);
-        
+
+
+        alert("add - ToDo: Hinzufügen von Parameter in Datenstruktur und Datenbank" + this);
+
         const listItem = this.createParameterListitemUI();
-        
+
         let buttonClicked = event.target || event.srcElement;
-        let paramListElement=buttonClicked.closest("li");
+        let paramListElement = buttonClicked.closest("li");
 
         paramListElement.after(listItem);
 
     }
     deleteParameter(event) {
         let buttonClicked = event.target || event.srcElement;
-        let paramListElement=buttonClicked.closest("li");
+        let paramListElement = buttonClicked.closest("li");
 
-        alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank"+ paramListElement);
+        alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank" + paramListElement);
         paramListElement.remove();
 
     }
@@ -156,9 +185,9 @@ export class SqlVerineForms {
         alert("up - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
 
         let buttonClicked = event.target || event.srcElement;
-        let paramListElement=buttonClicked.closest("li");
-    
-		if (paramListElement.previousElementSibling){
+        let paramListElement = buttonClicked.closest("li");
+
+        if (paramListElement.previousElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement, paramListElement.previousElementSibling);
         }
     }
@@ -166,9 +195,9 @@ export class SqlVerineForms {
         alert("down - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
 
         let buttonClicked = event.target || event.srcElement;
-        let paramListElement=buttonClicked.closest("li");
-    
-		if (paramListElement.nextElementSibling){
+        let paramListElement = buttonClicked.closest("li");
+
+        if (paramListElement.nextElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement.nextElementSibling, paramListElement);
         }
     }
@@ -182,7 +211,7 @@ export class SqlVerineForms {
             button.type = "button";
             button.classList.add("btn", "btn-outline-secondary", btn.btnColorClass, btn.btnClass);
             button.innerHTML = btn.btnHTML;
-            button.addEventListener("click",btn.btnFunction);
+            button.addEventListener("click", btn.btnFunction);
 
             const hiddenSpan = document.createElement("span");
             hiddenSpan.classList.add("visually-hidden");
@@ -194,6 +223,45 @@ export class SqlVerineForms {
         return btnGroup;
     }
 
+    setFormularData(formularData){
+        const formTitleElement = document.getElementById("form-title");
+        formTitleElement.value = formularData.title;
+    }
+
+}
+
+class FormularData {
+
+    constructor(id,title, query, queryHTML){
+        this.title = title;
+        this.id = id;
+        this.parameters = [];
+        this.query = query;
+        this.queryHTML=queryHTML;
+    }
+
+    addParameter(parameter){
+        this.parameters.add(parameter);
+    }
+
+    swapParameterPosition(parameter, newPosition){
+
+        let paramToSwapWith = this.parameters.find(param => param.position == newPosition);
+        if(paramToSwapWith!=undefined){
+            paramToSwapWith.position = parameter.position;
+        }
+        parameter.position=newPosition;
+    }
+
+
+}
+
+class ParameterData {
+    constructor(name, label, position){
+        this.name = name;
+        this.position=position;
+        this.label=label;
+    }
 }
 
 /*
