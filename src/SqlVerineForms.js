@@ -1,8 +1,8 @@
 const EMPTY_FORM_PARAMETER = 
 {
-    name: "paramXX",
+    name: "param01",
     label: "",
-    position: -1
+    position: 1
 };
 
 /*
@@ -50,7 +50,9 @@ export class SqlVerineForms {
 
         this.formsParameterList = this.createParameterListUI();
 
-        const listItem = this.createParameterListitemUI();
+
+        const defaultFormParam = new ParameterData(EMPTY_FORM_PARAMETER.name,EMPTY_FORM_PARAMETER.label,EMPTY_FORM_PARAMETER.position);
+        const listItem = this.createParameterListitemUI(defaultFormParam);
 
         this.formsParameterList.append(listItem);
 
@@ -90,10 +92,12 @@ export class SqlVerineForms {
         return formularParameterListe;
     }
 
-    //createParameterListitemUI(formularParameterListe) {
-    createParameterListitemUI() {
+
+    createParameterListitemUI(formParameter) {
         const parameterListitem = document.createElement("li");
         //formularParameterListe.append(parameterListitem);
+        parameterListitem.id=formParameter.name;
+
         const parameterBootstrapRow = document.createElement("div");
         parameterBootstrapRow.classList.add("row");
         parameterListitem.append(parameterBootstrapRow);
@@ -103,10 +107,10 @@ export class SqlVerineForms {
         parameterCol1.classList.add("col-2");
         parameterBootstrapRow.append(parameterCol1);
         const parameterLabel = document.createElement("label");
-        parameterLabel.for = "form-param-name01";
-        parameterLabel.id = "form-param01";
+        parameterLabel.for = "form-"+formParameter.name;
+        parameterLabel.id = "label-"+formParameter.name;
         parameterLabel.classList.add("col-form-label", "form-param");
-        parameterLabel.innerHTML = "param01";
+        parameterLabel.innerHTML = formParameter.name;
         parameterCol1.append(parameterLabel);
 
         //Col 2: Input
@@ -115,7 +119,7 @@ export class SqlVerineForms {
         parameterBootstrapRow.append(parameterCol2);
         const parameterInput = document.createElement("input");
         parameterInput.classList.add("form-control", "param-name");
-        parameterInput.id = "form-param-name01";
+        parameterInput.id = "form-"+formParameter.name;
         parameterInput.type = "text";
         parameterInput.placeholder = "Parameterlabel";
         parameterCol2.append(parameterInput);
@@ -167,15 +171,15 @@ export class SqlVerineForms {
 
         const listItem = this.createParameterListitemUI();
 
-        let buttonClicked = event.target || event.srcElement;
-        let paramListElement = buttonClicked.closest("li");
+        const buttonClicked = event.target || event.srcElement;
+        const paramListElement = buttonClicked.closest("li");
 
         paramListElement.after(listItem);
 
     }
     deleteParameter(event) {
-        let buttonClicked = event.target || event.srcElement;
-        let paramListElement = buttonClicked.closest("li");
+        const buttonClicked = event.target || event.srcElement;
+        const paramListElement = buttonClicked.closest("li");
 
         alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank" + paramListElement);
         paramListElement.remove();
@@ -184,8 +188,8 @@ export class SqlVerineForms {
     moveParameterUp(event) {
         alert("up - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
 
-        let buttonClicked = event.target || event.srcElement;
-        let paramListElement = buttonClicked.closest("li");
+        const buttonClicked = event.target || event.srcElement;
+        const paramListElement = buttonClicked.closest("li");
 
         if (paramListElement.previousElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement, paramListElement.previousElementSibling);
@@ -194,8 +198,8 @@ export class SqlVerineForms {
     moveParameterDown(event) {
         alert("down - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
 
-        let buttonClicked = event.target || event.srcElement;
-        let paramListElement = buttonClicked.closest("li");
+        const buttonClicked = event.target || event.srcElement;
+        const paramListElement = buttonClicked.closest("li");
 
         if (paramListElement.nextElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement.nextElementSibling, paramListElement);
@@ -226,6 +230,7 @@ export class SqlVerineForms {
     setFormularData(formularData){
         const formTitleElement = document.getElementById("form-title");
         formTitleElement.value = formularData.title;
+
     }
 
 }
@@ -244,9 +249,13 @@ class FormularData {
         this.parameters.add(parameter);
     }
 
+    deleteParameter(parameter){
+        this.parameters.remove(parameter);
+    }
+
     swapParameterPosition(parameter, newPosition){
 
-        let paramToSwapWith = this.parameters.find(param => param.position == newPosition);
+        const paramToSwapWith = this.parameters.find(param => param.position == newPosition);
         if(paramToSwapWith!=undefined){
             paramToSwapWith.position = parameter.position;
         }
