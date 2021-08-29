@@ -247,10 +247,12 @@ class FormularData {
 
     addParameter(parameter){
         this.parameters.add(parameter);
+        console.log(this.parameters);
     }
 
     deleteParameter(parameter){
         this.parameters.remove(parameter);
+        console.log(this.parameters);
     }
 
     swapParameterPosition(parameter, newPosition){
@@ -262,6 +264,25 @@ class FormularData {
         parameter.position=newPosition;
     }
 
+    findNextParameterName(){
+        const paramNumbers = [];
+        this.parameters.forEach(param => {
+            const paramNameNumber = parseInt(param.name.replace("param",""));
+            if(!isNaN(paramNameNumber)){
+                paramNumbers.add(paramNameNumber);
+            }
+        });
+
+        if(paramNumbers.length == 0){
+            return "param01";
+        }
+        return "param"+pad(Math.max.apply(Math, paramNumbers)+1);
+
+    }
+
+    pad(n) {
+        return (n < 10) ? ("0" + n) : n;
+    }
 
 }
 
