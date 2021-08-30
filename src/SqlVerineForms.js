@@ -2,31 +2,14 @@ const EMPTY_FORM_PARAMETER =
 {
     name: "param01",
     label: "",
-    position: 1
+    position: 0
 };
 
-/*
 const TEST_FORMULAR_DATA = {
     id: 1,
-    name: "Test Formular",
-    parameters:[
-        {
-            name: "param01",
-            label: "Parameter 1",
-            position: 1
-        },
-        {
-            name: "param02",
-            label: "Parameter 2",
-            position: 2
-        },
-        {
-            name: "param03",
-            label: "Parameter 3",
-            position: 3
-        },
-    ]
-}*/
+    title: "Test Formular",
+}
+
 export class SqlVerineForms {
 
 
@@ -35,7 +18,10 @@ export class SqlVerineForms {
         this.formsEditor = document.querySelector('#forms-editor');
         this.formsExecution = document.querySelector('#forms-execution');
 
-        this.formsParameterList = null;
+        this.formsParameterListUI = null;
+
+        this.formularData = new FormularData(TEST_FORMULAR_DATA.id,TEST_FORMULAR_DATA.title, "", "");
+        this.formularData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name,EMPTY_FORM_PARAMETER.label,EMPTY_FORM_PARAMETER.position));
 
     }
 
@@ -48,15 +34,15 @@ export class SqlVerineForms {
         formsEditorRow.append(this.createTitleUI());
 
 
-        this.formsParameterList = this.createParameterListUI();
+        this.formsParameterListUI = this.createParameterListUI();
 
+console.log(this.formularData.parameters[0]);
 
-        const defaultFormParam = new ParameterData(EMPTY_FORM_PARAMETER.name,EMPTY_FORM_PARAMETER.label,EMPTY_FORM_PARAMETER.position);
-        const listItem = this.createParameterListitemUI(defaultFormParam);
+        const listItem = this.createParameterListitemUI(this.formularData.parameters[0]);
 
-        this.formsParameterList.append(listItem);
+        this.formsParameterListUI.append(listItem);
 
-        formsEditorRow.append(this.formsParameterList);
+        formsEditorRow.append(this.formsParameterListUI);
 
         this.formsEditor.append(formsEditorRow);
 
@@ -169,10 +155,19 @@ export class SqlVerineForms {
 
         alert("add - ToDo: Hinzufügen von Parameter in Datenstruktur und Datenbank" + this);
 
-        const listItem = this.createParameterListitemUI();
-
+       
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
+
+        const nodes = Array.from( paramListElement.closest('ul').children );
+        const position = nodes.indexOf(paramListElement)+1;
+
+        const parameterToAdd = new ParameterData(this.formularData.findNextParameterName(), "", position);
+
+        this.formularData.addParameter(parameterToAdd);
+
+        const listItem = this.createParameterListitemUI(parameterToAdd);
+
 
         paramListElement.after(listItem);
 
@@ -246,13 +241,26 @@ class FormularData {
     }
 
     addParameter(parameter){
-        this.parameters.add(parameter);
+        this.updateParameterPositions(parameter.position);
+        this.parameters.push(parameter);
         console.log(this.parameters);
     }
+
+
 
     deleteParameter(parameter){
         this.parameters.remove(parameter);
         console.log(this.parameters);
+    }
+
+    updateParameterPositions(position){
+        this.parameters.forEach(param =>{
+            if(param.position >= position){
+                alert(position);
+                param.position=param.position+1;
+            }
+        });
+
     }
 
     swapParameterPosition(parameter, newPosition){
@@ -269,14 +277,14 @@ class FormularData {
         this.parameters.forEach(param => {
             const paramNameNumber = parseInt(param.name.replace("param",""));
             if(!isNaN(paramNameNumber)){
-                paramNumbers.add(paramNameNumber);
+                paramNumbers.push(paramNameNumber);
             }
         });
 
         if(paramNumbers.length == 0){
             return "param01";
         }
-        return "param"+pad(Math.max.apply(Math, paramNumbers)+1);
+        return "param"+this.pad(Math.max.apply(Math, paramNumbers)+1);
 
     }
 
