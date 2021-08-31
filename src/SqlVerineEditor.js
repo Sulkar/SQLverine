@@ -28,6 +28,7 @@ export default (function () {
     var ACTIVATE_EXERCISES = false;
     var SHOW_CODE_BTN = true;
     var SHOW_EXERCISE_TABLE = false;
+    var FORMULAR_DATA;
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = () => {

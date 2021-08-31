@@ -1,5 +1,4 @@
-const EMPTY_FORM_PARAMETER = 
-{
+const EMPTY_FORM_PARAMETER = {
     name: "param01",
     label: "",
     position: 0
@@ -20,8 +19,8 @@ export class SqlVerineForms {
 
         this.formsParameterListUI = null;
 
-        this.formularData = new FormularData(TEST_FORMULAR_DATA.id,TEST_FORMULAR_DATA.title, "", "");
-        this.formularData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name,EMPTY_FORM_PARAMETER.label,EMPTY_FORM_PARAMETER.position));
+        this.formularData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "");
+        this.formularData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
 
     }
 
@@ -36,7 +35,7 @@ export class SqlVerineForms {
 
         this.formsParameterListUI = this.createParameterListUI();
 
-console.log(this.formularData.parameters[0]);
+        console.log(this.formularData.parameters[0]);
 
         const listItem = this.createParameterListitemUI(this.formularData.parameters[0]);
 
@@ -82,7 +81,7 @@ console.log(this.formularData.parameters[0]);
     createParameterListitemUI(formParameter) {
         const parameterListitem = document.createElement("li");
         //formularParameterListe.append(parameterListitem);
-        parameterListitem.id=formParameter.name;
+        parameterListitem.id = formParameter.name;
 
         const parameterBootstrapRow = document.createElement("div");
         parameterBootstrapRow.classList.add("row");
@@ -93,8 +92,8 @@ console.log(this.formularData.parameters[0]);
         parameterCol1.classList.add("col-2");
         parameterBootstrapRow.append(parameterCol1);
         const parameterLabel = document.createElement("label");
-        parameterLabel.for = "form-"+formParameter.name;
-        parameterLabel.id = "label-"+formParameter.name;
+        parameterLabel.for = "form-" + formParameter.name;
+        parameterLabel.id = "label-" + formParameter.name;
         parameterLabel.classList.add("col-form-label", "form-param");
         parameterLabel.innerHTML = formParameter.name;
         parameterCol1.append(parameterLabel);
@@ -105,7 +104,7 @@ console.log(this.formularData.parameters[0]);
         parameterBootstrapRow.append(parameterCol2);
         const parameterInput = document.createElement("input");
         parameterInput.classList.add("form-control", "param-name");
-        parameterInput.id = "form-"+formParameter.name;
+        parameterInput.id = "form-" + formParameter.name;
         parameterInput.type = "text";
         parameterInput.placeholder = "Parameterlabel";
         parameterCol2.append(parameterInput);
@@ -155,12 +154,12 @@ console.log(this.formularData.parameters[0]);
 
         alert("add - ToDo: Hinzufügen von Parameter in Datenstruktur und Datenbank" + this);
 
-       
+
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
 
-        const nodes = Array.from( paramListElement.closest('ul').children );
-        const position = nodes.indexOf(paramListElement)+1;
+        const nodes = Array.from(paramListElement.closest('ul').children);
+        const position = nodes.indexOf(paramListElement) + 1;
 
         const parameterToAdd = new ParameterData(this.formularData.findNextParameterName(), "", position);
 
@@ -176,7 +175,11 @@ console.log(this.formularData.parameters[0]);
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
 
-        alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank" + paramListElement);
+        //alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank" + paramListElement);
+        
+        alert(paramListElement.querySelector("label").textContent);
+        this.formularData.deleteParameterByName(paramListElement.querySelector("label").textContent);
+        
         paramListElement.remove();
 
     }
@@ -222,7 +225,7 @@ console.log(this.formularData.parameters[0]);
         return btnGroup;
     }
 
-    setFormularData(formularData){
+    setFormularData(formularData) {
         const formTitleElement = document.getElementById("form-title");
         formTitleElement.value = formularData.title;
 
@@ -232,59 +235,71 @@ console.log(this.formularData.parameters[0]);
 
 class FormularData {
 
-    constructor(id,title, query, queryHTML){
+    constructor(id, title, query, queryHTML) {
         this.title = title;
         this.id = id;
         this.parameters = [];
         this.query = query;
-        this.queryHTML=queryHTML;
+        this.queryHTML = queryHTML;
     }
 
-    addParameter(parameter){
+    addParameter(parameter) {
         this.updateParameterPositions(parameter.position);
         this.parameters.push(parameter);
         console.log(this.parameters);
     }
 
+    findParameterByName(name) {
+        let parameter;
+        this.parameters.forEach(param => {
+            if (param.name === name) parameter = param;
+        });
+        return parameter;
+    }
 
+    deleteParameterByName(name) {
+        this.parameters.forEach((param, index) => {
+            if (param.name === name) this.parameters.splice(index, 1);
+        });
+    }
 
-    deleteParameter(parameter){
-        this.parameters.remove(parameter);
+    deleteParameter(parameter) {
+        deleteParameterByName(parameter.name)
         console.log(this.parameters);
     }
 
-    updateParameterPositions(position){
-        this.parameters.forEach(param =>{
-            if(param.position >= position){
+    updateParameterPositions(position) {
+        this.parameters.forEach(param => {
+            if (param.position >= position) {
                 alert(position);
-                param.position=param.position+1;
+                param.position = param.position + 1;
             }
         });
 
     }
 
-    swapParameterPosition(parameter, newPosition){
+    swapParameterPosition(parameter, newPosition) {
 
         const paramToSwapWith = this.parameters.find(param => param.position == newPosition);
-        if(paramToSwapWith!=undefined){
+        if (paramToSwapWith != undefined) {
             paramToSwapWith.position = parameter.position;
         }
-        parameter.position=newPosition;
+        parameter.position = newPosition;
     }
 
-    findNextParameterName(){
+    findNextParameterName() {
         const paramNumbers = [];
         this.parameters.forEach(param => {
-            const paramNameNumber = parseInt(param.name.replace("param",""));
-            if(!isNaN(paramNameNumber)){
+            const paramNameNumber = parseInt(param.name.replace("param", ""));
+            if (!isNaN(paramNameNumber)) {
                 paramNumbers.push(paramNameNumber);
             }
         });
 
-        if(paramNumbers.length == 0){
+        if (paramNumbers.length == 0) {
             return "param01";
         }
-        return "param"+this.pad(Math.max.apply(Math, paramNumbers)+1);
+        return "param" + this.pad(Math.max.apply(Math, paramNumbers) + 1);
 
     }
 
@@ -295,10 +310,10 @@ class FormularData {
 }
 
 class ParameterData {
-    constructor(name, label, position){
+    constructor(name, label, position) {
         this.name = name;
-        this.position=position;
-        this.label=label;
+        this.position = position;
+        this.label = label;
     }
 }
 
