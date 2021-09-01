@@ -9,12 +9,13 @@ import initSqlJs from "sql.js";
 import {
     VerineDatabase
 } from "./VerineDatabase";
-import sqlVerineEditor from "./SqlVerineEditor"
+
+import { SqlVerineEditor } from "./SqlVerineEditor"
+
 import { SqlVerineForms } from "./SqlVerineForms"
 
 
 //global variables
-var ACTIVE_CODE_VIEW_DATA; // JSON Data holder
 var CURRENT_VERINE_DATABASE;
 var DATABASE_ARRAY = [];
 
@@ -27,7 +28,7 @@ var mobileResultModal = new Modal(document.getElementById('resultModal'));
 // INIT //
 
 //setup SqlVerineEditor
-//var sqlVerineEditor = new SqlVerineEditor();
+var sqlVerineEditor = new SqlVerineEditor();
 sqlVerineEditor.setEditorContainer("SqlVerineEditor");
 sqlVerineEditor.setSchemaContainer("schemaArea");
 sqlVerineEditor.setOutputContainer("outputArea");
@@ -38,6 +39,7 @@ sqlVerineEditor.init();
 //setup VerineForms
 var sqlVerineForms = new SqlVerineForms();
 sqlVerineForms.createUI();
+sqlVerineForms.createSqlVerineEditor();
 
 //start
 handleUrlParameters();
@@ -142,6 +144,7 @@ $('#selDbChooser').on('change', function () {
         sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
         sqlVerineEditor.reinit();
         ////////////
+        sqlVerineForms.updateSqlVerineEditorDatabase(CURRENT_VERINE_DATABASE);
 
         updateDbChooser(CURRENT_VERINE_DATABASE.name);
         //updateActiveCodeView();
@@ -181,7 +184,6 @@ $("#fileDbUpload").on('change', function () {
 
             CURRENT_VERINE_DATABASE = new VerineDatabase(uploadedFileName, initObject[0], "local");
             CURRENT_VERINE_DATABASE.setupExercises();
-            ACTIVE_CODE_VIEW_DATA = initObject[1];
             DATABASE_ARRAY.push(CURRENT_VERINE_DATABASE);
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
@@ -208,6 +210,7 @@ $("#fileDbUpload").on('change', function () {
             sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
             sqlVerineEditor.reinit();
             ////////////
+            sqlVerineForms.updateSqlVerineEditorDatabase(CURRENT_VERINE_DATABASE);
 
             updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
 
@@ -369,7 +372,6 @@ function loadDbFromServer(dbName) {
 
         CURRENT_VERINE_DATABASE = new VerineDatabase(dbName, initObject[0], "server");
         CURRENT_VERINE_DATABASE.setupExercises();
-        ACTIVE_CODE_VIEW_DATA = initObject[1];
         CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(CURRENT_VERINE_DATABASE.name);
         DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = CURRENT_VERINE_DATABASE;
 
@@ -396,6 +398,7 @@ function loadDbFromServer(dbName) {
         sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
         sqlVerineEditor.reinit();
         ////////////
+        sqlVerineForms.updateSqlVerineEditorDatabase(CURRENT_VERINE_DATABASE);
 
         updateDbChooser(CURRENT_VERINE_DATABASE.name);
         //updateActiveCodeView();
