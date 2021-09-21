@@ -35,10 +35,9 @@ export class SqlVerineForms {
         this.formsSqlVerineEditor.showCodeButton(false);
         this.formsSqlVerineEditor.showCodeSwitch(false);
         this.formsSqlVerineEditor.showRunButton(false);
-        this.formsSqlVerineEditor.init();
-
-        
+        this.formsSqlVerineEditor.init();        
     }
+    
     updateSqlVerineEditorDatabase(currenDatabase){
         this.formsSqlVerineEditor.setVerineDatabase(currenDatabase);
         this.formsSqlVerineEditor.reinit();

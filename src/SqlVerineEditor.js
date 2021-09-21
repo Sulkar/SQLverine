@@ -203,7 +203,6 @@ export class SqlVerineEditor {
 
     setupButtonArea() {
         let buttonArea = '<div class="buttonArea codeComponents"></div>';
-
         return buttonArea;
     }
 
@@ -574,11 +573,6 @@ export class SqlVerineEditor {
         return tempElement;
     }
 
-    //function: get Element this.NR from Element ID
-    getElementNr(elementClasses) {
-        return elementClasses.split(" ")[0].split("_")[1];
-    }
-
     //function: add new line <span>
     addNewLine() {
         let tempLeerzeichen = "<span class='codeElement_" + this.NR + " newline'><br></span>";
@@ -615,6 +609,13 @@ export class SqlVerineEditor {
             }
         });
         return sqlStringFound;
+    }
+
+    //function: get current Sql Query
+    getSqlQuery(){        
+        let sqlQuery = $(this.EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
+        let re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
+        return sqlQuery.text().replaceAll(re, " ").trim();
     }
 
     //function: run sql command, type = desktop or mobile
@@ -773,20 +774,21 @@ export class SqlVerineEditor {
         sqlVerineEditor.updateUsedTables(sqlVerineEditor);
         //entfernt alle .inputField die ein Feld einer gelöscht Tabelle haben
         $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea.editor .selColumn").each(function () {
+            let self = this;
             let isTableActive = false;
-            sqlVerineEditor.USED_TABLES.forEach(element => {
-                if ($(this).hasClass(element)) {
+            sqlVerineEditor.USED_TABLES.forEach(element => {                
+                if ($(self).hasClass(element)) {
                     isTableActive = true;
-                    let updatedFieldNameBasedOnTableCount = $(this).html().replace(element + ".", "");
+                    let updatedFieldNameBasedOnTableCount = $(self).html().replace(element + ".", "");
                     if (sqlVerineEditor.USED_TABLES.length > 1) {
-                        $(this).html(element + "." + updatedFieldNameBasedOnTableCount);
+                        $(self).html(element + "." + updatedFieldNameBasedOnTableCount);
                     } else {
-                        $(this).html(updatedFieldNameBasedOnTableCount);
+                        $(self).html(updatedFieldNameBasedOnTableCount);
                     }
                 }
             });
             if (!isTableActive) {
-                sqlVerineEditor.deleteElement($(this));
+                sqlVerineEditor.deleteElement($(self));
             }
         });
     }
@@ -820,7 +822,7 @@ export class SqlVerineEditor {
         // root inputField remove old Element and create new one
         else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("root")) {
             let dataSqlElement = elementToDelete.attr("data-sql-element");
-            elementToDelete.replaceWith(addInputField(dataSqlElement, "root"));
+            elementToDelete.replaceWith(this.addInputField(dataSqlElement, "root"));
             this.setSelection(this.NEXT_ELEMENT_NR, false);
         }
         // don´t delete, select parent Element
@@ -1654,7 +1656,7 @@ export class SqlVerineEditor {
             elementINSERT += "<span class='codeElement_" + sqlVerineEditor.NR + " sqlIdentifier extended'>(</span>";
             sqlVerineEditor.NR++;
 
-            elementINSERT += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended insert2 sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "' data-element-group='" + (sqlVerineEditor.NR - 2) + "," + (sqlVerineEditor.NR - 1) + "," + (sqlVerineEditor.NR + 1) + "'>___</span>";
+            elementINSERT += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root insert2 sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "' data-element-group='" + (sqlVerineEditor.NR - 2) + "," + (sqlVerineEditor.NR - 1) + "," + (sqlVerineEditor.NR + 1) + "'>___</span>";
             sqlVerineEditor.NR++;
 
             elementINSERT += "<span class='codeElement_" + sqlVerineEditor.NR + " sqlIdentifier extended'>)</span>";
