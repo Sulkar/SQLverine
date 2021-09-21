@@ -319,8 +319,8 @@ export class SqlVerineEditor {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT = $(returnObject.thisCodeElement);
 
                     // Remove all special expression modifiers
-                    let where3 = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
-                    where3.attr('data-sql-element', 'WHERE_3');
+                    //let where3 = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                    //where3.attr('data-sql-element', 'WHERE_3');
 
                     //remove all EXP_IN
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN"]').each(function () {

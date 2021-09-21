@@ -40,6 +40,9 @@ sqlVerineEditor.init();
 var sqlVerineForms = new SqlVerineForms();
 sqlVerineForms.createUI();
 sqlVerineForms.createSqlVerineEditor();
+//debug:
+document.querySelector("#nav-forms-tab").style.display = 'none'; //block
+
 
 //start
 handleUrlParameters();
