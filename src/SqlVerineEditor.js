@@ -318,28 +318,35 @@ export class SqlVerineEditor {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.replaceWith(returnObject.tempSelectValue);
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT = $(returnObject.thisCodeElement);
 
-                    // Remove all special expression modifiers
-                    //let where3 = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
-                    //where3.attr('data-sql-element', 'WHERE_3');
+                    //get current SQL Command: WHERE, JOIN, ... and change data of next inputField after operator               
+                    let currentSqlCommand = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.parent().attr("data-sql-element");
+                    let inputFieldDataChange = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                    if(currentSqlCommand == "WHERE") inputFieldDataChange.attr('data-sql-element', 'WHERE_3');
+                    else if(currentSqlCommand == "JOIN") inputFieldDataChange.attr('data-sql-element', 'JOIN_4');
+                    else if(currentSqlCommand == "AND") inputFieldDataChange.attr('data-sql-element', 'WHERE_AND_3');
+                    else if(currentSqlCommand == "OR") inputFieldDataChange.attr('data-sql-element', 'WHERE_OR_3');
+                    //...
 
+                    
                     //remove all EXP_IN
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN"]').each(function () {
-                        let prevElement = $(self).prev();
+                        console.log("in")
+                        let prevElement = $(this).prev();
                         //Komma entfernen, wenn vorhanden
                         if (prevElement.text() == ", ") {
                             prevElement.remove();
                         }
-                        $(self).remove();
+                        $(this).remove();
                         sqlVerineEditor.NR--;
                     });
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN_BRACKET"]').each(function () {
-                        $(self).remove();
+                        $(this).remove();
                         sqlVerineEditor.NR--;
                     });
 
                     //remove all EXP_BETWEEN
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_BETWEEN"]').each(function () {
-                        $(self).remove();
+                        $(this).remove();
                         sqlVerineEditor.NR--;
                     });
 
