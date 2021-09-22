@@ -647,16 +647,17 @@ export class SqlVerineEditor {
         try {
             //löscht alte Ausgabe
             $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
-            $(this.OUTPUT_CONTAINER).html("");
+            $(this.OUTPUT_CONTAINER).html("");            
 
             let result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+           
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = this.CURRENT_VERINE_DATABASE.database.getRowsModified();
             if (modifiedRows > 0) {
 
-                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(.*?)/);
-                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(.*?)/);
-                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(.*?)/);
+                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(\w+)/);
+                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(\w+)/);
+                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(\w+)/);
 
                 if (insertSQL != null && insertSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
@@ -671,9 +672,9 @@ export class SqlVerineEditor {
             }
 
             //wurde drop, create, alter table ausgeführt?
-            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(.*?)/);
-            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](.*?)['"]/);
-            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(.*?)/);
+            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\w+)/);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](\w+)['"]/);
+            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\w+)/);
             let tablesChanged = false;
 
             if (dropTableSQL != null && dropTableSQL.length > 0) {
