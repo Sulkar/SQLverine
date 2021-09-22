@@ -149,6 +149,9 @@ export class SqlVerineForms {
         parameterInput.id = "form-" + formParameter.name;
         parameterInput.type = "text";
         parameterInput.placeholder = "Parameterlabel";
+
+        parameterInput.addEventListener('focusout', this.changeParameterLabel.bind(this));
+
         parameterCol2.append(parameterInput);
 
         //Col 3: Move Up/Down
@@ -195,13 +198,20 @@ export class SqlVerineForms {
     changeDescription(event){
         const input = event.target || event.srcElement;
         this.formularData.description = input.value;
-        console.log(this.formularData);
     }
 
     changeTitle(event){
         const input = event.target || event.srcElement;
         this.formularData.title = input.value;
-        console.log(this.formularData);
+    }
+
+    changeParameterLabel(event){
+        const input = event.target || event.srcElement;
+        const paramName = input.id.replace("form-","");
+        const param = this.formularData.findParameterByName(paramName);
+
+        param.label = input.value;
+
     }
 
     addParameter(event) {
