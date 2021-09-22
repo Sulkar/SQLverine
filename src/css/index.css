@@ -7,6 +7,23 @@ h1 {
     margin: 0 0 30px;
 }
 
+#btnExecRun{
+    display: inline-block;
+    padding: 0.35em 1.0em 0.15em;
+    border: 0;
+    margin: 0 0.3em 0.3em 0;
+    border-radius: 0.18em;
+    box-sizing: border-box;
+    text-decoration: none;
+    text-align: center;
+    transition: all 0.2s;
+    background-color: #fff;
+    color: forestgreen;
+    border-bottom: 0.15em solid forestgreen;
+    width: 4em;
+}
+
+
 .button {
     color: #333;
     background: linear-gradient(#eee, #ddd);

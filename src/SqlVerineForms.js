@@ -113,7 +113,7 @@ export class SqlVerineForms {
         formsExecRow.classList.add("row");
         formsExecRow.append(this.createExecTitleUI());
         formsExecRow.append(this.createExecDescriptionUI());
-        formsExecRow.append(this.createExecRunButtonUI());
+        
 
         const formsExecParametersList = this.createExecListUI();
 
@@ -127,7 +127,8 @@ export class SqlVerineForms {
         });
 
         formsExecRow.append(formsExecParametersList);
-
+        formsExecRow.append(this.createExecRunButtonUI());
+        
         this.formsExecution.innerHTML='';
         this.formsExecution.append(formsExecRow);
 
