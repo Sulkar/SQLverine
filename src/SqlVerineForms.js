@@ -110,6 +110,19 @@ export class SqlVerineForms {
         formsExecRow.append(this.createExecTitleUI());
         formsExecRow.append(this.createExecDescriptionUI());
 
+        const formsExecParametersList = this.createExecListUI();
+
+        this.formularData.parameters.sort(function(a,b) {
+            return parseInt(a.position) - parseInt(b.position);
+        });
+
+        this.formularData.parameters.forEach(param => {
+           const execParamListItem = this.createExecParameterListitemUI(param);
+           formsExecParametersList.append(execParamListItem);
+        });
+
+        formsExecRow.append(formsExecParametersList);
+
         this.formsExecution.innerHTML='';
         this.formsExecution.append(formsExecRow);
     }
@@ -124,6 +137,15 @@ export class SqlVerineForms {
         const formsExecDescription = document.createElement("p");
         formsExecDescription.innerHTML = this.formularData.description;
         return formsExecDescription;
+    }
+
+    createExecListUI(){
+        const formularParameterListe = document.createElement("ul");
+        formularParameterListe.classList.add("form-params");
+
+
+        return formularParameterListe;
+
     }
 
     createEditorTitleUI() {
@@ -170,6 +192,42 @@ export class SqlVerineForms {
         return formularParameterListe;
     }
 
+    createExecParameterListitemUI(formParameter) {
+        const parameterListitem = document.createElement("li");
+
+        parameterListitem.id = formParameter.name;
+
+        const parameterBootstrapRow = document.createElement("div");
+        parameterBootstrapRow.classList.add("row");
+        parameterListitem.append(parameterBootstrapRow);
+
+        //Col 1: Label
+        const parameterCol1 = document.createElement("div");
+        parameterCol1.classList.add("col-2");
+        parameterBootstrapRow.append(parameterCol1);
+        const parameterLabel = document.createElement("label");
+        parameterLabel.for = "form-exec-" + formParameter.name;
+        parameterLabel.id = "label-exec-" + formParameter.name;
+        //parameterLabel.classList.add("col-form-label", "form-param");
+        parameterLabel.innerHTML = formParameter.label;
+        parameterCol1.append(parameterLabel);
+
+        //Col 2: Input
+        const parameterCol2 = document.createElement("div");
+        parameterCol2.classList.add("col-5");
+        parameterBootstrapRow.append(parameterCol2);
+        const parameterInput = document.createElement("input");
+        parameterInput.classList.add("form-control", "param-name");
+        parameterInput.id = "form-exec-" + formParameter.name;
+        parameterInput.type = "text";
+        parameterInput.placeholder = "Wert eingbeben";
+
+        parameterInput.addEventListener('focusout', this.setParameterValue.bind(this));
+
+        parameterCol2.append(parameterInput);
+
+        return parameterListitem;
+    }
 
     createEditorParameterListitemUI(formParameter) {
         const parameterListitem = document.createElement("li");
@@ -265,6 +323,15 @@ export class SqlVerineForms {
 
     }
 
+    setParameterValue(event){
+        const input = event.target || event.srcElement;
+        const paramName = input.id.replace("form-exec-","");
+        const param = this.formularData.findParameterByName(paramName);
+
+        param.value = input.value;
+        console.log(this.formularData.parameters);
+    }
+
     addParameter(event) {
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
@@ -276,7 +343,7 @@ export class SqlVerineForms {
 
         this.formularData.addParameter(parameterToAdd);
 
-        const listItem = this.createParameterListitemUI(parameterToAdd);
+        const listItem = this.createEditorParameterListitemUI(parameterToAdd);
 
 
         paramListElement.after(listItem);
@@ -421,9 +488,10 @@ class FormularData {
 }
 
 class ParameterData {
-    constructor(name, label, position) {
+    constructor(name, label, position, value) {
         this.name = name;
         this.position = position;
         this.label = label;
+        this.value = value;
     }
 }
