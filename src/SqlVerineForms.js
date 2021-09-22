@@ -22,6 +22,11 @@ export class SqlVerineForms {
         //this.formsSqlVerineEditor = document.querySelector('#forms-sqlVerine');
         this.formsExecution = document.querySelector('#forms-execution');
 
+        //Mode Switch - wechselt von Edit zur View Ansicht
+        this.modeSwitch = document.querySelector('#formsSwitchMode');
+        this.modeSwitch.status = "bearbeiten";
+        this.modeSwitch.addEventListener('change', this.switchMode.bind(this));
+        
         this.formsParameterListUI = null;
 
         this.formularData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "");
@@ -29,6 +34,18 @@ export class SqlVerineForms {
 
         this.formsSqlVerineEditor;
 
+    }
+
+    switchMode(event){                
+        if(this.modeSwitch.status == "bearbeiten"){
+            this.modeSwitch.status = "anzeigen";                        
+            console.log(this.modeSwitch.status);
+        }else{
+            this.modeSwitch.status = "bearbeiten";
+            console.log(this.modeSwitch.status);
+        }  
+        const switchLabel = this.modeSwitch.nextElementSibling; 
+        switchLabel.innerHTML = this.modeSwitch.status;     
     }
 
     createSqlVerineEditor() {
@@ -46,6 +63,7 @@ export class SqlVerineForms {
         this.formsSqlVerineEditor.reinit();
     }
 
+    
     createUI() {
 
         const formsEditorRow = document.createElement("div");
@@ -73,6 +91,24 @@ export class SqlVerineForms {
 
         //this.createParameterListUI();
         //...
+    }
+
+    createSwitchModeUI(){
+        const switchModeButton = document.createElement("div");
+        switchModeButton.id = "formsSwitchModeForm"
+        switchModeButton.classList.add("form-check", "form-switch", "d-inline-block");
+        const switchModeInput = document.createElement("input");
+        switchModeInput.id = "formsSwitchMode";
+        switchModeInput.classList.add("form-check-input");
+        switchModeInput.type = "checkbox";
+        const switchModeLabel = document.createElement("label");
+        switchModeLabel.classList.add("form-check-label");
+        switchModeLabel.for = "formsSwitchMode";
+        switchModeLabel.innerHTML = "edit";
+        switchModeButton.append(switchModeInput);
+        switchModeButton.append(switchModeLabel);
+
+        return switchModeButton;
     }
 
     createTitleUI() {

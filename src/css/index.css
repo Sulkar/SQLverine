@@ -205,6 +205,11 @@ footer {
     margin: 0.4em 0;
 }
 
+#formsSwitchModeForm {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
 /* Gilt nur für Chrome, nötig um den Pfeil im Dropdown hinzubekommen */
 
 @media screen and (-webkit-min-device-pixel-ratio:0) and (min-resolution:.001dpcm) {
