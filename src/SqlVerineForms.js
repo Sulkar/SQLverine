@@ -19,14 +19,17 @@ export class SqlVerineForms {
     constructor() {
 
         this.formsEditor = document.querySelector('#forms-editor');
-        //this.formsSqlVerineEditor = document.querySelector('#forms-sqlVerine');
+        this.formsSqlVerineEditorContainer = document.querySelector('#forms-sqlVerineEditor');
         this.formsExecution = document.querySelector('#forms-execution');
+        this.formsEditor.style.display = 'none';
+        this.formsSqlVerineEditorContainer.style.display = 'none';
 
         //Mode Switch - wechselt von Edit zur View Ansicht
         this.modeSwitch = document.querySelector('#formsSwitchMode');
         this.modeSwitch.status = "bearbeiten";
         this.modeSwitch.addEventListener('change', this.switchMode.bind(this));
         
+        this.verineDatabase;
         this.formsParameterListUI = null;
 
         this.formularData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "");
@@ -38,11 +41,16 @@ export class SqlVerineForms {
 
     switchMode(event){                
         if(this.modeSwitch.status == "bearbeiten"){
-            this.modeSwitch.status = "anzeigen";                        
-            console.log(this.modeSwitch.status);
+            this.modeSwitch.status = "anzeigen";                                    
+            this.formsEditor.style.display = 'block';
+            this.formsExecution.style.display = 'none';
+            this.formsSqlVerineEditorContainer.style.display = 'block';
         }else{
+            this.createExecUI();
             this.modeSwitch.status = "bearbeiten";
-            console.log(this.modeSwitch.status);
+            this.formsEditor.style.display = 'none';
+            this.formsExecution.style.display = 'block';
+            this.formsSqlVerineEditorContainer.style.display = 'none';
         }  
         const switchLabel = this.modeSwitch.nextElementSibling; 
         switchLabel.innerHTML = this.modeSwitch.status;     
@@ -58,8 +66,10 @@ export class SqlVerineForms {
 
     }
     updateSqlVerineEditorDatabase(currenDatabase) {
-        this.formsSqlVerineEditor.setVerineDatabase(currenDatabase);
+        this.verineDatabase = currenDatabase;
+        this.formsSqlVerineEditor.setVerineDatabase(this.verineDatabase);
         this.formsSqlVerineEditor.reinit();
+        
     }
 
     
@@ -97,10 +107,8 @@ export class SqlVerineForms {
 
         const formsExecRow = document.createElement("div");
         formsExecRow.classList.add("row");
-
         formsExecRow.append(this.createExecTitleUI());
-
-        forms.formsExecRow.append(this.createExecDescriptionUI());
+        formsExecRow.append(this.createExecDescriptionUI());
 
         this.formsExecution.innerHTML='';
         this.formsExecution.append(formsExecRow);
