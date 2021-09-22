@@ -53,6 +53,10 @@ export class SqlVerineForms {
 
         formsEditorRow.append(this.createTitleUI());
 
+        formsEditorRow.append(document.createElement("br"));
+        formsEditorRow.append(document.createElement("br"));
+        formsEditorRow.append(this.createDescriptionUI());
+
 
         this.formsParameterListUI = this.createParameterListUI();
 
@@ -84,7 +88,24 @@ export class SqlVerineForms {
         formularTitelInput.placeholder = "Formular Titel";
         formularTitel.append(formularTitelInput);
 
+        formularTitelInput.addEventListener('focusout', this.changeTitle.bind(this));
+
         return formularTitel;
+    }
+
+    createDescriptionUI(){
+        const formularDescrition = document.createElement("div");
+        formularDescrition.classList.add("col-12");
+        const formularDescritionTextarea = document.createElement("textarea");
+        formularDescritionTextarea.id="form-description";
+        formularDescritionTextarea.classList.add("form-control");
+        formularDescritionTextarea.placeholder="Formular Beschreibung";
+        formularDescrition.append(formularDescritionTextarea);
+
+        formularDescrition.addEventListener('focusout', this.changeDescription.bind(this));
+
+        return formularDescrition;
+
     }
 
     createParameterListUI() {
@@ -170,12 +191,20 @@ export class SqlVerineForms {
         return parameterListitem;
     }
 
+
+    changeDescription(event){
+        const input = event.target || event.srcElement;
+        this.formularData.description = input.value;
+        console.log(this.formularData);
+    }
+
+    changeTitle(event){
+        const input = event.target || event.srcElement;
+        this.formularData.title = input.value;
+        console.log(this.formularData);
+    }
+
     addParameter(event) {
-
-
-        alert("add - ToDo: Hinzufügen von Parameter in Datenstruktur und Datenbank" + this);
-
-
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
 
@@ -196,16 +225,12 @@ export class SqlVerineForms {
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
 
-        //alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank" + paramListElement);
-
-        alert(paramListElement.querySelector("label").textContent);
         this.formularData.deleteParameterByName(paramListElement.querySelector("label").textContent);
 
         paramListElement.remove();
 
     }
     moveParameterUp(event) {
-        alert("up - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
 
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
@@ -215,7 +240,6 @@ export class SqlVerineForms {
         }
     }
     moveParameterDown(event) {
-        alert("down - ToDo: Reihenfolge in Datenstruktur und Datenbank ändern");
 
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
@@ -224,7 +248,6 @@ export class SqlVerineForms {
             paramListElement.parentNode.insertBefore(paramListElement.nextElementSibling, paramListElement);
         }
     }
-
 
     createBtnGroup(buttons) {
         const btnGroup = document.createElement("div");
@@ -256,18 +279,18 @@ export class SqlVerineForms {
 
 class FormularData {
 
-    constructor(id, title, query, queryHTML) {
+    constructor(id, title, query, queryHTML, description) {
         this.title = title;
         this.id = id;
         this.parameters = [];
         this.query = query;
         this.queryHTML = queryHTML;
+        this.description=description;
     }
 
     addParameter(parameter) {
         this.updateParameterPositions(parameter.position, 1);
         this.parameters.push(parameter);
-        console.log(this.parameters);
     }
 
     findParameterByName(name) {
@@ -287,7 +310,7 @@ class FormularData {
             }
         });
         this.updateParameterPositions(para.position, -1);
-        console.log(this.parameters);
+
     }
 
     deleteParameter(parameter) {
