@@ -21,6 +21,7 @@ export class SqlVerineForms {
         this.formsEditor = document.querySelector('#forms-editor');
         this.formsSqlVerineEditorContainer = document.querySelector('#forms-sqlVerineEditor');
         this.formsExecution = document.querySelector('#forms-execution');
+        this.formsSqlVerineEditorOutput = document.querySelector('#forms-sqlVerineEditorOutput');
         this.formsEditor.style.display = 'none';
         this.formsSqlVerineEditorContainer.style.display = 'none';
 
@@ -45,12 +46,14 @@ export class SqlVerineForms {
             this.formsEditor.style.display = 'block';
             this.formsExecution.style.display = 'none';
             this.formsSqlVerineEditorContainer.style.display = 'block';
+            this.formsSqlVerineEditorOutput.style.display = 'none';
         }else{
             this.createExecUI();
             this.modeSwitch.status = "bearbeiten";
             this.formsEditor.style.display = 'none';
             this.formsExecution.style.display = 'block';
             this.formsSqlVerineEditorContainer.style.display = 'none';
+            this.formsSqlVerineEditorOutput.style.display = 'block';
         }  
         const switchLabel = this.modeSwitch.nextElementSibling; 
         switchLabel.innerHTML = this.modeSwitch.status;     
@@ -59,6 +62,7 @@ export class SqlVerineForms {
     createSqlVerineEditor() {
         this.formsSqlVerineEditor = new SqlVerineEditor();
         this.formsSqlVerineEditor.setEditorContainer('forms-sqlVerineEditor');
+        this.formsSqlVerineEditor.setOutputContainer(this.formsSqlVerineEditorOutput.id);
         this.formsSqlVerineEditor.showCodeButton(false);
         this.formsSqlVerineEditor.showCodeSwitch(false);
         this.formsSqlVerineEditor.showRunButton(false);
@@ -109,6 +113,7 @@ export class SqlVerineForms {
         formsExecRow.classList.add("row");
         formsExecRow.append(this.createExecTitleUI());
         formsExecRow.append(this.createExecDescriptionUI());
+        formsExecRow.append(this.createExecRunButtonUI());
 
         const formsExecParametersList = this.createExecListUI();
 
@@ -125,6 +130,8 @@ export class SqlVerineForms {
 
         this.formsExecution.innerHTML='';
         this.formsExecution.append(formsExecRow);
+
+        this.formularData.query = "select * from schueler";
     }
 
     createExecTitleUI(){
@@ -139,12 +146,27 @@ export class SqlVerineForms {
         return formsExecDescription;
     }
 
+
     createExecListUI(){
         const formularParameterListe = document.createElement("ul");
         formularParameterListe.classList.add("form-params");
 
 
         return formularParameterListe;
+
+    }
+    createExecRunButtonUI(){
+        const runButton = document.createElement("button");
+        runButton.id = "btnExecRun";
+        runButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16"><path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" /> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" /></svg>';
+
+        runButton.addEventListener('click', this.executeDatabaseQuery.bind(this));
+
+        return runButton;
+    }
+
+    executeDatabaseQuery(){
+        this.formsSqlVerineEditor.execSqlCommand(this.formularData.query, "desktop");
 
     }
 
