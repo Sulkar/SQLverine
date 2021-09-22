@@ -1,4 +1,6 @@
-import { SqlVerineEditor } from "./SqlVerineEditor"
+import {
+    SqlVerineEditor
+} from "./SqlVerineEditor"
 
 const EMPTY_FORM_PARAMETER = {
     name: "param01",
@@ -24,21 +26,22 @@ export class SqlVerineForms {
 
         this.formularData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "");
         this.formularData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
-        
+
         this.formsSqlVerineEditor;
 
     }
 
-    createSqlVerineEditor(){
+    createSqlVerineEditor() {
         this.formsSqlVerineEditor = new SqlVerineEditor();
         this.formsSqlVerineEditor.setEditorContainer('forms-sqlVerineEditor');
         this.formsSqlVerineEditor.showCodeButton(false);
         this.formsSqlVerineEditor.showCodeSwitch(false);
         this.formsSqlVerineEditor.showRunButton(false);
-        this.formsSqlVerineEditor.init();        
+        this.formsSqlVerineEditor.init();
+
+
     }
-    
-    updateSqlVerineEditorDatabase(currenDatabase){
+    updateSqlVerineEditorDatabase(currenDatabase) {
         this.formsSqlVerineEditor.setVerineDatabase(currenDatabase);
         this.formsSqlVerineEditor.reinit();
     }
@@ -194,10 +197,10 @@ export class SqlVerineForms {
         const paramListElement = buttonClicked.closest("li");
 
         //alert("delete - ToDo: Löschen von Parameter aus Datenstruktur und Datenbank" + paramListElement);
-        
+
         alert(paramListElement.querySelector("label").textContent);
         this.formularData.deleteParameterByName(paramListElement.querySelector("label").textContent);
-        
+
         paramListElement.remove();
 
     }
@@ -262,7 +265,7 @@ class FormularData {
     }
 
     addParameter(parameter) {
-        this.updateParameterPositions(parameter.position);
+        this.updateParameterPositions(parameter.position, 1);
         this.parameters.push(parameter);
         console.log(this.parameters);
     }
@@ -276,21 +279,27 @@ class FormularData {
     }
 
     deleteParameterByName(name) {
+        let para;
         this.parameters.forEach((param, index) => {
-            if (param.name === name) this.parameters.splice(index, 1);
+            if (param.name === name) {
+                this.parameters.splice(index, 1);
+                para = param;
+            }
         });
+        this.updateParameterPositions(para.position, -1);
+        console.log(this.parameters);
     }
 
     deleteParameter(parameter) {
         deleteParameterByName(parameter.name)
-        console.log(this.parameters);
+        //updateParameterPositions(parameter.position, -1);
+
     }
 
-    updateParameterPositions(position) {
+    updateParameterPositions(position, direction) {
         this.parameters.forEach(param => {
             if (param.position >= position) {
-                alert(position);
-                param.position = param.position + 1;
+                param.position = param.position + direction;
             }
         });
 
