@@ -436,21 +436,21 @@ export class SqlVerineEditor {
                 } else if (sqlVerineEditor.hasCurrentSelectedElementSqlDataString(sqlVerineEditor.CURRENT_SELECTED_ELEMENT, "INSERT_2")) {
 
                     let updateField1 = sqlVerineEditor.addLeerzeichenMitKomma();
-                    updateField1 += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (this.NR + 2) + "' data-element-group='" + (this.NR - 1) + "," + (this.NR + 1) + "," + (this.NR + 2) + "'>___</span>";
+                    updateField1 += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "' data-element-group='" + (sqlVerineEditor.NR - 1) + "," + (sqlVerineEditor.NR + 1) + "," + (sqlVerineEditor.NR + 2) + "'>___</span>";
                     sqlVerineEditor.NR++;
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.after(updateField1);
 
                     let lastInsert3Field = sqlVerineEditor.findElementBySqlData(sqlVerineEditor.CURRENT_SELECTED_ELEMENT.closest(".parent").children(), "INSERT_3", "last");
 
                     let updateField2 = sqlVerineEditor.addLeerzeichenMitKomma();
-                    updateField2 += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (this.NR + 2) + "' data-element-group='" + (this.NR - 1) + "," + (this.NR - 2) + "," + (this.NR - 3) + "'>___</span>";
+                    updateField2 += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='INSERT_3' data-next-element='" + (sqlVerineEditor.NR + 2) + "' data-element-group='" + (sqlVerineEditor.NR - 1) + "," + (sqlVerineEditor.NR - 2) + "," + (sqlVerineEditor.NR - 3) + "'>___</span>";
                     sqlVerineEditor.NR++;
                     $(lastInsert3Field).after(updateField2);
                 }
                 //Create Table Spalte Typ ist gewählt, Feld für Einschränkung wird hinzugefügt
                 else if (sqlVerineEditor.hasCurrentSelectedElementSqlDataString(sqlVerineEditor.CURRENT_SELECTED_ELEMENT, "CREATE_COLUMN_2, CREATE_COLUMN_3")) {
                     let updateField1 = sqlVerineEditor.addLeerzeichen();
-                    updateField1 += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='CREATE_COLUMN_3' data-next-element='" + (this.NR + 2) + "' data-element-group=''>___</span>";
+                    updateField1 += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='CREATE_COLUMN_3' data-next-element='" + (sqlVerineEditor.NR + 2) + "' data-element-group=''>___</span>";
                     sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
                     sqlVerineEditor.NR++;
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.after(updateField1);
@@ -465,13 +465,13 @@ export class SqlVerineEditor {
             else if (sqlVerineEditor.hasCurrentSelectedElementSqlDataString(sqlVerineEditor.CURRENT_SELECTED_ELEMENT, "UPDATE")) {
                 let lastUpdateField = sqlVerineEditor.findElementBySqlData(sqlVerineEditor.CURRENT_SELECTED_ELEMENT.children(), "UPDATE_3", "last");
                 let updateFields = sqlVerineEditor.addLeerzeichenMitKomma();
-                updateFields += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "' data-element-group='" + (this.NR - 1) + "," + (this.NR + 1) + "," + (this.NR + 2) + "," + (this.NR + 3) + "," + (this.NR + 4) + "'>___</span>";
+                updateFields += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "' data-element-group='" + (sqlVerineEditor.NR - 1) + "," + (sqlVerineEditor.NR + 1) + "," + (sqlVerineEditor.NR + 2) + "," + (sqlVerineEditor.NR + 3) + "," + (sqlVerineEditor.NR + 4) + "'>___</span>";
                 sqlVerineEditor.NR++;
                 updateFields += sqlVerineEditor.addLeerzeichen();
                 updateFields += "<span class='codeElement_" + sqlVerineEditor.NR + "' data-goto-element='" + (sqlVerineEditor.NR - 8) + "'> = </span>";
                 sqlVerineEditor.NR++;
                 updateFields += sqlVerineEditor.addLeerzeichen();
-                updateFields += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_3' data-next-element='" + (sqlVerineEditor.NR - 4) + "' data-element-group='" + (this.NR - 1) + "," + (this.NR - 2) + "," + (this.NR - 3) + "," + (this.NR - 4) + "'>___</span>";
+                updateFields += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled extended sqlIdentifier' data-sql-element='UPDATE_3' data-next-element='" + (sqlVerineEditor.NR - 4) + "' data-element-group='" + (sqlVerineEditor.NR - 1) + "," + (sqlVerineEditor.NR - 2) + "," + (sqlVerineEditor.NR - 3) + "," + (sqlVerineEditor.NR - 4) + "'>___</span>";
                 sqlVerineEditor.NR++;
                 $(lastUpdateField).after(updateFields);
             }
@@ -625,23 +625,30 @@ export class SqlVerineEditor {
         return sqlQuery.text().replaceAll(re, " ").trim();
     }
 
+    getSqlQueryHtml(){
+        return $(".codeArea pre code").html().replaceAll("active", "");
+    }
+    getSqlQueryText(){
+        console.log(this.getSqlQueryHtml())
+        let tempSqlCommand;
+        const re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
+        if ($(this.EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {
+            tempSqlCommand = $(this.EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
+            tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
+            tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
+        } else {
+            tempSqlCommand = $(this.EDITOR_CONTAINER).find("#codeAreaText textarea");
+            tempSqlCommand = tempSqlCommand.val().replaceAll(re, " ").trim();
+            this.updateUsedTables(this);
+        }
+        return tempSqlCommand;
+    }
     //function: run sql command, type = desktop or mobile
     execSqlCommand(tempSqlCommand, type) {
         //bereitet den sql Befehl vor
-        let re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
+        
         if (tempSqlCommand == null) {
-
-            //Nutze Code aus der Codeare oder aus der Textare, je nachdem welches Element gerade sichtbar ist
-            if ($(this.EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {
-                tempSqlCommand = $(this.EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
-                tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
-                tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
-            } else {
-                tempSqlCommand = $(this.EDITOR_CONTAINER).find("#codeAreaText textarea");
-                tempSqlCommand = tempSqlCommand.val().replaceAll(re, " ").trim();
-                this.updateUsedTables(this);
-            }
-
+            tempSqlCommand = this.getSqlQueryText();
         }
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
@@ -695,7 +702,7 @@ export class SqlVerineEditor {
 
             //erstellt eine Tabelle mit den Ergebnissen
             for (let i = 0; i < result.length; i++) {
-                if (type == "mobile") $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").append(createTableSql(result[i].columns, result[i].values));
+                if (type == "mobile") $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").append(this.createTableSql(result[i].columns, result[i].values));
                 else if (type == "desktop") {
                     $(this.OUTPUT_CONTAINER).append("" + this.createTableSql(result[i].columns, result[i].values) + "");
                 };
