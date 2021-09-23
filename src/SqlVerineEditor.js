@@ -59,7 +59,7 @@ export class SqlVerineEditor {
         $(this.EDITOR_CONTAINER).find('.codeArea.editor pre code').html("");
         this.updateActiveCodeView();
         if (this.URLCODE != undefined) {
-            this.fillCodeAreaWithCode();
+            this.fillCodeAreaWithCode(unescape(this.URLCODE), this.URL_CURRENT_ID);
         }
     }
 
@@ -128,9 +128,9 @@ export class SqlVerineEditor {
         }
     }
 
-    fillCodeAreaWithCode() {
-        $(this.EDITOR_CONTAINER).find('.codeArea.editor pre code').html(unescape(this.URLCODE));
-        this.NR = this.URL_CURRENT_ID;
+    fillCodeAreaWithCode(code, currentId) {
+        $(this.EDITOR_CONTAINER).find('.codeArea.editor pre code').html(code); //unescape(this.URLCODE)
+        this.NR = currentId; //this.URL_CURRENT_ID
     }
 
     setupEditor() {
@@ -625,7 +625,7 @@ export class SqlVerineEditor {
     }
 
     getSqlQueryHtml(){
-        return $(".codeArea pre code").html().replaceAll("active", "");
+        return $(this.EDITOR_CONTAINER).find(".codeArea.editor pre code").html().replaceAll("active", "");
     }
     getSqlQueryText(){
         let tempSqlCommand;
