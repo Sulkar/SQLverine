@@ -40,6 +40,63 @@ export class SqlVerineForms {
 
     }
 
+    findFormsTable(){
+        const result = this.verineDatabase.getTableNames();
+        if(result.includes("verine_forms")){
+
+        }else{
+            this.createNewVerineFormsTable();
+        }
+    }
+
+    createNewVerineFormsTable(){
+        this.verineDatabase.runSqlCode('CREATE TABLE verine_forms ("id" INTEGER, "form_data" TEXT, PRIMARY KEY("id" AUTOINCREMENT));');
+    }
+
+    createFormsData(){
+        //JSON.parse(text);       
+        const result = this.verineDatabase.addForm(JSON.stringify(this.formularData));
+        console.log(result)
+
+        const form = this.verineDatabase.getFormById(1);
+        console.log(form)
+        console.log("----")
+    }
+
+    findFormsData(id){
+        const result = this.verineDatabase.runSqlCode('SELECT * FROM verine_forms WHERE id='+id);
+        return result;
+    }
+
+
+    updateFormChooser(selected) {
+        document.querySelector("#form-chooser").innerHTML = "";
+        const forms = this.verineDatabase.getForms();
+        forms.forEach(form => {
+            const tempFormData = JSON.parse(form[1]); 
+            document.querySelector("#form-chooser").append(new Option(tempFormData.title, form[0]));
+        })
+        if (selected != null) $("#form-chooser").val(selected);
+    }
+
+    // {"title":"Test Formular","id":1,"parameters":[{"name":"param01","position":0,"label":""}],"query":"select * from schueler","queryHTML":""}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     switchMode(event){                
         if(this.modeSwitch.status == "bearbeiten"){
             this.modeSwitch.status = "anzeigen";                                    
@@ -47,6 +104,7 @@ export class SqlVerineForms {
             this.formsExecution.style.display = 'none';
             this.formsSqlVerineEditorContainer.style.display = 'block';
             this.formsSqlVerineEditorOutput.style.display = 'none';
+            this.updateFormChooser();
         }else{
             this.createExecUI();
             this.modeSwitch.status = "bearbeiten";
@@ -75,7 +133,8 @@ export class SqlVerineForms {
         this.verineDatabase = currenDatabase;
         this.formsSqlVerineEditor.setVerineDatabase(this.verineDatabase);
         this.formsSqlVerineEditor.reinit();
-        
+        this.createFormsData();
+        this.updateFormChooser();
     }
 
     

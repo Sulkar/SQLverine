@@ -12,8 +12,10 @@ export class VerineDatabase {
 
         if (this.database != null) {
             this.exerciseTable = this.getExerciseTable();
+            this.formTable = this.getFormTable();
             this.exerciseOrder = this.getExerciseOrder();
             this.exerciseArray = this.getExercises();
+            this.formArray = this.getForms();
         }
 
         this.updateValues = []; //[sql_id, Spalte, Wert]
@@ -185,6 +187,59 @@ export class VerineDatabase {
         } else {
             this.exerciseTable = undefined;
             return this.exerciseTable;
+        }
+    }
+
+    getFormTable() {
+        let databaseTables = this.getTableNames();
+        if (databaseTables.includes("verine_forms")) {
+            return "verine_forms";
+        } else {
+            this.formTable = undefined;
+            return this.formTable;
+        }
+    }
+
+    getFormById(formId) {
+        let formData = {};
+        this.formArray.forEach(form => {
+            if (form[0] == formId) {
+                formData = form[1];
+            }
+        });
+        return formData;
+    }
+
+    getForms() {
+        this.formTable = this.getFormTable();
+        if (this.formTable != undefined) {
+            try {
+                return this.database.exec("SELECT * FROM " + this.formTable + ";")[0].values;
+            } catch (err) {
+                return [];
+            }
+        } else {
+            return [];
+        }
+    }
+
+    addForm(newFormData) {
+        let errorLogArray = [];
+        this.formTable = this.getFormTable();       
+        const addFormQuery = "INSERT INTO " + this.formTable + " (form_data) VALUES ('" + newFormData + "');"; 
+       
+        try {
+            this.database.exec(addFormQuery);
+            this.formArray = this.getForms();
+        } catch (err) {
+            errorLogArray.push(err);
+            console.log(err);
+        }
+        if (errorLogArray.length == 0) {
+            //gibt die ID der neu eingefügten Form zurück
+            return this.database.exec("SELECT last_insert_rowid()")[0].values[0][0];
+        } else {
+            return errorLogArray;
         }
     }
 
