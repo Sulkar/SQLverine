@@ -330,7 +330,6 @@ export class SqlVerineEditor {
                     
                     //remove all EXP_IN
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN"]').each(function () {
-                        console.log("in")
                         let prevElement = $(this).prev();
                         //Komma entfernen, wenn vorhanden
                         if (prevElement.text() == ", ") {
@@ -629,7 +628,6 @@ export class SqlVerineEditor {
         return $(".codeArea pre code").html().replaceAll("active", "");
     }
     getSqlQueryText(){
-        console.log(this.getSqlQueryHtml())
         let tempSqlCommand;
         const re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
         if ($(this.EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {

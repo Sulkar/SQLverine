@@ -201,7 +201,7 @@ export class VerineDatabase {
     }
 
     getFormById(formId) {
-        let formData = {};
+        let formData = undefined;
         this.formArray.forEach(form => {
             if (form[0] == formId) {
                 formData = form[1];
@@ -224,7 +224,7 @@ export class VerineDatabase {
     }
 
     addForm(newFormData) {
-        let errorLogArray = [];
+        const errorLogArray = [];
         this.formTable = this.getFormTable();       
         const addFormQuery = "INSERT INTO " + this.formTable + " (form_data) VALUES ('" + newFormData + "');"; 
        
@@ -240,6 +240,20 @@ export class VerineDatabase {
             return this.database.exec("SELECT last_insert_rowid()")[0].values[0][0];
         } else {
             return errorLogArray;
+        }
+    }
+
+    updateForm(updateFormData, id) {
+        const errorLogArray = [];
+        let updateQuery = "";
+        updateQuery += "UPDATE " + this.formTable + " SET form_data = '" + updateFormData + "' WHERE id = " + id + ";";
+                       
+        try {
+            this.database.exec(updateQuery);
+            this.formArray = this.getForms();
+            return true;
+        } catch (err) {
+            return errorLogArray.push(err);
         }
     }
 

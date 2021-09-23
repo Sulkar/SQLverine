@@ -50,6 +50,32 @@ export class SqlVerineForms {
 
     }
 
+    loadAllFormsFromDB(){
+        this.allForms = [];
+        const formsDB = this.verineDatabase.getForms();      
+        formsDB.forEach(form => {
+            this.allForms.push(JSON.parse(form));
+        });
+    }
+
+    saveAllFormsToDB(){
+        this.findFormsTable();
+
+        this.allForms.forEach(form =>{
+            console.log("id: " + form.id)
+            const found = this.verineDatabase.getFormById(form.id);
+            let result;
+            if(found == undefined){
+                console.log("insert")
+                result = this.verineDatabase.addForm(JSON.stringify(form));                
+                form.id = result;
+            }else{
+                console.log("update")
+                result = this.verineDatabase.updateForm(JSON.stringify(form), form.id);
+            }            
+        });
+    }
+
 
     findFormsTable(){
         const result = this.verineDatabase.getTableNames();
@@ -64,39 +90,23 @@ export class SqlVerineForms {
         this.verineDatabase.runSqlCode('CREATE TABLE verine_forms ("id" INTEGER, "form_data" TEXT, PRIMARY KEY("id" AUTOINCREMENT));');
     }
 
-    createFormsData(){
-        //JSON.parse(text);       
-        const result = this.verineDatabase.addForm(JSON.stringify(this.formularData));
-        console.log(result)
+    updateFormChooser() {
+        this.formsChooser.innerHTML = "";
+        const placeholderOption = new Option("Formular wählen");
+        placeholderOption.disabled = true;
+        placeholderOption.selected = true;
+        placeholderOption.hidden = true;
+        this.formsChooser.append(placeholderOption);
 
-        const form = this.verineDatabase.getFormById(1);
-        console.log(form)
-        console.log("----")
+        let formsCounter = 1;
+        this.allForms.forEach(form => {
+            this.formsChooser.append(new Option(form.title, formsCounter));
+            formsCounter++;
+        })        
     }
-
-    findFormsData(id){
-        const result = this.verineDatabase.runSqlCode('SELECT * FROM verine_forms WHERE id='+id);
-        return result;
-    }
-
-
-    updateFormChooser(selected) {
-        document.querySelector("#form-chooser").innerHTML = "";
-        const forms = this.verineDatabase.getForms();
-        forms.forEach(form => {
-            const tempFormData = JSON.parse(form[1]); 
-            document.querySelector("#form-chooser").append(new Option(tempFormData.title, form[0]));
-        })
-        if (selected != null) $("#form-chooser").val(selected);
-    }
-
-    // {"title":"Test Formular","id":1,"parameters":[{"name":"param01","position":0,"label":""}],"query":"select * from schueler","queryHTML":""}
-
-
-
-
 
     switchMode(event) {
+        this.saveAllFormsToDB();
         if (this.modeSwitch.status == "bearbeiten") {
             this.setModeSwitchAnzeigen();
         } else {
@@ -144,7 +154,6 @@ export class SqlVerineForms {
         this.verineDatabase = currenDatabase;
         this.formsSqlVerineEditor.setVerineDatabase(this.verineDatabase);
         this.formsSqlVerineEditor.reinit();
-        this.createFormsData();
         this.updateFormChooser();
 
     }
@@ -158,11 +167,7 @@ export class SqlVerineForms {
         
         const formsEditorRow = document.createElement("div");
         formsEditorRow.classList.add("row");
-        console.log(this.selectedFormularData);
         if (this.selectedFormularData !== undefined) {
-
-            console.log("AddNew");
-            console.log(this.selectedFormularData);
 
             this.modeSwitch.style.display="block";
             this.modeSwitch.nextElementSibling.style.display="block";
@@ -439,12 +444,13 @@ export class SqlVerineForms {
 
     addNewForm(event){
         
+        
+
         const optionVal=this.allForms.length+1;
 
-        const initialFormData = new selectedFormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "",TEST_FORMULAR_DATA.description);
+        const initialFormData = new FormularData(TEST_FORMULAR_DATA.title, "", "",TEST_FORMULAR_DATA.description);
         initialFormData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
-        
-        
+                
         this.allForms.push(initialFormData);
         this.setSelectedFormularData(initialFormData);
         
@@ -456,6 +462,8 @@ export class SqlVerineForms {
 
         this.formsChooser.append(newFormOption); 
         this.formsChooser.value=optionVal;
+
+        
     }
 
     changeDescription(event) {
@@ -485,7 +493,6 @@ export class SqlVerineForms {
         const param = this.selectedFormularData.findParameterByName(paramName);
 
         param.value = input.value;
-        console.log(this.selectedFormularData.parameters);
     }
 
     addParameter(event) {
@@ -564,11 +571,11 @@ export class SqlVerineForms {
 
 }
 
-class selectedFormularData {
+class FormularData {
 
-    constructor(id, title, query, queryHTML, description) {
+    constructor(title, query, queryHTML, description) {
         this.title = title;
-        this.id = id;
+        this.id = undefined;
         this.parameters = [];
         this.query = query;
         this.queryHTML = queryHTML;
@@ -645,10 +652,8 @@ class selectedFormularData {
 
         this.parameters.forEach(param => {
             queryWithParams = queryWithParams.replace(param.name, param.value);
-            console.log(param.name + " " + param.value + " " + queryWithParams);
         });
 
-        console.log(queryWithParams);
         return queryWithParams;
     }
 
