@@ -41,7 +41,7 @@ export class SqlVerineForms {
         this.verineDatabase;
         this.formsParameterListUI = null;
 
-        this.formularData = undefined;
+        this.selectedFormularData = undefined;
         this.formsSqlVerineEditor;
 
         this.allForms = [];
@@ -75,8 +75,8 @@ export class SqlVerineForms {
         this.formsExecution.style.display = 'block';
         this.formsSqlVerineEditorContainer.style.display = 'none';
         this.formsSqlVerineEditorOutput.style.display = 'block';
-        this.formularData.query = this.formsSqlVerineEditor.getSqlQueryText();
-        this.formularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
+        this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
+        this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
 
         const switchLabel = this.modeSwitch.nextElementSibling;
         switchLabel.innerHTML = this.modeSwitch.status;
@@ -108,11 +108,11 @@ export class SqlVerineForms {
         
         const formsEditorRow = document.createElement("div");
         formsEditorRow.classList.add("row");
-        console.log(this.formularData);
-        if (this.formularData !== undefined) {
+        console.log(this.selectedFormularData);
+        if (this.selectedFormularData !== undefined) {
 
             console.log("AddNew");
-            console.log(this.formularData);
+            console.log(this.selectedFormularData);
 
             this.modeSwitch.style.display="block";
             this.modeSwitch.nextElementSibling.style.display="block";
@@ -125,11 +125,11 @@ export class SqlVerineForms {
 
             this.formsParameterListUI = this.createEditorParameterListUI();
 
-            this.formularData.parameters.sort(function (a, b) {
+            this.selectedFormularData.parameters.sort(function (a, b) {
                 return parseInt(a.position) - parseInt(b.position);
             });
 
-            this.formularData.parameters.forEach(param => {
+            this.selectedFormularData.parameters.forEach(param => {
                 const listItem = this.createEditorParameterListitemUI(param);
                 this.formsParameterListUI.append(listItem);
             });
@@ -151,18 +151,18 @@ export class SqlVerineForms {
         const formsExecRow = document.createElement("div");
         formsExecRow.classList.add("row");
 
-        if (this.formularData !== undefined) {
+        if (this.selectedFormularData !== undefined) {
             formsExecRow.append(this.createExecTitleUI());
             formsExecRow.append(this.createExecDescriptionUI());
 
 
             const formsExecParametersList = this.createExecListUI();
 
-            this.formularData.parameters.sort(function (a, b) {
+            this.selectedFormularData.parameters.sort(function (a, b) {
                 return parseInt(a.position) - parseInt(b.position);
             });
 
-            this.formularData.parameters.forEach(param => {
+            this.selectedFormularData.parameters.forEach(param => {
                 const execParamListItem = this.createExecParameterListitemUI(param);
                 formsExecParametersList.append(execParamListItem);
             });
@@ -173,11 +173,11 @@ export class SqlVerineForms {
             this.formsExecution.innerHTML = '';
             this.formsExecution.append(formsExecRow);
 
-            this.formularData.query = "select * from schueler";
+            this.selectedFormularData.query = "select * from schueler";
         } else {
-            const noFormularData = document.createElement("p");
-            noFormularData.innerHTML = "Es wurde noch kein Formular erstellt. Informationen zur Formularerstellung findest du in der Doku unter <a href=''>Formulare erstellen</a>.";
-            formsExecRow.append(noFormularData);
+            const noselectedFormularData = document.createElement("p");
+            noselectedFormularData.innerHTML = "Es wurde noch kein Formular erstellt. Informationen zur Formularerstellung findest du in der Doku unter <a href=''>Formulare erstellen</a>.";
+            formsExecRow.append(noselectedFormularData);
             this.formsExecution.innerHTML = '';
             this.formsExecution.append(formsExecRow);
         }
@@ -185,13 +185,13 @@ export class SqlVerineForms {
 
     createExecTitleUI() {
         const formsExecTitle = document.createElement("h4");
-        formsExecTitle.innerHTML = this.formularData.title;
+        formsExecTitle.innerHTML = this.selectedFormularData.title;
         return formsExecTitle;
     }
 
     createExecDescriptionUI() {
         const formsExecDescription = document.createElement("p");
-        formsExecDescription.innerHTML = this.formularData.description;
+        formsExecDescription.innerHTML = this.selectedFormularData.description;
         return formsExecDescription;
     }
 
@@ -216,7 +216,7 @@ export class SqlVerineForms {
 
     executeDatabaseQuery() {
 
-        this.formsSqlVerineEditor.execSqlCommand(this.formularData.getQueryWithParams(), "desktop");
+        this.formsSqlVerineEditor.execSqlCommand(this.selectedFormularData.getQueryWithParams(), "desktop");
     }
 
 
@@ -232,7 +232,7 @@ export class SqlVerineForms {
         formularTitelInput.classList.add('form-control');
         formularTitelInput.type = "text";
         formularTitelInput.placeholder = "Formular Titel";
-        formularTitelInput.value = this.formularData.title;
+        formularTitelInput.value = this.selectedFormularData.title;
         formularTitel.append(formularTitelInput);
 
         formularTitelInput.addEventListener('focusout', this.changeTitle.bind(this));
@@ -382,12 +382,12 @@ export class SqlVerineForms {
         
         const optionVal=this.allForms.length+1;
 
-        const initialFormData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "",TEST_FORMULAR_DATA.description);
+        const initialFormData = new selectedFormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "",TEST_FORMULAR_DATA.description);
         initialFormData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
         
         
         this.allForms.push(initialFormData);
-        this.setFormularData(initialFormData);
+        this.setselectedFormularData(initialFormData);
         
         this.setModeSwitchAnzeigen();
 
@@ -401,12 +401,12 @@ export class SqlVerineForms {
 
     changeDescription(event) {
         const input = event.target || event.srcElement;
-        this.formularData.description = input.value;
+        this.selectedFormularData.description = input.value;
     }
 
     changeTitle(event) {
         const input = event.target || event.srcElement;
-        this.formularData.title = input.value;
+        this.selectedFormularData.title = input.value;
 
         this.formsChooser.options[this.formsChooser.selectedIndex].innerHTML=input.value;
     }
@@ -414,7 +414,7 @@ export class SqlVerineForms {
     changeParameterLabel(event) {
         const input = event.target || event.srcElement;
         const paramName = input.id.replace("form-", "");
-        const param = this.formularData.findParameterByName(paramName);
+        const param = this.selectedFormularData.findParameterByName(paramName);
 
         param.label = input.value;
 
@@ -423,10 +423,10 @@ export class SqlVerineForms {
     setParameterValue(event) {
         const input = event.target || event.srcElement;
         const paramName = input.id.replace("form-exec-", "");
-        const param = this.formularData.findParameterByName(paramName);
+        const param = this.selectedFormularData.findParameterByName(paramName);
 
         param.value = input.value;
-        console.log(this.formularData.parameters);
+        console.log(this.selectedFormularData.parameters);
     }
 
     addParameter(event) {
@@ -436,9 +436,9 @@ export class SqlVerineForms {
         const nodes = Array.from(paramListElement.closest('ul').children);
         const position = nodes.indexOf(paramListElement) + 1;
 
-        const parameterToAdd = new ParameterData(this.formularData.findNextParameterName(), "", position);
+        const parameterToAdd = new ParameterData(this.selectedFormularData.findNextParameterName(), "", position);
 
-        this.formularData.addParameter(parameterToAdd);
+        this.selectedFormularData.addParameter(parameterToAdd);
 
         const listItem = this.createEditorParameterListitemUI(parameterToAdd);
 
@@ -450,7 +450,7 @@ export class SqlVerineForms {
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
 
-        this.formularData.deleteParameterByName(paramListElement.querySelector("label").textContent);
+        this.selectedFormularData.deleteParameterByName(paramListElement.querySelector("label").textContent);
 
         paramListElement.remove();
 
@@ -494,10 +494,10 @@ export class SqlVerineForms {
         return btnGroup;
     }
 
-    setFormularData(formularData) {
+    setselectedFormularData(selectedFormularData) {
         //const formTitleElement = document.getElementById("form-title");
-        //formTitleElement.value = formularData.title;
-        this.formularData = formularData;
+        //formTitleElement.value = selectedFormularData.title;
+        this.selectedFormularData = selectedFormularData;
        
         this.createUI();
     }
@@ -505,7 +505,7 @@ export class SqlVerineForms {
 
 }
 
-class FormularData {
+class selectedFormularData {
 
     constructor(id, title, query, queryHTML, description) {
         this.title = title;
