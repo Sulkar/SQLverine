@@ -27,8 +27,11 @@ export class SqlVerineForms {
         this.formsSqlVerineEditorContainer.style.display = 'none';
 
         this.formsChooser = document.getElementById("form-chooser");
+        this.formsChooser.addEventListener("change", this.formSelected.bind(this));
+        
         this.addFormButton = document.getElementById("btnFormNew");
         this.addFormButton.addEventListener("click", this.addNewForm.bind(this));
+        
         this.downloadFormButton = document.getElementById("btnFormDownload");
         this.uploadFormButton = document.getElementById("uploadForm");
 
@@ -176,7 +179,7 @@ export class SqlVerineForms {
             this.selectedFormularData.query = "select * from schueler";
         } else {
             const noselectedFormularData = document.createElement("p");
-            noselectedFormularData.innerHTML = "Es wurde noch kein Formular erstellt. Informationen zur Formularerstellung findest du in der Doku unter <a href=''>Formulare erstellen</a>.";
+            noselectedFormularData.innerHTML = "Es wurde noch kein Formular erstellt oder ausgewählt. Informationen zur Formularerstellung findest du in der Doku unter <a href=''>Formulare erstellen</a>.";
             formsExecRow.append(noselectedFormularData);
             this.formsExecution.innerHTML = '';
             this.formsExecution.append(formsExecRow);
@@ -377,6 +380,15 @@ export class SqlVerineForms {
         return parameterListitem;
     }
 
+    formSelected(event){
+        const select = event.target || event.srcElement;
+        if(select.value !== undefined && this.allForms[select.value-1]!==undefined){
+            this.setSelectedFormularData(this.allForms[select.value-1]);
+        } else {
+            this.setSelectedFormularData(undefined);
+            this.setModeSwitchBearbeiten();
+        }
+    }
 
     addNewForm(event){
         
@@ -387,7 +399,7 @@ export class SqlVerineForms {
         
         
         this.allForms.push(initialFormData);
-        this.setselectedFormularData(initialFormData);
+        this.setSelectedFormularData(initialFormData);
         
         this.setModeSwitchAnzeigen();
 
@@ -494,7 +506,7 @@ export class SqlVerineForms {
         return btnGroup;
     }
 
-    setselectedFormularData(selectedFormularData) {
+    setSelectedFormularData(selectedFormularData) {
         //const formTitleElement = document.getElementById("form-title");
         //formTitleElement.value = selectedFormularData.title;
         this.selectedFormularData = selectedFormularData;
