@@ -26,6 +26,13 @@ export class SqlVerineForms {
         this.formsEditor.style.display = 'none';
         this.formsSqlVerineEditorContainer.style.display = 'none';
 
+        this.formsChooser = document.getElementById("form-chooser");
+        this.addFormButton = document.getElementById("btnFormNew");
+        this.addFormButton.addEventListener("click", this.addNewForm.bind(this));
+        this.downloadFormButton = document.getElementById("btnFormDownload");
+        this.uploadFormButton = document.getElementById("uploadForm");
+
+
         //Mode Switch - wechselt von Edit zur View Ansicht
         this.modeSwitch = document.querySelector('#formsSwitchMode');
         this.modeSwitch.status = "bearbeiten";
@@ -37,27 +44,40 @@ export class SqlVerineForms {
         this.formularData = undefined;
         this.formsSqlVerineEditor;
 
-        this.hasFormdata = false;
+        this.allForms = [];
 
     }
 
     switchMode(event) {
         if (this.modeSwitch.status == "bearbeiten") {
-            this.modeSwitch.status = "anzeigen";
-            this.formsEditor.style.display = 'block';
-            this.formsExecution.style.display = 'none';
-            this.formsSqlVerineEditorContainer.style.display = 'block';
-            this.formsSqlVerineEditorOutput.style.display = 'none';
+            this.setModeSwitchAnzeigen();
         } else {
-            this.createExecUI();
-            this.modeSwitch.status = "bearbeiten";
-            this.formsEditor.style.display = 'none';
-            this.formsExecution.style.display = 'block';
-            this.formsSqlVerineEditorContainer.style.display = 'none';
-            this.formsSqlVerineEditorOutput.style.display = 'block';
-            this.formularData.query = this.formsSqlVerineEditor.getSqlQueryText();
-            this.formularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
+            this.setModeSwitchBearbeiten();
         }
+        
+    }
+
+    setModeSwitchAnzeigen(){
+        this.modeSwitch.status = "anzeigen";
+        this.formsEditor.style.display = 'block';
+        this.formsExecution.style.display = 'none';
+        this.formsSqlVerineEditorContainer.style.display = 'block';
+        this.formsSqlVerineEditorOutput.style.display = 'none';
+
+        const switchLabel = this.modeSwitch.nextElementSibling;
+        switchLabel.innerHTML = this.modeSwitch.status;
+    }
+
+    setModeSwitchBearbeiten(){
+        this.createExecUI();
+        this.modeSwitch.status = "bearbeiten";
+        this.formsEditor.style.display = 'none';
+        this.formsExecution.style.display = 'block';
+        this.formsSqlVerineEditorContainer.style.display = 'none';
+        this.formsSqlVerineEditorOutput.style.display = 'block';
+        this.formularData.query = this.formsSqlVerineEditor.getSqlQueryText();
+        this.formularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
+
         const switchLabel = this.modeSwitch.nextElementSibling;
         switchLabel.innerHTML = this.modeSwitch.status;
     }
@@ -82,18 +102,18 @@ export class SqlVerineForms {
 
     createUI() {
 
-        /* 
-        if(this.formularData==undefined){
-             this.formularData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "",TEST_FORMULAR_DATA.description);
-             this.formularData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
-         }
-         */
+       
         this.modeSwitch.style.display="none";
         this.modeSwitch.nextElementSibling.style.display="none";
         
         const formsEditorRow = document.createElement("div");
         formsEditorRow.classList.add("row");
-        if (!this.formularData == undefined) {
+        console.log(this.formularData);
+        if (this.formularData !== undefined) {
+
+            console.log("AddNew");
+            console.log(this.formularData);
+
             this.modeSwitch.style.display="block";
             this.modeSwitch.nextElementSibling.style.display="block";
             formsEditorRow.append(this.createEditorTitleUI());
@@ -122,8 +142,6 @@ export class SqlVerineForms {
 
         this.createExecUI();
 
-        //this.createParameterListUI();
-        //...
     }
 
     createExecUI() {
@@ -133,7 +151,7 @@ export class SqlVerineForms {
         const formsExecRow = document.createElement("div");
         formsExecRow.classList.add("row");
 
-        if (!this.formularData == undefined) {
+        if (this.formularData !== undefined) {
             formsExecRow.append(this.createExecTitleUI());
             formsExecRow.append(this.createExecDescriptionUI());
 
@@ -360,6 +378,27 @@ export class SqlVerineForms {
     }
 
 
+    addNewForm(event){
+        
+        const optionVal=this.allForms.length+1;
+
+        const initialFormData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "",TEST_FORMULAR_DATA.description);
+        initialFormData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
+        
+        
+        this.allForms.push(initialFormData);
+        this.setFormularData(initialFormData);
+        
+        this.setModeSwitchAnzeigen();
+
+        const newFormOption = document.createElement("option");
+        newFormOption.value= optionVal;
+        newFormOption.innerHTML = "Neues Formular";
+
+        this.formsChooser.append(newFormOption); 
+        this.formsChooser.value=optionVal;
+    }
+
     changeDescription(event) {
         const input = event.target || event.srcElement;
         this.formularData.description = input.value;
@@ -368,6 +407,8 @@ export class SqlVerineForms {
     changeTitle(event) {
         const input = event.target || event.srcElement;
         this.formularData.title = input.value;
+
+        this.formsChooser.options[this.formsChooser.selectedIndex].innerHTML=input.value;
     }
 
     changeParameterLabel(event) {
@@ -457,6 +498,7 @@ export class SqlVerineForms {
         //const formTitleElement = document.getElementById("form-title");
         //formTitleElement.value = formularData.title;
         this.formularData = formularData;
+       
         this.createUI();
     }
 
