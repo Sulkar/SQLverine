@@ -52,9 +52,10 @@ export class SqlVerineForms {
 
     loadAllFormsFromDB(){
         this.allForms = [];
+        this.setSelectedFormularData(undefined);
         const formsDB = this.verineDatabase.getForms();      
         formsDB.forEach(form => {
-            this.allForms.push(JSON.parse(form));
+            this.allForms.push(JSON.parse(form[1]));
         });
     }
 
@@ -66,7 +67,7 @@ export class SqlVerineForms {
             const found = this.verineDatabase.getFormById(form.id);
             let result;
             if(found == undefined){
-                console.log("insert")
+                console.log("insert");
                 result = this.verineDatabase.addForm(JSON.stringify(form));                
                 form.id = result;
             }else{
@@ -106,6 +107,10 @@ export class SqlVerineForms {
     }
 
     switchMode(event) {
+        this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
+        this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
+        this.selectedFormularData.queryHTMLlastId = this.formsSqlVerineEditor.NR;
+
         this.saveAllFormsToDB();
         if (this.modeSwitch.status == "bearbeiten") {
             this.setModeSwitchAnzeigen();
@@ -115,7 +120,7 @@ export class SqlVerineForms {
         
     }
 
-    setModeSwitchAnzeigen(){
+    setModeSwitchAnzeigen(){        
         this.modeSwitch.status = "anzeigen";
         this.formsEditor.style.display = 'block';
         this.formsExecution.style.display = 'none';
@@ -133,8 +138,6 @@ export class SqlVerineForms {
         this.formsExecution.style.display = 'block';
         this.formsSqlVerineEditorContainer.style.display = 'none';
         this.formsSqlVerineEditorOutput.style.display = 'block';
-        this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
-        this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
 
         const switchLabel = this.modeSwitch.nextElementSibling;
         switchLabel.innerHTML = this.modeSwitch.status;
@@ -154,6 +157,7 @@ export class SqlVerineForms {
         this.verineDatabase = currenDatabase;
         this.formsSqlVerineEditor.setVerineDatabase(this.verineDatabase);
         this.formsSqlVerineEditor.reinit();
+        this.loadAllFormsFromDB();
         this.updateFormChooser();
 
     }
@@ -190,6 +194,14 @@ export class SqlVerineForms {
             });
 
             formsEditorRow.append(this.formsParameterListUI);
+
+            //sqlverine editor füllen
+            let lastEditorId = 1;
+            if(this.selectedFormularData.queryHTMLlastId != undefined) lastEditorId = this.selectedFormularData.queryHTMLlastId;
+            this.formsSqlVerineEditor.fillCodeAreaWithCode(this.selectedFormularData.queryHTML, lastEditorId); 
+            this.formsSqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT = "START";
+            this.formsSqlVerineEditor.updateActiveCodeView();
+
         }
 
         this.formsEditor.innerHTML = '';
@@ -228,7 +240,6 @@ export class SqlVerineForms {
             this.formsExecution.innerHTML = '';
             this.formsExecution.append(formsExecRow);
 
-            this.selectedFormularData.query = "select * from schueler";
         } else {
             const noselectedFormularData = document.createElement("p");
             noselectedFormularData.innerHTML = "Es wurde noch kein Formular erstellt oder ausgewählt. Informationen zur Formularerstellung findest du in der Doku unter <a href=''>Formulare erstellen</a>.";
@@ -579,6 +590,7 @@ class FormularData {
         this.parameters = [];
         this.query = query;
         this.queryHTML = queryHTML;
+        this.queryHTMLlastId = undefined;
         this.description = description;
     }
 
