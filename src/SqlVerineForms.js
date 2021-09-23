@@ -10,7 +10,7 @@ const EMPTY_FORM_PARAMETER = {
 
 const TEST_FORMULAR_DATA = {
     id: 1,
-    title: "Test Formular",
+    title: "",
 }
 
 export class SqlVerineForms {
@@ -33,8 +33,9 @@ export class SqlVerineForms {
         this.verineDatabase;
         this.formsParameterListUI = null;
 
-        this.formularData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "");
-        this.formularData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
+        this.formularData=undefined;
+
+        
 
         this.formsSqlVerineEditor;
 
@@ -81,6 +82,11 @@ export class SqlVerineForms {
     
     createUI() {
 
+        if(this.formularData==undefined){
+            this.formularData = new FormularData(TEST_FORMULAR_DATA.id, TEST_FORMULAR_DATA.title, "", "");
+            this.formularData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
+        }
+
         const formsEditorRow = document.createElement("div");
         formsEditorRow.classList.add("row");
 
@@ -92,15 +98,20 @@ export class SqlVerineForms {
 
 
         this.formsParameterListUI = this.createEditorParameterListUI();
+        
+        this.formularData.parameters.sort(function(a,b) {
+            return parseInt(a.position) - parseInt(b.position);
+        });
 
-        console.log(this.formularData.parameters[0]);
-
-        const listItem = this.createEditorParameterListitemUI(this.formularData.parameters[0]);
-
-        this.formsParameterListUI.append(listItem);
+        this.formularData.parameters.forEach(param => {
+            const listItem = this.createEditorParameterListitemUI(param);
+            this.formsParameterListUI.append(listItem);
+         });
 
         formsEditorRow.append(this.formsParameterListUI);
 
+
+        this.formsEditor.innerHTML='';
         this.formsEditor.append(formsEditorRow);
 
         this.createExecUI();
@@ -170,7 +181,7 @@ export class SqlVerineForms {
 
     executeDatabaseQuery(){
 
-        this.formsSqlVerineEditor.execSqlCommand(this.formularData.query, "desktop");
+        this.formsSqlVerineEditor.execSqlCommand(this.formularData.getQueryWithParams(), "desktop");
     }
 
     
@@ -186,6 +197,7 @@ export class SqlVerineForms {
         formularTitelInput.classList.add('form-control');
         formularTitelInput.type = "text";
         formularTitelInput.placeholder = "Formular Titel";
+        formularTitelInput.value=this.formularData.title;
         formularTitel.append(formularTitelInput);
 
         formularTitelInput.addEventListener('focusout', this.changeTitle.bind(this));
@@ -430,6 +442,7 @@ export class SqlVerineForms {
 
     }
 
+ 
 }
 
 class FormularData {
@@ -507,6 +520,19 @@ class FormularData {
         return "param" + this.pad(Math.max.apply(Math, paramNumbers) + 1);
 
     }
+
+    getQueryWithParams(){
+        let queryWithParams = this.query;
+
+        this.parameters.forEach(param =>{
+            queryWithParams=queryWithParams.replace(param.name, param.value);
+            console.log(param.name+" "+param.value + " " +queryWithParams);
+        });
+        
+        console.log(queryWithParams);
+        return queryWithParams;
+    }
+
 
     pad(n) {
         return (n < 10) ? ("0" + n) : n;
