@@ -54,6 +54,8 @@ export class SqlVerineForms {
             this.formsExecution.style.display = 'block';
             this.formsSqlVerineEditorContainer.style.display = 'none';
             this.formsSqlVerineEditorOutput.style.display = 'block';
+            this.formularData.query = this.formsSqlVerineEditor.getSqlQueryText();
+            this.formularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
         }  
         const switchLabel = this.modeSwitch.nextElementSibling; 
         switchLabel.innerHTML = this.modeSwitch.status;     
@@ -166,9 +168,11 @@ export class SqlVerineForms {
     }
 
     executeDatabaseQuery(){
-        this.formsSqlVerineEditor.execSqlCommand(this.formularData.query, "desktop");
 
+        this.formsSqlVerineEditor.execSqlCommand(this.formularData.query, "desktop");
     }
+
+    
 
     createEditorTitleUI() {
         //erstelle Formulartitel Input
