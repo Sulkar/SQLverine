@@ -257,6 +257,19 @@ export class VerineDatabase {
         }
     }
 
+    deleteFormById(formId) {
+        let errorLogArray = [];
+        let deleteExerciseQuery = 'DELETE FROM ' + this.formTable + ' WHERE id = ' + formId + ';';
+        try {
+            const result = this.database.exec(deleteExerciseQuery);
+            this.formArray = this.getForms();
+            return result;
+        } catch (err) {
+            errorLogArray.push(err);
+            return errorLogArray;
+        }
+    }
+
     getExerciseById(exerciseId) {
         let exerciseObject = {};
         this.exerciseArray.forEach(exercise => {
