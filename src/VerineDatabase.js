@@ -617,7 +617,7 @@ export class VerineDatabase {
         let tableColorArray = [];
 
         tables.forEach(table => {
-            if (table != "verine_exercises" && table != "verine_info") {
+            if (table != "verine_exercises" && table != "verine_info" && table != "verine_forms") {
                 let tableColor = this.colorArray[tableCounter % this.colorArray.length];
 
                 if (tableCounter % 3 == 0) {

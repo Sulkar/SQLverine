@@ -1109,7 +1109,7 @@ export class SqlVerineEditor {
         this.clearSelectionOptions(".buttonArea .selTable");
         let databaseTables = this.getSqlTables();
         for (let i = 0; i < databaseTables.length; i++) {
-            if ((databaseTables[i] != "verine_exercises" && databaseTables[i] != "verine_info") || this.SHOW_EXERCISE_TABLE) {
+            if ((databaseTables[i] != "verine_exercises" && databaseTables[i] != "verine_info" && databaseTables[i] != "verine_forms") || this.SHOW_EXERCISE_TABLE) {
                 $(this.EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
             }
         }
