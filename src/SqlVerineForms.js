@@ -55,7 +55,13 @@ export class SqlVerineForms {
         this.setSelectedFormularData(undefined);
         const formsDB = this.verineDatabase.getForms();      
         formsDB.forEach(form => {
-            this.allForms.push(JSON.parse(form[1]));
+            
+            const newFormObjectData = JSON.parse(form[1]);            
+            const newFormData = new FormularData(newFormObjectData.title);
+            newFormObjectData.id = form[0]; //sql ID
+            newFormData.setObjectData(newFormObjectData);
+            this.allForms.push(newFormData);
+
         });
     }
 
@@ -281,7 +287,7 @@ export class SqlVerineForms {
     }
 
     executeDatabaseQuery() {
-
+        console.log(this.selectedFormularData.getQueryWithParams())
         this.formsSqlVerineEditor.execSqlCommand(this.selectedFormularData.getQueryWithParams(), "desktop");
     }
 
@@ -545,6 +551,8 @@ export class SqlVerineForms {
 
         if (paramListElement.previousElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement, paramListElement.previousElementSibling);
+            const parameter = this.selectedFormularData.findParameterByName(paramListElement.querySelector("label").textContent);
+            this.selectedFormularData.swapParameterPosition(parameter, parameter.position-1)
         }
     }
     moveParameterDown(event) {
@@ -554,6 +562,8 @@ export class SqlVerineForms {
 
         if (paramListElement.nextElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement.nextElementSibling, paramListElement);
+            const parameter = this.selectedFormularData.findParameterByName(paramListElement.querySelector("label").textContent);
+            this.selectedFormularData.swapParameterPosition(parameter, parameter.position+1)
         }
     }
 
@@ -600,9 +610,20 @@ class FormularData {
         this.description = description;
     }
 
+    setObjectData(formularObjectData){
+        this.title = formularObjectData.title;
+        this.id = formularObjectData.id;
+        this.parameters = formularObjectData.parameters;
+        this.query = formularObjectData.query;
+        this.queryHTML = formularObjectData.queryHTML;
+        this.queryHTMLlastId = formularObjectData.queryHTMLlastId;
+        this.description = formularObjectData.description;        
+    }
+
     addParameter(parameter) {
         this.updateParameterPositions(parameter.position, 1);
         this.parameters.push(parameter);
+        console.log(this.parameters)
     }
 
     findParameterByName(name) {
