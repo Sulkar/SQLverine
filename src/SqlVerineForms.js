@@ -27,7 +27,7 @@ export class SqlVerineForms {
 
         this.formsChooser = document.getElementById("form-chooser");
         this.formsChooser.addEventListener("change", this.formSelected.bind(this));
-        
+
         this.addFormButton = document.getElementById("btnFormNew");
         this.addFormButton.addEventListener("click", this.addNewForm.bind(this));
         
@@ -50,6 +50,7 @@ export class SqlVerineForms {
         this.formsSqlVerineEditor;
 
         this.allForms = [];
+        this.addFormAllowed = true;
 
     }
 
@@ -70,10 +71,10 @@ export class SqlVerineForms {
     loadAllFormsFromDB(){
         this.allForms = [];
         this.setSelectedFormularData(undefined);
-        const formsDB = this.verineDatabase.getForms();      
+        const formsDB = this.verineDatabase.getForms();
         formsDB.forEach(form => {
-            
-            const newFormObjectData = JSON.parse(form[1]);            
+
+            const newFormObjectData = JSON.parse(form[1]);
             const newFormData = new FormularData(newFormObjectData.title);
             newFormObjectData.id = form[0]; //sql ID
             newFormData.setObjectData(newFormObjectData);
@@ -82,7 +83,7 @@ export class SqlVerineForms {
         });
     }
 
-    saveAllFormsToDB(){
+    saveAllFormsToDB() {
         this.findFormsTable();
 
         this.allForms.forEach(form =>{
@@ -93,21 +94,21 @@ export class SqlVerineForms {
                 form.id = result;
             }else{
                 result = this.verineDatabase.updateForm(JSON.stringify(form), form.id);
-            }            
+            }
         });
     }
 
 
-    findFormsTable(){
+    findFormsTable() {
         const result = this.verineDatabase.getTableNames();
-        if(result.includes("verine_forms")){
+        if (result.includes("verine_forms")) {
 
-        }else{
+        } else {
             this.createNewVerineFormsTable();
         }
     }
 
-    createNewVerineFormsTable(){
+    createNewVerineFormsTable() {
         this.verineDatabase.runSqlCode('CREATE TABLE verine_forms ("id" INTEGER, "form_data" TEXT, PRIMARY KEY("id" AUTOINCREMENT));');
     }
 
@@ -123,7 +124,7 @@ export class SqlVerineForms {
         this.allForms.forEach(form => {
             this.formsChooser.append(new Option(form.title, formsCounter));
             formsCounter++;
-        })        
+        })
     }
 
     switchMode(event) {
@@ -137,10 +138,10 @@ export class SqlVerineForms {
         } else {
             this.setModeSwitchBearbeiten();
         }
-        
+
     }
 
-    setModeSwitchAnzeigen(){        
+    setModeSwitchAnzeigen() {
         this.modeSwitch.status = "anzeigen";
         this.formsEditor.style.display = 'block';
         this.formsExecution.style.display = 'none';
@@ -151,7 +152,7 @@ export class SqlVerineForms {
         switchLabel.innerHTML = this.modeSwitch.status;
     }
 
-    setModeSwitchBearbeiten(){
+    setModeSwitchBearbeiten() {
         this.createExecUI();
         this.modeSwitch.status = "bearbeiten";
         this.formsEditor.style.display = 'none';
@@ -219,8 +220,8 @@ export class SqlVerineForms {
 
             //sqlverine editor füllen
             let lastEditorId = 1;
-            if(this.selectedFormularData.queryHTMLlastId != undefined) lastEditorId = this.selectedFormularData.queryHTMLlastId;
-            this.formsSqlVerineEditor.fillCodeAreaWithCode(this.selectedFormularData.queryHTML, lastEditorId); 
+            if (this.selectedFormularData.queryHTMLlastId != undefined) lastEditorId = this.selectedFormularData.queryHTMLlastId;
+            this.formsSqlVerineEditor.fillCodeAreaWithCode(this.selectedFormularData.queryHTML, lastEditorId);
             this.formsSqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT = "START";
             this.formsSqlVerineEditor.updateActiveCodeView();
 
@@ -487,34 +488,39 @@ export class SqlVerineForms {
         this.formSelected();      
     }
 
-    addNewForm(event){
-        
-        //speichert die aktuellen Formdaten in die DB, wenn welche existieren
-        if(this.selectedFormularData != undefined){
-            this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
-            this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
-            this.selectedFormularData.queryHTMLlastId = this.formsSqlVerineEditor.NR;
-            this.saveAllFormsToDB();
+    addNewForm(event) {
+
+        if (this.addFormAllowed) {
+            //speichert die aktuellen Formdaten in die DB, wenn welche existieren
+            if (this.selectedFormularData != undefined) {
+                this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
+                this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
+                this.selectedFormularData.queryHTMLlastId = this.formsSqlVerineEditor.NR;
+                this.saveAllFormsToDB();
+            }
+
+            const optionVal = this.allForms.length + 1;
+
+            const initialFormData = new FormularData(TEST_FORMULAR_DATA.title, "", "", TEST_FORMULAR_DATA.description);
+            initialFormData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
+
+
+            this.allForms.push(initialFormData);
+            this.setSelectedFormularData(initialFormData);
+
+            this.setModeSwitchAnzeigen();
+
+            const newFormOption = document.createElement("option");
+            newFormOption.value = optionVal;
+            newFormOption.innerHTML = "Neues Formular";
+
+            this.formsChooser.append(newFormOption);
+            this.formsChooser.value = optionVal;
+
+            document.getElementById("form-title").focus();
+            this.addFormAllowed = false;
         }
 
-        const optionVal=this.allForms.length+1;
-
-        const initialFormData = new FormularData(TEST_FORMULAR_DATA.title, "", "",TEST_FORMULAR_DATA.description);
-        initialFormData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
-                
-        this.allForms.push(initialFormData);
-        this.setSelectedFormularData(initialFormData);
-        
-        this.setModeSwitchAnzeigen();
-
-        const newFormOption = document.createElement("option");
-        newFormOption.value= optionVal;
-        newFormOption.innerHTML = "Neues Formular";
-
-        this.formsChooser.append(newFormOption); 
-        this.formsChooser.value=optionVal;
-        document.getElementById("form-title").focus();
-        
     }
 
     changeDescription(event) {
@@ -523,10 +529,15 @@ export class SqlVerineForms {
     }
 
     changeTitle(event) {
-        const input = event.target || event.srcElement;
-        this.selectedFormularData.title = input.value;
 
-        this.formsChooser.options[this.formsChooser.selectedIndex].innerHTML=input.value;
+
+        const input = event.target || event.srcElement;
+        if (input.value.trim().length > 0) {
+            this.selectedFormularData.title = input.value;
+
+            this.formsChooser.options[this.formsChooser.selectedIndex].innerHTML = input.value;
+            this.addFormAllowed = true;
+        }
     }
 
     changeParameterLabel(event) {
@@ -580,7 +591,7 @@ export class SqlVerineForms {
         if (paramListElement.previousElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement, paramListElement.previousElementSibling);
             const parameter = this.selectedFormularData.findParameterByName(paramListElement.querySelector("label").textContent);
-            this.selectedFormularData.swapParameterPosition(parameter, parameter.position-1)
+            this.selectedFormularData.swapParameterPosition(parameter, parameter.position - 1)
         }
     }
     moveParameterDown(event) {
@@ -591,7 +602,7 @@ export class SqlVerineForms {
         if (paramListElement.nextElementSibling) {
             paramListElement.parentNode.insertBefore(paramListElement.nextElementSibling, paramListElement);
             const parameter = this.selectedFormularData.findParameterByName(paramListElement.querySelector("label").textContent);
-            this.selectedFormularData.swapParameterPosition(parameter, parameter.position+1)
+            this.selectedFormularData.swapParameterPosition(parameter, parameter.position + 1)
         }
     }
 
@@ -619,7 +630,7 @@ export class SqlVerineForms {
         //const formTitleElement = document.getElementById("form-title");
         //formTitleElement.value = selectedFormularData.title;
         this.selectedFormularData = selectedFormularData;
-       
+
         this.createUI();
     }
 
@@ -638,14 +649,14 @@ class FormularData {
         this.description = description;
     }
 
-    setObjectData(formularObjectData){
+    setObjectData(formularObjectData) {
         this.title = formularObjectData.title;
         this.id = formularObjectData.id;
         this.parameters = formularObjectData.parameters;
         this.query = formularObjectData.query;
         this.queryHTML = formularObjectData.queryHTML;
         this.queryHTMLlastId = formularObjectData.queryHTMLlastId;
-        this.description = formularObjectData.description;        
+        this.description = formularObjectData.description;
     }
 
     addParameter(parameter) {
