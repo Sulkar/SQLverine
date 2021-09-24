@@ -375,6 +375,18 @@
             {
                 "codeComponentClass": ".btnOR",
                 "codeComponentType": "button"
+            },            
+            {
+                "codeComponentClass": ".btnOrder",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnLimit",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnGroup",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -394,6 +406,19 @@
             },
             {
                 "codeComponentClass": ".btnOR",
+                "codeComponentType": "button"
+            }
+            ,            
+            {
+                "codeComponentClass": ".btnOrder",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnLimit",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnGroup",
                 "codeComponentType": "button"
             }
         ]

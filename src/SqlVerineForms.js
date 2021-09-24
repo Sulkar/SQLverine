@@ -455,7 +455,13 @@ export class SqlVerineForms {
 
     addNewForm(event){
         
-        
+        //speichert die aktuellen Formdaten in die DB, wenn welche existieren
+        if(this.selectedFormularData != undefined){
+            this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
+            this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
+            this.selectedFormularData.queryHTMLlastId = this.formsSqlVerineEditor.NR;
+            this.saveAllFormsToDB();
+        }
 
         const optionVal=this.allForms.length+1;
 
