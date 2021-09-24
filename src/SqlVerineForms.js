@@ -242,7 +242,7 @@ export class SqlVerineForms {
 
         } else {
             const noselectedFormularData = document.createElement("p");
-            noselectedFormularData.innerHTML = "Es wurde noch kein Formular erstellt oder ausgewählt. Informationen zur Formularerstellung findest du in der Doku unter <a href=''>Formulare erstellen</a>.";
+            noselectedFormularData.innerHTML = "Es wurde noch kein Formular erstellt oder ausgewählt. Informationen zur Formularerstellung findest du in der Doku unter <a href='https://sqlverine.org/docs/intro'>Formulare erstellen</a>.";
             formsExecRow.append(noselectedFormularData);
             this.formsExecution.innerHTML = '';
             this.formsExecution.append(formsExecRow);
