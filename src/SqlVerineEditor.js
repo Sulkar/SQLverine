@@ -30,8 +30,6 @@ export class SqlVerineEditor {
         this.SHOW_CODE_SWITCH = true;
         this.SHOW_EXERCISE_TABLE = false;
         this.FORMULAR_DATA;
-        this.MAX_LIMIT = 10;
-        this.CURRENT_PAGINATION = 0;
     }
 
     //Initialisierung des SqlVerineEditors
@@ -255,7 +253,7 @@ export class SqlVerineEditor {
         //codeAreaText: strg + enter führt sql Code aus
         $(sqlVerineEditor.EDITOR_CONTAINER).find("#codeAreaText").on('keydown', 'textarea', function (event) {
             if (event.ctrlKey && event.keyCode === 13) {
-                sqlVerineEditor.CURRENT_PAGINATION = 0;
+                sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(0);
                 sqlVerineEditor.execSqlCommand(null, "desktop");
                 sqlVerineEditor.RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                     runFunction();
@@ -400,7 +398,7 @@ export class SqlVerineEditor {
 
         // Button: run sql command - desktop
         $(sqlVerineEditor.EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
-            sqlVerineEditor.CURRENT_PAGINATION = 0;            
+            sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(0);           
             sqlVerineEditor.execSqlCommand(null, "desktop");
             sqlVerineEditor.RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                 runFunction();
@@ -410,7 +408,7 @@ export class SqlVerineEditor {
         $(sqlVerineEditor.EDITOR_CONTAINER).on('click', '.btnRunMobile', function (event) {
             let tempCode = $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(sqlVerineEditor.OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
-            sqlVerineEditor.CURRENT_PAGINATION = 0;
+            sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(0);
             sqlVerineEditor.execSqlCommand(null, "mobile");
             sqlVerineEditor.RUN_FUNCTIONS_MOBILE.forEach(runFunction => {
                 runFunction();
@@ -559,19 +557,19 @@ export class SqlVerineEditor {
 
         //Pagination Button
         $(sqlVerineEditor.OUTPUT_CONTAINER).on('click', '.btnPaginationRight', function (event) {
-            sqlVerineEditor.CURRENT_PAGINATION++;
+            sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(sqlVerineEditor.CURRENT_VERINE_DATABASE.getCurrentPagination()+1);
             sqlVerineEditor.execSqlCommand(null, "desktop", true);
         });
         $(sqlVerineEditor.OUTPUT_CONTAINER).on('click', '.btnPaginationLeft', function (event) {
-            sqlVerineEditor.CURRENT_PAGINATION--;
+            sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(sqlVerineEditor.CURRENT_VERINE_DATABASE.getCurrentPagination()-1);
             sqlVerineEditor.execSqlCommand(null, "desktop", true);
         });
         $(sqlVerineEditor.OUTPUT_CONTAINER_MOBILE).on('click', '.btnPaginationRight', function (event) {
-            sqlVerineEditor.CURRENT_PAGINATION++;
+            sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(sqlVerineEditor.CURRENT_VERINE_DATABASE.getCurrentPagination()+1);
             sqlVerineEditor.execSqlCommand(null, "mobile");
         });
         $(sqlVerineEditor.OUTPUT_CONTAINER_MOBILE).on('click', '.btnPaginationLeft', function (event) {
-            sqlVerineEditor.CURRENT_PAGINATION--;
+            sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(sqlVerineEditor.CURRENT_VERINE_DATABASE.getCurrentPagination()-1);
             sqlVerineEditor.execSqlCommand(null, "mobile");
         });
     }
@@ -667,8 +665,8 @@ export class SqlVerineEditor {
     //function: run sql command, type = desktop or mobile
     execSqlCommand(tempSqlCommand, type, pagination) {
         //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
-        const maxLimit = this.MAX_LIMIT;
-        const currentPagination = this.CURRENT_PAGINATION;
+        const maxLimit = this.CURRENT_VERINE_DATABASE.getMaxLimit();
+        const currentPagination = this.CURRENT_VERINE_DATABASE.getCurrentPagination();
         const tempLimit = " LIMIT " + (maxLimit + 1) + " OFFSET " +  (currentPagination * maxLimit);
     
         //bereitet den sql Befehl vor
@@ -768,11 +766,11 @@ export class SqlVerineEditor {
         newTable += "<tbody>";
         
         //wenn Testelement die maximale Anzahl der angezeigten Einträge übersteigt, wird es entfernt
-        if(values.length > this.MAX_LIMIT){
+        if(values.length > this.CURRENT_VERINE_DATABASE.getMaxLimit()){
             values.pop();
             paginationRight = true;
         }
-        if(this.CURRENT_PAGINATION > 0){
+        if(this.CURRENT_VERINE_DATABASE.getCurrentPagination() > 0){
             paginationLeft = true;
         }
         
