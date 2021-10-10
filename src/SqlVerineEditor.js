@@ -30,6 +30,8 @@ export class SqlVerineEditor {
         this.SHOW_CODE_SWITCH = true;
         this.SHOW_EXERCISE_TABLE = false;
         this.FORMULAR_DATA;
+        this.MAX_LIMIT = 10;
+        this.CURRENT_PAGINATION = 0;
     }
 
     //Initialisierung des SqlVerineEditors
@@ -253,6 +255,7 @@ export class SqlVerineEditor {
         //codeAreaText: strg + enter führt sql Code aus
         $(sqlVerineEditor.EDITOR_CONTAINER).find("#codeAreaText").on('keydown', 'textarea', function (event) {
             if (event.ctrlKey && event.keyCode === 13) {
+                sqlVerineEditor.CURRENT_PAGINATION = 0;
                 sqlVerineEditor.execSqlCommand(null, "desktop");
                 sqlVerineEditor.RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                     runFunction();
@@ -397,6 +400,7 @@ export class SqlVerineEditor {
 
         // Button: run sql command - desktop
         $(sqlVerineEditor.EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
+            sqlVerineEditor.CURRENT_PAGINATION = 0;            
             sqlVerineEditor.execSqlCommand(null, "desktop");
             sqlVerineEditor.RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                 runFunction();
@@ -406,6 +410,7 @@ export class SqlVerineEditor {
         $(sqlVerineEditor.EDITOR_CONTAINER).on('click', '.btnRunMobile', function (event) {
             let tempCode = $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(sqlVerineEditor.OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
+            sqlVerineEditor.CURRENT_PAGINATION = 0;
             sqlVerineEditor.execSqlCommand(null, "mobile");
             sqlVerineEditor.RUN_FUNCTIONS_MOBILE.forEach(runFunction => {
                 runFunction();
@@ -551,6 +556,24 @@ export class SqlVerineEditor {
             }
             $(sqlVerineEditor.EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft(scrollPos);
         });
+
+        //Pagination Button
+        $(sqlVerineEditor.OUTPUT_CONTAINER).on('click', '.btnPaginationRight', function (event) {
+            sqlVerineEditor.CURRENT_PAGINATION++;
+            sqlVerineEditor.execSqlCommand(null, "desktop", true);
+        });
+        $(sqlVerineEditor.OUTPUT_CONTAINER).on('click', '.btnPaginationLeft', function (event) {
+            sqlVerineEditor.CURRENT_PAGINATION--;
+            sqlVerineEditor.execSqlCommand(null, "desktop", true);
+        });
+        $(sqlVerineEditor.OUTPUT_CONTAINER_MOBILE).on('click', '.btnPaginationRight', function (event) {
+            sqlVerineEditor.CURRENT_PAGINATION++;
+            sqlVerineEditor.execSqlCommand(null, "mobile");
+        });
+        $(sqlVerineEditor.OUTPUT_CONTAINER_MOBILE).on('click', '.btnPaginationLeft', function (event) {
+            sqlVerineEditor.CURRENT_PAGINATION--;
+            sqlVerineEditor.execSqlCommand(null, "mobile");
+        });
     }
 
     /////////////
@@ -642,44 +665,57 @@ export class SqlVerineEditor {
         return tempSqlCommand;
     }
     //function: run sql command, type = desktop or mobile
-    execSqlCommand(tempSqlCommand, type) {
+    execSqlCommand(tempSqlCommand, type, pagination) {
+        //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
+        const maxLimit = this.MAX_LIMIT;
+        const currentPagination = this.CURRENT_PAGINATION;
+        const tempLimit = " LIMIT " + (maxLimit + 1) + " OFFSET " +  (currentPagination * maxLimit);
+    
         //bereitet den sql Befehl vor
-        
         if (tempSqlCommand == null) {
-            tempSqlCommand = this.getSqlQueryText();
+            tempSqlCommand = this.getSqlQueryText();            
         }
+
+        let result = undefined;
+
+        //wenn SELECT, dann Limit einbauen
+        const selectSQL = tempSqlCommand.match(/(SELECT)\s([\w+,*])/i);
+        if (selectSQL != null && selectSQL.length > 0){
+            result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand + tempLimit);
+        }else if(pagination == undefined){
+            result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+        }
+        
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
             //löscht alte Ausgabe
             $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
             $(this.OUTPUT_CONTAINER).html("");            
 
-            let result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
-           
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = this.CURRENT_VERINE_DATABASE.database.getRowsModified();
             if (modifiedRows > 0) {
 
-                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(\w+)/);
-                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(\w+)/);
-                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(\w+)/);
+                let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(\w+)/i);
+                let updateSQL = tempSqlCommand.match(/(UPDATE)\s(\w+)/i);
+                let insertSQL = tempSqlCommand.match(/(INSERT INTO)\s(\w+)/i);
 
                 if (insertSQL != null && insertSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
-                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2]);
+                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2] + tempLimit);
                 } else if (updateSQL != null && updateSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
-                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2]);
+                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2] + tempLimit);
                 } else if (deleteSQL != null && deleteSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
-                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2]);
+                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2] + tempLimit);
                 }
             }
 
             //wurde drop, create, alter table ausgeführt?
-            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\w+)/);
-            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](\w+)['"]/);
-            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\w+)/);
+            let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\w+)/i);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](\w+)['"]/i);
+            let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\w+)/i);
             let tablesChanged = false;
 
             if (dropTableSQL != null && dropTableSQL.length > 0) {
@@ -691,7 +727,7 @@ export class SqlVerineEditor {
             } else if (alterTableSQL != null && alterTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
                 tablesChanged = true;
-                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2]);
+                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2] + tempLimit);
             }
             //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
             if (tablesChanged) {
@@ -716,6 +752,8 @@ export class SqlVerineEditor {
 
     //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
     createTableSql(columns, values) {
+        let paginationRight = false;
+        let paginationLeft = false;
 
         this.SOLUTION_ALL_ARRAY = [];
         this.SOLUTION_ROW_COUNTER = 0;
@@ -728,8 +766,19 @@ export class SqlVerineEditor {
         newTable += "</thead>";
 
         newTable += "<tbody>";
+        
+        //wenn Testelement die maximale Anzahl der angezeigten Einträge übersteigt, wird es entfernt
+        if(values.length > this.MAX_LIMIT){
+            values.pop();
+            paginationRight = true;
+        }
+        if(this.CURRENT_PAGINATION > 0){
+            paginationLeft = true;
+        }
+        
+        //Zeilen werden erstellt
         values.forEach((value) => {
-            newTable += "<tr>";
+            newTable += "<tr>";            
             this.SOLUTION_ROW_COUNTER++;
             value.forEach((element, indexColumn) => {
                 //fügt Elemente dem Ergebnis Array hinzu -> wird für das Überprüfen der Aufgabe benötigt
@@ -745,6 +794,14 @@ export class SqlVerineEditor {
         newTable += "</tbody>";
         newTable += "</table></div>"
 
+        //Pagination Schaltflächen
+        if(paginationRight){
+            newTable += "<button class='btnPaginationRight'>weiter</button>"    
+        }
+        if(paginationLeft){
+            newTable += "<button class='btnPaginationLeft'>zurück</button>"    
+        }
+        
         return newTable;
     }
 
