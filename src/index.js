@@ -44,8 +44,12 @@ sqlVerineForms.createSqlVerineEditor();
 document.querySelector("#nav-forms-tab").style.display = 'block'; //block
 
 
+
+
 //start
 handleUrlParameters();
+
+
 
 ////////////
 // EVENTS //
@@ -302,6 +306,31 @@ async function init(dataPromise) {
     return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
 }
 
+function setupProgressDots(){
+    const progressArea = document.getElementById("progress-dots-area");
+    
+    console.log(CURRENT_VERINE_DATABASE);
+
+    const allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
+
+    
+
+    allExercises.forEach(exercise => { 
+        const dot = document.createElement("a");
+        dot.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+        progressArea.append(dot);
+
+    });
+
+    
+    
+}
+    
+
+function updateProgressDots(){
+
+}
+
 //function: Aktualisierung der Übungen und der Progressbar
 function updateExercise() {
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
@@ -422,6 +451,9 @@ function loadDbFromServer(dbName) {
         let someTabTriggerEl = document.querySelector('#nav-info-tab')
         let tab = new Tab(someTabTriggerEl)
         tab.show()
+
+
+        setupProgressDots();
 
     }, function (error) {
         console.log(error)
