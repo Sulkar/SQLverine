@@ -10,9 +10,13 @@ import {
     VerineDatabase
 } from "./VerineDatabase";
 
-import { SqlVerineEditor } from "./SqlVerineEditor"
+import {
+    SqlVerineEditor
+} from "./SqlVerineEditor"
 
-import { SqlVerineForms } from "./SqlVerineForms"
+import {
+    SqlVerineForms
+} from "./SqlVerineForms"
 
 
 //global variables
@@ -113,7 +117,7 @@ $(".exerciseMobileView").on("click", ".btnNextExercise", function () {
 });
 
 //Button ist im Infotab und navigiert den Nutzer zum Aufgabentab
-$("#btnGotoExerciseTab").on('click', function () {
+$(".tab-content #nav-info").on("click", "#btnGotoExerciseTab", function () {
     let tab = new Tab(document.querySelector('#nav-mission-tab'));
     tab.show();
 });
@@ -159,12 +163,14 @@ $('#selDbChooser').on('change', function () {
         // zeigt das Datenbankschema an
         $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
+        // aktualisiere die DB Informationen
+        createInfo(CURRENT_VERINE_DATABASE.getInfo());
+
+        // sind Aufgaben in der DB, dann zeige Aufgabe Tab
         if (CURRENT_VERINE_DATABASE.getCurrentExerciseId() != undefined) {
-            //$("#nav-mission").show();
             $("#nav-mission-tab").show();
             updateExercise();
         } else {
-            //$("#nav-mission").hide();
             $("#nav-mission-tab").hide();
         }
 
@@ -178,6 +184,26 @@ $('#selDbChooser').on('change', function () {
         loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
     }
 });
+
+function createInfo(databaseInfos) {
+    if (!$.isEmptyObject(databaseInfos)) {
+        let dbInfo = databaseInfos.informationen;
+        let dbAuthor = databaseInfos.autor_name;
+        if (dbAuthor != "") dbAuthor = "Von: " + dbAuthor;
+        let dbLizenz = databaseInfos.lizenz;
+        if (dbLizenz != "") dbLizenz = "<br>Lizenz: " + dbLizenz;
+        let dbUrl = databaseInfos.autor_url;
+        if (dbUrl != "") dbUrl = "<br>Webseite: <a href='" + dbUrl + "' target='_blank'>" + dbUrl + "</a>";
+
+        $('#nav-info').html("<div>" + dbInfo + "</div></div>" + dbAuthor + dbUrl + dbLizenz + "</div>");
+    } else {
+        let standardInfo = '';
+        standardInfo += '<h3>Willkommen bei SQLverine</h3>';
+        standardInfo += '<p>SQLverine ist ein einfacher online SQL Editor für SQLite Datenbanken, der Schülerinnen und Schülern den Einstieg in das Thema Datenbanken und SQL Abfragen auf spielerische Weise ermöglicht.</p>';
+        standardInfo += '<p>Auf der linken Seite kannst du mit Hilfe der Codeblöcke verschiedene SQL Abfragen testen oder du schaust in unsere <a href="https://sqlverine.org/docs/intro" target="_blank">Dokumentation</a>.</p>';
+        $('#nav-info').html(standardInfo);
+    }
+}
 
 // Datenbankdatei wurde zum Upload ausgewählt
 $("#fileDbUpload").on('change', function () {
@@ -224,12 +250,13 @@ $("#fileDbUpload").on('change', function () {
             // zeigt das Datenbankschema an
             $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
+            // aktualisiere die DB Informationen
+            createInfo(CURRENT_VERINE_DATABASE.getInfo());
+
             if (CURRENT_VERINE_DATABASE.getCurrentExerciseId() != undefined) {
-                //$("#nav-mission").show();
                 $("#nav-mission-tab").show();
                 updateExercise();
             } else {
-                //$("#nav-mission").hide();
                 $("#nav-mission-tab").hide();
             }
 
@@ -438,12 +465,13 @@ function loadDbFromServer(dbName) {
         // zeigt das Datenbankschema an
         $("#schemaArea").html(CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
 
+        // aktualisiere die DB Informationen
+        createInfo(CURRENT_VERINE_DATABASE.getInfo());
+
         if (CURRENT_VERINE_DATABASE.getCurrentExerciseId() != undefined) {
-            //$("#nav-mission").show();
             $("#nav-mission-tab").show();
             updateExercise();
         } else {
-            //$("#nav-mission").hide();
             $("#nav-mission-tab").hide();
         }
 

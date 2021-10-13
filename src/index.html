@@ -303,18 +303,7 @@
                 <!-- Tab Modals -->
                 <div class="tab-content" id="nav-tabContent">
                     <!-- Info Tab -->
-                    <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
-                        <h3>Willkommen bei SQLverine</h3>
-                        <p>SQLverine ist ein einfacher online SQL Editor für SQLite Datenbanken, der Schülerinnen und
-                            Schülern den Einstieg in das Thema Datenbanken und SQL Abfragen auf spielerische Weise
-                            ermöglicht.
-                        </p>
-                        <p>Auf der linken Seite kannst du mit Hilfe der Codeblöcke verschiedene SQL Abfragen testen oder
-                            du startest mit einer einfachen Aufgabe:</p>
-                        <div class="text-center"><button id="btnGotoExerciseTab" class=" btn btn-outline-success "
-                                data-toggle="tooltip" data-placement="top">
-                                zur Aufgabe
-                            </button></div>
+                    <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">                                                
                     </div>
                     <!-- Schema Tab -->
                     <div class="tab-pane fade" id="nav-schema" role="tabpanel" aria-labelledby="nav-schema-tab">
@@ -420,6 +409,18 @@
                                         </svg>
                                     </button>
 
+                                    <button id="btnFormDelete" class="btnFormNew d-none d-md-inline-block"
+                                        data-toggle="tooltip" data-placement="top" title="Neues Formular">
+                                        del
+                                    </button>
+
+                                    <div id="formsSwitchModeForm" class="form-check form-switch d-none d-lg-inline-block">
+                                        <input class="form-check-input" type="checkbox" id="formsSwitchMode">
+                                        <label class="form-check-label" for="formsSwitchMode">bearbeiten</label>
+                                    </div>
+                                    
+                                    
+
                                     <!--
                                     <label for="uploadForm" class="fileUpload d-none d-md-inline-block"
                                         data-toggle="tooltip" data-placement="top" title="Upload Form">
@@ -450,10 +451,7 @@
                                     -->
                                 </div>
                                 <div class="col-auto">
-                                    <div id="formsSwitchModeForm" class="form-check form-switch d-none d-lg-inline-block">
-                                        <input class="form-check-input" type="checkbox" id="formsSwitchMode">
-                                        <label class="form-check-label" for="formsSwitchMode">bearbeiten</label>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <hr />
