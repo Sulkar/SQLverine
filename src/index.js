@@ -386,14 +386,10 @@ function closeHilfestellungAccordions() {
 //function: Aktualisierung der Übungen und der Progressbar
 function updateExercise() {
 
-
-
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-    let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
 
-
+    closeHilfestellungAccordions();
     setupProgressDots();
-
 
     $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
     //Beschreibung
