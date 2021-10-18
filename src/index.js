@@ -354,17 +354,23 @@ function setupProgressDots(){
         if(currExercise.id == exercise.id){
             dot.classList.add("active-exercise");
         }
+
+        dot.id="dotExerciseID-"+exercise.id;
+        dot.addEventListener("click", scrolldotClicked)
         progressArea.append(dot);
 
     });
 
     const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
     progressAreaMobile.innerHTML=progressArea.innerHTML;
-
-    
-    
 }
-    
+   
+function scrolldotClicked(event) {
+    const dot = event.target || event.srcElement;
+    const dotHref = dot.closest("a");
+    const excerciseID = dotHref.id.replace("dotExerciseID-","");
+    console.log(excerciseID);
+}
 
 
 
