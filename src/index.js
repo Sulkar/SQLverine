@@ -336,6 +336,8 @@ async function init(dataPromise) {
 function setupProgressDots(){
     const progressArea = document.getElementById("progress-dots-area");
     progressArea.innerHTML="";
+
+
     
     const currExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
 
@@ -356,6 +358,9 @@ function setupProgressDots(){
 
     });
 
+    const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
+    progressAreaMobile.innerHTML=progressArea.innerHTML;
+
     
     
 }
@@ -370,11 +375,11 @@ function updateExercise() {
 
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
-    let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
+
 
     setupProgressDots();
 
-    $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
+
     $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
     //Beschreibung
     if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
