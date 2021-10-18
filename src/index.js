@@ -3,7 +3,8 @@ import "./css/index.css"
 import $ from "jquery";
 import {
     Tab,
-    Modal
+    Modal,
+    Collapse
 } from "bootstrap";
 import initSqlJs from "sql.js";
 import {
@@ -180,7 +181,7 @@ $('#selDbChooser').on('change', function () {
         tab.show()
     }
     // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
-    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/ ) {
+    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
         loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
     }
 });
@@ -333,9 +334,11 @@ async function init(dataPromise) {
     return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
 }
 
-function setupProgressDots(){
+function setupProgressDots() {
     const progressArea = document.getElementById("progress-dots-area");
+
     progressArea.innerHTML="";
+
 
 
     
@@ -374,17 +377,26 @@ function scrolldotClicked(event) {
 
 
 
+function closeHilfestellungAccordions() {
+    const hilfeCollapseMobile = $('#accordionExerciseMetaCollapseMobile');
+    const collapseMobile = new Collapse(hilfeCollapseMobile, {
+        toggle: false,
+    });
+    collapseMobile.hide();
+    const hilfeCollapse = $('#accordionExerciseMetaCollapse');
+    const collapse = new Collapse(hilfeCollapse, {
+        toggle: false,
+    });
+    collapse.hide();
+}
+
 //function: Aktualisierung der Übungen und der Progressbar
 function updateExercise() {
 
-
-
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-    let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
 
-
+    closeHilfestellungAccordions();
     setupProgressDots();
-
 
     $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
     //Beschreibung
