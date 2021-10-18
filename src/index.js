@@ -3,7 +3,8 @@ import "./css/index.css"
 import $ from "jquery";
 import {
     Tab,
-    Modal
+    Modal,
+    Collapse
 } from "bootstrap";
 import initSqlJs from "sql.js";
 import {
@@ -180,7 +181,7 @@ $('#selDbChooser').on('change', function () {
         tab.show()
     }
     // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
-    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/ ) {
+    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
         loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
     }
 });
@@ -333,29 +334,42 @@ async function init(dataPromise) {
     return [new sql.Database(new Uint8Array(bufferedDatabase)), jsonData];
 }
 
-function setupProgressDots(){
+function setupProgressDots() {
     const progressArea = document.getElementById("progress-dots-area");
-    
+
     console.log(CURRENT_VERINE_DATABASE);
 
     const allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
 
-    
 
-    allExercises.forEach(exercise => { 
+
+    allExercises.forEach(exercise => {
         const dot = document.createElement("a");
-        dot.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+        dot.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
         progressArea.append(dot);
 
     });
 
-    
-    
+
+
 }
-    
 
-function updateProgressDots(){
 
+function updateProgressDots() {
+
+}
+
+function closeHilfestellungAccordions() {
+    const hilfeCollapseMobile = $('#accordionExerciseMetaCollapseMobile');
+    const collapseMobile = new Collapse(hilfeCollapseMobile, {
+        toggle: false,
+    });
+    collapseMobile.hide();
+    const hilfeCollapse = $('#accordionExerciseMetaCollapse');
+    const collapse = new Collapse(hilfeCollapse, {
+        toggle: false,
+    });
+    collapse.hide();
 }
 
 //function: Aktualisierung der Übungen und der Progressbar
@@ -363,6 +377,8 @@ function updateExercise() {
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
     let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
+
+    closeHilfestellungAccordions();
 
     $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
     $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
