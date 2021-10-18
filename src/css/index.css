@@ -303,6 +303,29 @@ div.tab-pane.active {
     background-color: steelblue;
 }
 
+#progress-dots-area {
+    text-align: center;
+    color: slategrey;
+}
+
+#progress-dots-area  a:not([href]){
+    color: lightgray;
+    text-decoration: none;
+    padding: 0.35em;
+}
+
+#progress-dots-area a:not([href]).active-exercise {
+    color: slategrey;
+    font-size: 1.4em;
+}
+
+
+#progress-dots-area  a:not([href]).solved {
+    color: slategrey;
+}
+
+
+
 .accordion-button:not(.collapsed) {
     color: steelblue;
     background-color: #fff;
