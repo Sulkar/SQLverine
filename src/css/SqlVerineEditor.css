@@ -255,12 +255,12 @@ pre span.codeline span:first {
     padding-left: 2em;
 }
 
-.codeComponentsScrolldots {
+.codeComponentsScrolldots{
     text-align: center;
     color: slategrey;
 }
 
-.codeComponentsScrolldots a:not([href]) {
+.codeComponentsScrolldots a:not([href]){
     color: lightgray;
     text-decoration: none;
     padding: 0.2em;

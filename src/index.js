@@ -337,27 +337,38 @@ async function init(dataPromise) {
 function setupProgressDots() {
     const progressArea = document.getElementById("progress-dots-area");
 
-    console.log(CURRENT_VERINE_DATABASE);
+    progressArea.innerHTML="";
+
+
+
+    
+    const currExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
 
     const allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
 
-
-
-    allExercises.forEach(exercise => {
+    allExercises.forEach(exerciseOrder => { 
         const dot = document.createElement("a");
-        dot.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+        dot.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+        const exercise = CURRENT_VERINE_DATABASE.getExerciseById(exerciseOrder[1]);
+        if(exercise.geloest==1){
+            dot.classList.add("solved");
+        }
+
+        if(currExercise.id == exercise.id){
+            dot.classList.add("active-exercise");
+        }
         progressArea.append(dot);
 
     });
 
+    const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
+    progressAreaMobile.innerHTML=progressArea.innerHTML;
 
-
+    
+    
 }
 
 
-function updateProgressDots() {
-
-}
 
 function closeHilfestellungAccordions() {
     const hilfeCollapseMobile = $('#accordionExerciseMetaCollapseMobile');
@@ -374,13 +385,16 @@ function closeHilfestellungAccordions() {
 
 //function: Aktualisierung der Übungen und der Progressbar
 function updateExercise() {
+
+
+
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     let allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
-    let progressBarPercentage = CURRENT_EXERCISE.reihenfolge / allExercises.length * 100;
 
-    closeHilfestellungAccordions();
 
-    $(".progress-bar-exercise").css('width', progressBarPercentage + "%");
+    setupProgressDots();
+
+
     $(".exercise-content .exercise-title").html(CURRENT_EXERCISE.titel);
     //Beschreibung
     if (removeEmptyTags(CURRENT_EXERCISE.beschreibung) != "") {
@@ -413,6 +427,7 @@ function updateExercise() {
     else if (CURRENT_EXERCISE.answerObject.next) {
         $(".exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
     }
+
 }
 
 //function: entfernt Tags aus Daten von der Datenbank, um zu prüfen ob ein Inhalt vorhanden ist.
