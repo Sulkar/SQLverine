@@ -590,10 +590,12 @@ export class SqlVerineForms {
         const buttonClicked = event.target || event.srcElement;
         const paramListElement = buttonClicked.closest("li");
 
+        if(this.selectedFormularData.parameters.length>1){
+
         this.selectedFormularData.deleteParameterByName(paramListElement.querySelector("label").textContent);
-
+    
         paramListElement.remove();
-
+    }
     }
     moveParameterUp(event) {
 
