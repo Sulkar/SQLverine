@@ -339,42 +339,51 @@ function setupProgressDots() {
 
     progressArea.innerHTML="";
 
-
-
-    
     const currExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
 
     const allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
 
+    const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
+    progressAreaMobile.innerHTML="";
+
     allExercises.forEach(exerciseOrder => { 
         const dot = document.createElement("a");
+        const mobileDot  = document.createElement("a");
         dot.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+        mobileDot.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+        
         const exercise = CURRENT_VERINE_DATABASE.getExerciseById(exerciseOrder[1]);
         if(exercise.geloest==1){
             dot.classList.add("solved");
+            mobileDot.classList.add("solved");
         }
 
         if(currExercise.id == exercise.id){
             dot.classList.add("active-exercise");
+            mobileDot.classList.add("active-exercise");
         }
 
         dot.id="dotExerciseID-"+exercise.id;
         dot.addEventListener("click", scrolldotClicked)
+
+
+        mobileDot.addEventListener("click", scrolldotClicked)
         progressArea.append(dot);
+        
+        mobileDot.id= "dotExerciseIDMobile-"+exercise.id;
+        progressAreaMobile.append(mobileDot);
 
     });
 
-    const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
-    progressAreaMobile.innerHTML=progressArea.innerHTML;
+    //const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
+   // progressAreaMobile.innerHTML=progressArea.innerHTML;
 }
    
 function scrolldotClicked(event) {
     const dot = event.target || event.srcElement;
     const dotHref = dot.closest("a");
-    const excerciseID = dotHref.id.replace("dotExerciseID-","");
+    const excerciseID = dotHref.id.replace("Mobile","").replace("dotExerciseID-","");
     CURRENT_VERINE_DATABASE.setCurrentExerciseId(excerciseID);
-
-    console.log(excerciseID);
 
     updateExercise();
 }
