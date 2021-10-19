@@ -372,7 +372,11 @@ function scrolldotClicked(event) {
     const dot = event.target || event.srcElement;
     const dotHref = dot.closest("a");
     const excerciseID = dotHref.id.replace("dotExerciseID-","");
+    CURRENT_VERINE_DATABASE.setCurrentExerciseId(excerciseID);
+
     console.log(excerciseID);
+
+    updateExercise();
 }
 
 
