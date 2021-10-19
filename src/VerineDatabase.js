@@ -30,16 +30,16 @@ export class VerineDatabase {
 
 
     }
-    getCurrentPagination(){
+    getCurrentPagination() {
         return this.currentPagination;
     }
-    setCurrentPagination(currentPagination){
+    setCurrentPagination(currentPagination) {
         this.currentPagination = currentPagination;
     }
-    getMaxLimit(){
+    getMaxLimit() {
         return this.maxLimit;
     }
-    setMaxLimit(maxLimit){
+    setMaxLimit(maxLimit) {
         this.maxLimit = maxLimit;
     }
     hasExercises() {
@@ -312,12 +312,13 @@ export class VerineDatabase {
         }
 
         let infoObject = {};
-        if (verine_info.length > 0) {            
+        if (verine_info.length > 0) {
             infoObject.id = verine_info[0];
             infoObject.autor_name = verine_info[1];
             infoObject.autor_url = verine_info[2];
             infoObject.lizenz = verine_info[3];
             infoObject.informationen = verine_info[4];
+            infoObject.freie_aufgabenwahl = verine_info[5]
         }
 
         return infoObject;
@@ -332,12 +333,12 @@ export class VerineDatabase {
         const rows = this.getRows();
         const lastPaginationPage = Math.floor(rows / this.getMaxLimit());
         const remainder = rows % this.getMaxLimit();
-        if(remainder == 0){
-            this.setCurrentPagination(lastPaginationPage-1);
-        }else{
+        if (remainder == 0) {
+            this.setCurrentPagination(lastPaginationPage - 1);
+        } else {
             this.setCurrentPagination(lastPaginationPage);
         }
-        
+
     }
 
     setCurrentExerciseAsSolved() {
@@ -439,6 +440,20 @@ export class VerineDatabase {
 
     updateInfo(infoUpdateArray) {
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
+
+
+        let checkFreieAufgabenwahlSpalte = "SELECT freie_aufgabenwahl FROM verine_info";
+        try {
+            this.database.exec(checkFreieAufgabenwahlSpalte);
+        } catch (err) {
+            let alterTable = "ALTER TABLE verine_info ADD 'freie_aufgabenwahl' INTEGER";
+            try {
+                this.database.exec(alterTable);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
         infoUpdateArray.forEach(updateValue => {
             updateQuery += "UPDATE verine_info SET " + updateValue[0] + " = '" + updateValue[1] + "' WHERE id = 1;";
         });
