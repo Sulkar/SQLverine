@@ -181,7 +181,7 @@ $('#selDbChooser').on('change', function () {
         tab.show()
     }
     // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
-    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/) {
+    else if (CURRENT_DATABASE_INDEX != null /*&& DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server"*/ ) {
         loadDbFromServer(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
     }
 });
@@ -337,59 +337,56 @@ async function init(dataPromise) {
 function setupProgressDots() {
     const progressArea = document.getElementById("progress-dots-area");
 
-    progressArea.innerHTML="";
+    progressArea.innerHTML = "";
 
     const currExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
 
     const allExercises = CURRENT_VERINE_DATABASE.getExerciseOrder();
 
     const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
-    progressAreaMobile.innerHTML="";
+    progressAreaMobile.innerHTML = "";
 
-    allExercises.forEach(exerciseOrder => { 
+    allExercises.forEach(exerciseOrder => {
         const dot = document.createElement("a");
-        const mobileDot  = document.createElement("a");
-        dot.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
-        mobileDot.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
-        
+        const mobileDot = document.createElement("a");
+        dot.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+        mobileDot.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0.8em" height="0.8em" fill="currentColor" class="bi bi-circle-fill" viewBox="0 0 16 16"> <circle cx="8" cy="8" r="8"></circle></svg>';
+
         const exercise = CURRENT_VERINE_DATABASE.getExerciseById(exerciseOrder[1]);
-        if(exercise.geloest==1){
+        if (exercise.geloest == 1) {
             dot.classList.add("solved");
             mobileDot.classList.add("solved");
         }
 
-        if(currExercise.id == exercise.id){
+        if (currExercise.id == exercise.id) {
             dot.classList.add("active-exercise");
             mobileDot.classList.add("active-exercise");
         }
 
-        dot.id="dotExerciseID-"+exercise.id;
+        dot.id = "dotExerciseID-" + exercise.id;
         dot.addEventListener("click", scrolldotClicked)
 
 
         mobileDot.addEventListener("click", scrolldotClicked)
         progressArea.append(dot);
-        
-        mobileDot.id= "dotExerciseIDMobile-"+exercise.id;
+
+        mobileDot.id = "dotExerciseIDMobile-" + exercise.id;
         progressAreaMobile.append(mobileDot);
 
     });
 
     //const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
-   // progressAreaMobile.innerHTML=progressArea.innerHTML;
+    // progressAreaMobile.innerHTML=progressArea.innerHTML;
 }
-   
+
 function scrolldotClicked(event) {
     const dot = event.target || event.srcElement;
     const dotHref = dot.closest("a");
-    const exerciseID = dotHref.id.replace("Mobile","").replace("dotExerciseID-","");
+    const exerciseID = dotHref.id.replace("Mobile", "").replace("dotExerciseID-", "");
     const exerciseClicked = CURRENT_VERINE_DATABASE.getExerciseById(exerciseID);
 
-console.log(CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl);
-console.log(exerciseClicked);
+    if ((!CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == 1) || exerciseClicked.geloest == 1) {
 
-    if((!CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl==undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl==1) || exerciseClicked.geloest == 1){
-    
         CURRENT_VERINE_DATABASE.setCurrentExerciseId(exerciseID);
 
         updateExercise();
