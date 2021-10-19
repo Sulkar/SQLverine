@@ -63,6 +63,10 @@ export class SqlVerineEditor {
         }
     }
 
+    clearOutputContainer(){
+        $(this.OUTPUT_CONTAINER).html("");
+        $(this.OUTPUT_CONTAINER_MOBILE).html("");
+    }
     setVerineDatabase(verineDatabase) {
         this.CURRENT_VERINE_DATABASE = verineDatabase;
     }

@@ -133,7 +133,8 @@ $('#selDbChooser').on('change', function () {
     if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database != null) {
         CURRENT_VERINE_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX];
 
-        //reinit SqlVerineEditor       
+        //reinit SqlVerineEditor  
+        sqlVerineEditor.clearOutputContainer();     
         sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunctionDesktop(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
@@ -222,6 +223,7 @@ $("#fileDbUpload").on('change', function () {
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
             //reinit SqlVerineEditor       
+            sqlVerineEditor.clearOutputContainer();   
             sqlVerineEditor.resetRunFunctions();
             sqlVerineEditor.addRunFunctionDesktop(() => {
                 let someTabTriggerEl = document.querySelector('#nav-result-tab');
@@ -487,6 +489,7 @@ function loadDbFromServer(dbName) {
         DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = CURRENT_VERINE_DATABASE;
 
         //reinit SqlVerineEditor       
+        sqlVerineEditor.clearOutputContainer();   
         sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunctionDesktop(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');

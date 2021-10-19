@@ -479,6 +479,7 @@ export class SqlVerineForms {
     }
 
     formSelected(event) {
+        this.formsSqlVerineEditor.clearOutputContainer();
         //speichert die aktuellen Formdaten in die DB, wenn welche existieren
         if (this.selectedFormularData != undefined) {
             this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
