@@ -10,7 +10,7 @@ export class VerineDatabase {
         this.columns = undefined;
         this.values = undefined;
 
-        this.maxLimit = 10;
+        this.maxLimit = 200;
         this.currentPagination = 0;
 
         if (this.database != null) {

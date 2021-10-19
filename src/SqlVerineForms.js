@@ -30,7 +30,7 @@ export class SqlVerineForms {
 
         this.addFormButton = document.getElementById("btnFormNew");
         this.addFormButton.addEventListener("click", this.addNewForm.bind(this));
-        
+
         this.deleteFormButton = document.getElementById("btnFormDelete");
         this.deleteFormButton.addEventListener("click", this.deleteForm.bind(this));
 
@@ -54,21 +54,33 @@ export class SqlVerineForms {
 
     }
 
-    deleteForm(){
-        if(this.selectedFormularData != undefined && this.selectedFormularData.id != undefined){
+    deleteForm() {
+        if (this.selectedFormularData != undefined && this.selectedFormularData.id != undefined) {
             this.verineDatabase.deleteFormById(this.selectedFormularData.id);
-            this.allForms.forEach((form, index) => {
-                if(form.id == this.selectedFormularData.id){
-                    this.allForms.splice(index, 1);
+
+            for (var i = this.allForms.length - 1; i >= 0; i--) {
+                if (this.allForms[i].id == this.selectedFormularData.id || this.allForms[i].title == '') {
+                    this.allForms.splice(i, 1);
                 }
-            });
-            this.updateFormChooser();
-            this.selectForm("1");
+            }
+        } else if (this.selectedFormularData != undefined) {
+            for (var i = this.allForms.length - 1; i >= 0; i--) {
+                if (this.allForms[i].id == undefined || this.allForms[i].title == '') {
+                    this.allForms.splice(i, 1);
+                }
+            }
         }
-       
+
+        this.addFormAllowed = true;
+        this.updateFormChooser();
+        if (this.allForms.length == 0)
+            this.selectForm(undefined);
+        else
+            this.selectForm("1")
+
     }
 
-    loadAllFormsFromDB(){
+    loadAllFormsFromDB() {
         this.allForms = [];
         this.setSelectedFormularData(undefined);
         const formsDB = this.verineDatabase.getForms();
@@ -86,13 +98,13 @@ export class SqlVerineForms {
     saveAllFormsToDB() {
         this.findFormsTable();
 
-        this.allForms.forEach(form =>{
+        this.allForms.forEach(form => {
             const found = this.verineDatabase.getFormById(form.id);
             let result;
-            if(found == undefined){
-                result = this.verineDatabase.addForm(JSON.stringify(form));                
+            if (found == undefined) {
+                result = this.verineDatabase.addForm(JSON.stringify(form));
                 form.id = result;
-            }else{
+            } else {
                 result = this.verineDatabase.updateForm(JSON.stringify(form), form.id);
             }
         });
@@ -186,18 +198,18 @@ export class SqlVerineForms {
 
     createUI() {
 
-        this.deleteFormButton.style.display="none";
-        this.modeSwitch.style.display="none";
-        this.modeSwitch.nextElementSibling.style.display="none";
-        
+        this.deleteFormButton.style.display = "none";
+        this.modeSwitch.style.display = "none";
+        this.modeSwitch.nextElementSibling.style.display = "none";
+
         const formsEditorRow = document.createElement("div");
         formsEditorRow.classList.add("row");
         if (this.selectedFormularData !== undefined) {
 
-            this.deleteFormButton.style.display="block";
+            this.deleteFormButton.style.display = "block";
 
-            this.modeSwitch.style.display="block";
-            this.modeSwitch.nextElementSibling.style.display="block";
+            this.modeSwitch.style.display = "block";
+            this.modeSwitch.nextElementSibling.style.display = "block";
             formsEditorRow.append(this.createEditorTitleUI());
 
             formsEditorRow.append(document.createElement("br"));
@@ -225,12 +237,12 @@ export class SqlVerineForms {
             this.formsSqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT = "START";
             this.formsSqlVerineEditor.updateActiveCodeView();
 
-            
+
 
         }
 
         this.formsEditor.innerHTML = '';
-        this.formsEditor.append(formsEditorRow);               
+        this.formsEditor.append(formsEditorRow);
         this.createExecUI();
 
     }
@@ -466,26 +478,27 @@ export class SqlVerineForms {
         return parameterListitem;
     }
 
-    formSelected(event){
+    formSelected(event) {
         //speichert die aktuellen Formdaten in die DB, wenn welche existieren
-        if(this.selectedFormularData != undefined){
+        if (this.selectedFormularData != undefined) {
             this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
             this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
             this.selectedFormularData.queryHTMLlastId = this.formsSqlVerineEditor.NR;
             this.saveAllFormsToDB();
         }
 
-        if(this.formsChooser.value !== undefined && this.allForms[this.formsChooser.value-1]!==undefined){
-            this.setSelectedFormularData(this.allForms[this.formsChooser.value-1]);
+        if (this.formsChooser.value !== undefined && this.allForms[this.formsChooser.value - 1] !== undefined) {
+            this.setSelectedFormularData(this.allForms[this.formsChooser.value - 1]);
         } else {
             this.setSelectedFormularData(undefined);
             this.setModeSwitchBearbeiten();
         }
     }
 
-    selectForm(valueToSelect){
-        this.formsChooser.selectedIndex = valueToSelect;  
-        this.formSelected();      
+    selectForm(valueToSelect) {
+        if (valueToSelect != undefined)
+            this.formsChooser.selectedIndex = valueToSelect;
+        this.formSelected();
     }
 
     addNewForm(event) {
@@ -503,7 +516,6 @@ export class SqlVerineForms {
 
             const initialFormData = new FormularData(TEST_FORMULAR_DATA.title, "", "", TEST_FORMULAR_DATA.description);
             initialFormData.addParameter(new ParameterData(EMPTY_FORM_PARAMETER.name, EMPTY_FORM_PARAMETER.label, EMPTY_FORM_PARAMETER.position));
-
 
             this.allForms.push(initialFormData);
             this.setSelectedFormularData(initialFormData);
