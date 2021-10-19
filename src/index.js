@@ -382,10 +382,18 @@ function setupProgressDots() {
 function scrolldotClicked(event) {
     const dot = event.target || event.srcElement;
     const dotHref = dot.closest("a");
-    const excerciseID = dotHref.id.replace("Mobile","").replace("dotExerciseID-","");
-    CURRENT_VERINE_DATABASE.setCurrentExerciseId(excerciseID);
+    const exerciseID = dotHref.id.replace("Mobile","").replace("dotExerciseID-","");
+    const exerciseClicked = CURRENT_VERINE_DATABASE.getExerciseById(exerciseID);
 
-    updateExercise();
+console.log(CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl);
+console.log(exerciseClicked);
+
+    if((!CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl==undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl==1) || exerciseClicked.geloest == 1){
+    
+        CURRENT_VERINE_DATABASE.setCurrentExerciseId(exerciseID);
+
+        updateExercise();
+    }
 }
 
 
