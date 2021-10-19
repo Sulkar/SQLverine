@@ -63,7 +63,7 @@ export class SqlVerineEditor {
         }
     }
 
-    clearOutputContainer(){
+    clearOutputContainer() {
         $(this.OUTPUT_CONTAINER).html("");
         $(this.OUTPUT_CONTAINER_MOBILE).html("");
     }
@@ -668,6 +668,7 @@ export class SqlVerineEditor {
     }
     //function: run sql command, type = desktop or mobile
     execSqlCommand(tempSqlCommand, type, pagination) {
+
         //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
         const maxLimit = this.CURRENT_VERINE_DATABASE.getMaxLimit();
         const currentPagination = this.CURRENT_VERINE_DATABASE.getCurrentPagination();
@@ -679,17 +680,16 @@ export class SqlVerineEditor {
         }
 
         let result = undefined;
-
-        //wenn SELECT, dann Limit einbauen
-        const selectSQL = tempSqlCommand.match(/(SELECT)\s([\w+,*])/i);
-        if (selectSQL != null && selectSQL.length > 0) {
-            result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand + tempLimit);
-        } else if (pagination == undefined) {
-            result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
-        }
-
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
+            //wenn SELECT, dann Limit einbauen
+            const selectSQL = tempSqlCommand.match(/(SELECT)\s([\w+,*])/i);
+            if (selectSQL != null && selectSQL.length > 0) {
+                result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand + tempLimit);
+            } else if (pagination == undefined) {
+                result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
+            }
+
             //löscht alte Ausgabe
             $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
             $(this.OUTPUT_CONTAINER).html("");
@@ -1388,7 +1388,7 @@ export class SqlVerineEditor {
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnCreateForeignKey synSQL sqlDelete"> FOREIGN KEY ___ REFERENCES ___ (___)</button>');
                 break;
             default:
-                //log("no component found")
+            //log("no component found")
         }
     }
 
