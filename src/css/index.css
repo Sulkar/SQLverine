@@ -230,7 +230,8 @@ footer {
 /* Gilt nur für Chrome, nötig um den Pfeil im Dropdown hinzubekommen */
 
 @media screen and (-webkit-min-device-pixel-ratio:0) and (min-resolution:.001dpcm) {
-    .dbHandlingMenu select {
+    .dbHandlingMenu select,
+    .formHandlingMenu select {
         appearance: none;
     }
 }
