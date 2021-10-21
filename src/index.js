@@ -278,6 +278,7 @@ $("#fileDbUpload").on('change', function () {
 
 //Button: lädt die aktuell ausgewählte Datenbank herunter
 $(".btnDbDownload").click(function () {
+    sqlVerineForms.saveAllFormsToDB();
     var binaryArray = CURRENT_VERINE_DATABASE.database.export();
 
     var blob = new Blob([binaryArray]);
