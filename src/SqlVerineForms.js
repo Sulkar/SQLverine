@@ -93,6 +93,8 @@ export class SqlVerineForms {
             this.allForms.push(newFormData);
 
         });
+        if (this.allForms.length > 0)
+            this.setSelectedFormularData(this.allForms[0]);
     }
 
     saveAllFormsToDB() {
@@ -193,7 +195,8 @@ export class SqlVerineForms {
         this.formsSqlVerineEditor.reinit();
         this.loadAllFormsFromDB();
         this.updateFormChooser();
-
+        if (this.allForms.length > 0)
+            this.selectForm("1");
     }
 
 
@@ -313,6 +316,7 @@ export class SqlVerineForms {
     }
 
     executeDatabaseQuery() {
+        this.verineDatabase.setCurrentPagination(0);
         this.formsSqlVerineEditor.execSqlCommand(this.selectedFormularData.getQueryWithParams(), "desktop");
     }
 
