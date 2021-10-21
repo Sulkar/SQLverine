@@ -64,8 +64,8 @@ export class SqlVerineEditor {
     }
 
     clearOutputContainer() {
+        $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
         $(this.OUTPUT_CONTAINER).html("");
-        $(this.OUTPUT_CONTAINER_MOBILE).html("");
     }
     setVerineDatabase(verineDatabase) {
         this.CURRENT_VERINE_DATABASE = verineDatabase;
@@ -691,8 +691,7 @@ export class SqlVerineEditor {
             }
 
             //löscht alte Ausgabe
-            $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
-            $(this.OUTPUT_CONTAINER).html("");
+            this.clearOutputContainer();
 
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = this.CURRENT_VERINE_DATABASE.database.getRowsModified();
