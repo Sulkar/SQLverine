@@ -240,6 +240,7 @@ export class VerineDatabase {
     addForm(newFormData) {
         const errorLogArray = [];
         this.formTable = this.getFormTable();
+        newFormData = newFormData.replaceAll("'","''");
         const addFormQuery = "INSERT INTO " + this.formTable + " (form_data) VALUES ('" + newFormData + "');";
 
         try {
@@ -259,6 +260,7 @@ export class VerineDatabase {
 
     updateForm(updateFormData, id) {
         const errorLogArray = [];
+        updateFormData = updateFormData.replaceAll("'","''");
         let updateQuery = "";
         updateQuery += "UPDATE " + this.formTable + " SET form_data = '" + updateFormData + "' WHERE id = " + id + ";";
 
