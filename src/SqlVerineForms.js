@@ -1,6 +1,10 @@
+import "./css/SqlVerineForms.css"
 import {
     SqlVerineEditor
 } from "./SqlVerineEditor"
+import {
+    Modal
+} from "bootstrap";
 
 const EMPTY_FORM_PARAMETER = {
     name: "param01",
@@ -32,7 +36,14 @@ export class SqlVerineForms {
         this.addFormButton.addEventListener("click", this.addNewForm.bind(this));
 
         this.deleteFormButton = document.getElementById("btnFormDelete");
-        this.deleteFormButton.addEventListener("click", this.deleteForm.bind(this));
+        this.deleteFormButton.addEventListener("click", this.showDeleteFormModal.bind(this));
+
+        this.deleteFormModal = new Modal(document.getElementById("formDeleteModal"));
+
+        this.deleteFormModalAcceptButton = document.getElementById("formDeleteModalAcceptBtn");
+        this.deleteFormModalAcceptButton.addEventListener("click", this.deleteForm.bind(this));
+        
+        this.formDeleteModalFormName = document.getElementById("formDeleteModalFormName");        
 
         this.downloadFormButton = document.getElementById("btnFormDownload");
         this.uploadFormButton = document.getElementById("uploadForm");
@@ -52,6 +63,14 @@ export class SqlVerineForms {
         this.allForms = [];
         this.addFormAllowed = true;
 
+    }
+
+    showDeleteFormModal(){
+        if (this.selectedFormularData != undefined){
+            this.formDeleteModalFormName.innerHTML = this.selectedFormularData.title;
+            this.deleteFormModal.show();
+        }
+            
     }
 
     deleteForm() {
@@ -78,6 +97,7 @@ export class SqlVerineForms {
         else
             this.selectForm("1")
 
+        this.deleteFormModal.hide();
     }
 
     loadAllFormsFromDB() {
