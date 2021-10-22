@@ -317,7 +317,8 @@ export class SqlVerineForms {
 
     executeDatabaseQuery() {
         this.verineDatabase.setCurrentPagination(0);
-        this.formsSqlVerineEditor.execSqlCommand(this.selectedFormularData.getQueryWithParams(), "desktop");
+        this.formsSqlVerineEditor.setCurrentSqlQuerry(this.getSelectedFormularData().getQueryWithParams());
+        this.formsSqlVerineEditor.execSqlCommand(null, "desktop");
     }
 
 
@@ -640,7 +641,9 @@ export class SqlVerineForms {
         this.selectedFormularData = selectedFormularData;
         this.createUI();
     }
-
+    getSelectedFormularData() {
+        return this.selectedFormularData;
+    }
 
 }
 
