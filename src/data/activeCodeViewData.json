@@ -679,14 +679,7 @@
             }
         ],
         "visibleCodeComponents": [
-            {
-                "codeComponentClass": ".btnAsc",
-                "codeComponentType": "button"
-            },
-            {
-                "codeComponentClass": ".btnDesc",
-                "codeComponentType": "button"
-            }
+           
         ]
     },
     {
@@ -710,6 +703,14 @@
             {
                 "codeComponentClass": ".selAggregate",
                 "codeComponentType": "select"
+            },
+            {
+                "codeComponentClass": ".btnAsc",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDesc",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -739,10 +740,7 @@
             }
         ],
         "visibleCodeComponents": [
-            {
-                "codeComponentClass": ".btnDesc",
-                "codeComponentType": "button"
-            }
+           
         ]
     },
     {
@@ -755,10 +753,7 @@
             }
         ],
         "visibleCodeComponents": [
-            {
-                "codeComponentClass": ".btnAsc",
-                "codeComponentType": "button"
-            }
+            
         ]
     },
     {

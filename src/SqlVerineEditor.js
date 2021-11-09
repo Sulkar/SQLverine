@@ -909,6 +909,10 @@ export class SqlVerineEditor {
         else if (elementToDelete.hasClass("synBrackets") && elementToDelete.hasClass("extended")) {
             this.setSelection("next", true);
         }
+        // ASC, DESC 
+        else if (elementToDelete.hasClass("btnAsc") || elementToDelete.hasClass("btnDesc")) {
+            this.setSelection("next", true);
+        }
         // spezielle Behandlung des inputFields von INSERT_2
         else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("extended") && this.hasCurrentSelectedElementSqlDataString(elementToDelete, "INSERT_2, UPDATE_2, UPDATE_3")) {
             let elementGroup = elementToDelete.attr("data-element-group");
@@ -1586,14 +1590,14 @@ export class SqlVerineEditor {
             let self = this;
             let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
             let elementOrderAsc = "";
-            elementOrderAsc += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ASC'>";
+            elementOrderAsc += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " sqlIdentifier inputFields' data-sql-element='ASC'>";
             sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
             sqlVerineEditor.NR++;
             elementOrderAsc += sqlVerineEditor.addLeerzeichen();
             elementOrderAsc += "ASC";
             elementOrderAsc += "</span>";
 
-            sqlVerineEditor.CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOrderAsc);
+            sqlVerineEditor.CURRENT_SELECTED_ELEMENT.append(elementOrderAsc); //closest(".parent").first().after(elementOrderAsc);
             sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
         });
 
@@ -1602,14 +1606,14 @@ export class SqlVerineEditor {
             let self = this;
             let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
             let elementOrderDesc = "";
-            elementOrderDesc += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='DESC'>";
+            elementOrderDesc += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " sqlIdentifier inputFields' data-sql-element='DESC'>";
             sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
             sqlVerineEditor.NR++;
             elementOrderDesc += sqlVerineEditor.addLeerzeichen();
             elementOrderDesc += "DESC";
             elementOrderDesc += "</span>";
 
-            sqlVerineEditor.CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementOrderDesc);
+            sqlVerineEditor.CURRENT_SELECTED_ELEMENT.append(elementOrderDesc); //closest(".parent").first().after(elementOrderDesc);
             sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
         });
 
