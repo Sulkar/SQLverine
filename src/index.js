@@ -134,7 +134,7 @@ $('#selDbChooser').on('change', function () {
         CURRENT_VERINE_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX];
 
         //reinit SqlVerineEditor  
-        sqlVerineEditor.clearOutputContainer();     
+        sqlVerineEditor.clearOutputContainer();
         sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunctionDesktop(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
@@ -223,7 +223,7 @@ $("#fileDbUpload").on('change', function () {
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
             //reinit SqlVerineEditor       
-            sqlVerineEditor.clearOutputContainer();   
+            sqlVerineEditor.clearOutputContainer();
             sqlVerineEditor.resetRunFunctions();
             sqlVerineEditor.addRunFunctionDesktop(() => {
                 let someTabTriggerEl = document.querySelector('#nav-result-tab');
@@ -388,8 +388,10 @@ function scrolldotClicked(event) {
     const exerciseID = dotHref.id.replace("Mobile", "").replace("dotExerciseID-", "");
     const exerciseClicked = CURRENT_VERINE_DATABASE.getExerciseById(exerciseID);
 
-    if ((!CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == 1) || exerciseClicked.geloest == 1) {
 
+    if ((CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl !== undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == 1) || exerciseClicked.geloest == 1) {
+
+        console.log("test2");
         CURRENT_VERINE_DATABASE.setCurrentExerciseId(exerciseID);
 
         updateExercise();
@@ -490,7 +492,7 @@ function loadDbFromServer(dbName) {
         DATABASE_ARRAY[CURRENT_DATABASE_INDEX] = CURRENT_VERINE_DATABASE;
 
         //reinit SqlVerineEditor       
-        sqlVerineEditor.clearOutputContainer();   
+        sqlVerineEditor.clearOutputContainer();
         sqlVerineEditor.resetRunFunctions();
         sqlVerineEditor.addRunFunctionDesktop(() => {
             let someTabTriggerEl = document.querySelector('#nav-result-tab');
