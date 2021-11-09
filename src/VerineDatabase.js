@@ -346,7 +346,7 @@ export class VerineDatabase {
     setCurrentExerciseAsSolved() {
         this.exerciseArray.forEach(exercise => {
             if (exercise[0] == this.currentExcersiseId) {
-                exercise[8] = true;
+                exercise[8] = 1;
             }
         });
     }

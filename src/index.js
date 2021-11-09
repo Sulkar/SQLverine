@@ -347,6 +347,7 @@ function setupProgressDots() {
 
     const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
     progressAreaMobile.innerHTML = "";
+    let lastExerciseSolved = false;
 
     allExercises.forEach(exerciseOrder => {
         const dot = document.createElement("a");
@@ -358,7 +359,15 @@ function setupProgressDots() {
         if (exercise.geloest == 1) {
             dot.classList.add("solved");
             mobileDot.classList.add("solved");
+            lastExerciseSolved = true;
+        }else if(exercise.geloest != 1 && lastExerciseSolved){
+            dot.classList.add("nextExercise");
+            mobileDot.classList.add("nextExercise");
+            lastExerciseSolved = false;
+        }else{
+            lastExerciseSolved = false;
         }
+
 
         if (currExercise.id == exercise.id) {
             dot.classList.add("active-exercise");
@@ -377,8 +386,6 @@ function setupProgressDots() {
 
     });
 
-    //const progressAreaMobile = document.getElementById("progress-dots-area-mobile");
-    // progressAreaMobile.innerHTML=progressArea.innerHTML;
 }
 
 function scrolldotClicked(event) {
@@ -387,8 +394,7 @@ function scrolldotClicked(event) {
     const exerciseID = dotHref.id.replace("Mobile", "").replace("dotExerciseID-", "");
     const exerciseClicked = CURRENT_VERINE_DATABASE.getExerciseById(exerciseID);
 
-
-    if ((CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl !== undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == 1) || exerciseClicked.geloest == 1) {
+    if ((CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl !== undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == 1) || exerciseClicked.geloest == 1 || dotHref.classList.contains("nextExercise")) {
         CURRENT_VERINE_DATABASE.setCurrentExerciseId(exerciseID);
         updateExercise();
     }
@@ -412,7 +418,8 @@ function closeHilfestellungAccordions() {
 //function: Aktualisierung der Übungen und der Progressbar
 function updateExercise() {
 
-    let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
+    const currentExcersiseId = CURRENT_VERINE_DATABASE.getCurrentExerciseId();
+    let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(currentExcersiseId);
 
     closeHilfestellungAccordions();
     setupProgressDots();
@@ -438,11 +445,15 @@ function updateExercise() {
     $(".exercise-output").html("");
 
     $(".exercise-feedback").hide();
-    if (CURRENT_EXERCISE.geloest) {
+
+    if (CURRENT_EXERCISE.geloest == 1) {
         $(".exercise-feedback").show();
         $(".exercise-feedback-text").html(CURRENT_EXERCISE.feedback);
         $(".exercise-output").append("<div class='text-center'><button id='btnNextExercise' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>nächste Aufgabe</button></div>");
-
+        //update Exercise
+        let exerciseUpdateArray = [];
+        exerciseUpdateArray.push([currentExcersiseId, "geloest", 1]);
+        CURRENT_VERINE_DATABASE.updateExercise(exerciseUpdateArray);
     } else if (CURRENT_EXERCISE.answerObject.input) {
         $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button'>check</button></div></div><div class='text-center outputInfo'></div>");
     } //next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
