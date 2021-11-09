@@ -74,7 +74,6 @@ $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
 });
 
 $(".exerciseMobileView").on("click", ".btnInputCheckExercise", function () {
-    console.log("in")
     //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
     if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".exerciseMobileView .input-check").val())) {
@@ -390,10 +389,7 @@ function scrolldotClicked(event) {
 
 
     if ((CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl !== undefined && CURRENT_VERINE_DATABASE.getInfo().freie_aufgabenwahl == 1) || exerciseClicked.geloest == 1) {
-
-        console.log("test2");
         CURRENT_VERINE_DATABASE.setCurrentExerciseId(exerciseID);
-
         updateExercise();
     }
 }

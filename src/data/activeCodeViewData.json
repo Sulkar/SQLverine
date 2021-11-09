@@ -679,6 +679,31 @@
             }
         ],
         "visibleCodeComponents": [
+           
+        ]
+    },
+    {
+        "selectedSQLElement": "ORDER_1",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [            
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },
+            {
+                "codeComponentClass": ".selAggregate",
+                "codeComponentType": "select"
+            },
             {
                 "codeComponentClass": ".btnAsc",
                 "codeComponentType": "button"
@@ -690,7 +715,7 @@
         ]
     },
     {
-        "selectedSQLElement": "ORDER_1",
+        "selectedSQLElement": "ORDER_1_AGGREGAT",
         "level": 1,
         "visibleMainControls": [
             {
@@ -715,10 +740,7 @@
             }
         ],
         "visibleCodeComponents": [
-            {
-                "codeComponentClass": ".btnDesc",
-                "codeComponentType": "button"
-            }
+           
         ]
     },
     {
@@ -731,10 +753,7 @@
             }
         ],
         "visibleCodeComponents": [
-            {
-                "codeComponentClass": ".btnAsc",
-                "codeComponentType": "button"
-            }
+            
         ]
     },
     {
@@ -816,6 +835,10 @@
         "visibleCodeComponents": [
             {
                 "codeComponentClass": ".btnHaving",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnOrder",
                 "codeComponentType": "button"
             }
         ]
