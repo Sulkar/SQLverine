@@ -416,7 +416,7 @@ export class SqlVerineForms {
         parameterInput.classList.add("form-control", "param-name");
         parameterInput.id = "form-exec-" + formParameter.name;
         parameterInput.type = "text";
-        parameterInput.placeholder = "Wert eingbeben";
+        parameterInput.placeholder = "Wert eingeben";
 
         parameterInput.addEventListener('focusout', this.setParameterValue.bind(this));
 
