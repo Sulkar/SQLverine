@@ -694,6 +694,30 @@
         "level": 1,
         "visibleMainControls": [
             {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [            
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },
+            {
+                "codeComponentClass": ".selAggregate",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "ORDER_1_AGGREGAT",
+        "level": 1,
+        "visibleMainControls": [
+            {
                 "codeComponentClass": ".btnDelete",
                 "codeComponentType": "button"
             }
@@ -816,6 +840,10 @@
         "visibleCodeComponents": [
             {
                 "codeComponentClass": ".btnHaving",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnOrder",
                 "codeComponentType": "button"
             }
         ]
