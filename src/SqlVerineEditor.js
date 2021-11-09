@@ -678,11 +678,6 @@ export class SqlVerineEditor {
     //function: run sql command, type = desktop or mobile
     execSqlCommand(tempSqlCommand, type, pagination) {
 
-        //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
-        const maxLimit = this.CURRENT_VERINE_DATABASE.getMaxLimit();
-        const currentPagination = this.CURRENT_VERINE_DATABASE.getCurrentPagination();
-        const tempLimit = " LIMIT " + (maxLimit + 1) + " OFFSET " + (currentPagination * maxLimit);
-
         //bereitet den sql Befehl vor
         if (tempSqlCommand == null && this.CURRENT_SQL_QUERRY == undefined) {
             tempSqlCommand = this.getSqlQueryText();
@@ -690,7 +685,14 @@ export class SqlVerineEditor {
             tempSqlCommand = this.CURRENT_SQL_QUERRY;
         }
 
-        
+        //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
+        const maxLimit = this.CURRENT_VERINE_DATABASE.getMaxLimit();
+        const currentPagination = this.CURRENT_VERINE_DATABASE.getCurrentPagination();
+        let tempLimit = "";
+        if(!tempSqlCommand.toUpperCase().includes("LIMIT")){
+            tempLimit = " LIMIT " + (maxLimit + 1) + " OFFSET " + (currentPagination * maxLimit);
+        }
+
         let result = undefined;
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
