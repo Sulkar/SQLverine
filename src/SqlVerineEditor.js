@@ -886,7 +886,8 @@ export class SqlVerineEditor {
                 if ($(self).hasClass(element)) {
                     isTableActive = true;
                     let updatedFieldNameBasedOnTableCount = $(self).html().replace(element + ".", "");
-                    if (sqlVerineEditor.USED_TABLES.length > 1) {
+                    //wenn mehr als zwei Spalten genutzt werden und es sich um kein CREATE_FOREIGN_KEY Element handelt, wird die Tabelle an die Spalte angehängt. Z.B.: schueler.id
+                    if (sqlVerineEditor.USED_TABLES.length > 1 && !sqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT.includes("CREATE_FOREIGN_KEY")) {
                         $(self).html(element + "." + updatedFieldNameBasedOnTableCount);
                     } else {
                         $(self).html(updatedFieldNameBasedOnTableCount);

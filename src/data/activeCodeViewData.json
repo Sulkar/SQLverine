@@ -1527,7 +1527,12 @@
                 "codeComponentType": "button"
             }
         ],
-        "visibleCodeComponents": []
+        "visibleCodeComponents": [            
+            {
+                "codeComponentClass": ".btnCreateForeignKey",
+                "codeComponentType": "button"
+            }
+        ]
     },
     {
         "selectedSQLElement": "CREATE_FOREIGN_KEY_1",
