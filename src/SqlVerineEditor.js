@@ -1035,12 +1035,22 @@ export class SqlVerineEditor {
         }
         this.NR++;
         
-        //String Function: LENGTH
+        //String Function: LENGTH (___)
         if(tempSelectField.value == "LENGTH"){
             tempStringFunction += this.addInputField(tempSqlElement + "_LENGTH_FUNCTION", "root");
             tempStringFunction += ")</span>";
         }
-        
+        //String Function: SUBSTR (___, ___) or (___, ___, ___)
+        else if(tempSelectField.value == "SUBSTR"){
+            let tempNextElementNr = 0;
+            tempStringFunction += this.addInputField(tempSqlElement + "_SUBSTR_FUNCTION_1", "root");
+            tempNextElementNr = this.NEXT_ELEMENT_NR;
+            tempStringFunction += this.addLeerzeichenMitKomma();
+            tempStringFunction += this.addInputField(tempSqlElement + "_SUBSTR_FUNCTION_2", "root");
+            tempStringFunction += ")</span>";
+            this.NEXT_ELEMENT_NR = tempNextElementNr;
+        }
+
         return tempStringFunction;
     }
 
@@ -1392,7 +1402,7 @@ export class SqlVerineEditor {
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selAggregate synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Aggregatsfunktion wählen</option><option value="AVG">AVG ( ___ )</option><option value="COUNT">COUNT ( ___ )</option><option value="MIN">MIN ( ___ )</option><option value="MAX">MAX ( ___ )</option><option value="SUM">SUM ( ___ )</option></select>');
                 break;
             case ".selStringFunction":
-                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selStringFunction synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Stringfunktion wählen</option><option value="LENGTH">LENGTH ( ___ )</option></select>');
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selStringFunction synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Stringfunktion wählen</option><option value="LENGTH">LENGTH ( ___ )</option><option value="SUBSTR">SUBSTR ( ___, ___ )</option></select>');
                 break;
             case ".btnAND":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAND synSQL sqlWhere codeButton">AND</button>');
