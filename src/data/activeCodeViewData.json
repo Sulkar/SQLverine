@@ -369,13 +369,69 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selColumn",
-                "codeComponentType": "select"
-            },
-            {
                 "codeComponentClass": ".btnLeftBracket",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },            
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_AND_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_AND_1_SUBSTR_FUNCTION_1", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }     
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_AND_1_SUBSTR_FUNCTION_2", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }        
         ]
     },
     {
@@ -425,13 +481,69 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selColumn",
-                "codeComponentType": "select"
-            },
-            {
                 "codeComponentClass": ".btnLeftBracket",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },            
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_OR_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_OR_1_SUBSTR_FUNCTION_1", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }     
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_OR_1_SUBSTR_FUNCTION_2", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }        
         ]
     },
     {
@@ -546,13 +658,69 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selColumn",
-                "codeComponentType": "select"
-            },
-            {
                 "codeComponentClass": ".btnLeftBracket",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },            
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+        ]
+    },
+    {
+        "selectedSQLElement": "AND_OR_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
+        ]
+    },
+    {
+        "selectedSQLElement": "AND_OR_1_SUBSTR_FUNCTION_1", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }     
+        ]
+    },
+    {
+        "selectedSQLElement": "AND_OR_1_SUBSTR_FUNCTION_2", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }        
         ]
     },
     {
@@ -602,13 +770,70 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selColumn",
-                "codeComponentType": "select"
-            },
-            {
                 "codeComponentClass": ".btnLeftBracket",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },            
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+            
+        ]
+    },
+    {
+        "selectedSQLElement": "OR_AND_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
+        ]
+    },
+    {
+        "selectedSQLElement": "OR_AND_1_SUBSTR_FUNCTION_1", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }     
+        ]
+    },
+    {
+        "selectedSQLElement": "OR_AND_1_SUBSTR_FUNCTION_2", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }        
         ]
     },
     {
@@ -658,13 +883,69 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selColumn",
-                "codeComponentType": "select"
-            },
-            {
                 "codeComponentClass": ".btnLeftBracket",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },            
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+        ]
+    },
+    {
+        "selectedSQLElement": "OR_OR_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
+        ]
+    },
+    {
+        "selectedSQLElement": "OR_OR_1_SUBSTR_FUNCTION_1", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }     
+        ]
+    },
+    {
+        "selectedSQLElement": "OR_OR_1_SUBSTR_FUNCTION_2", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }        
         ]
     },
     {
@@ -714,13 +995,69 @@
         ],
         "visibleCodeComponents": [
             {
-                "codeComponentClass": ".selColumn",
-                "codeComponentType": "select"
-            },
-            {
                 "codeComponentClass": ".btnLeftBracket",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },            
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+        ]
+    },
+    {
+        "selectedSQLElement": "AND_AND_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
+        ]
+    },
+    {
+        "selectedSQLElement": "AND_AND_1_SUBSTR_FUNCTION_1", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }     
+        ]
+    },
+    {
+        "selectedSQLElement": "AND_AND_1_SUBSTR_FUNCTION_2", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }        
         ]
     },
     {
