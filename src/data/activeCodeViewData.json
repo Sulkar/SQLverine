@@ -87,6 +87,10 @@
             {
                 "codeComponentClass": ".selAggregate",
                 "codeComponentType": "select"
+            },
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
         ]
     },
@@ -106,6 +110,23 @@
             }
         ]
     },
+    {
+        "selectedSQLElement": "SELECT_SELECT_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    
     {
         "selectedSQLElement": "SELECT_FROM",
         "level": 1,
@@ -171,7 +192,27 @@
             {
                 "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
+            },
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
         ]
     },
     {
@@ -705,6 +746,10 @@
                 "codeComponentType": "select"
             },
             {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
+            },
+            {
                 "codeComponentClass": ".btnAsc",
                 "codeComponentType": "button"
             },
@@ -716,6 +761,22 @@
     },
     {
         "selectedSQLElement": "ORDER_1_AGGREGAT",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "ORDER_1_LENGTH_FUNCTION",
         "level": 1,
         "visibleMainControls": [
             {

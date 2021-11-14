@@ -401,6 +401,11 @@ export class SqlVerineEditor {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.replaceWith(sqlVerineEditor.addAggregat(tempSelectField));
                     sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
                 }
+                // -> selStringFunction
+                else if ($(tempSelectField).hasClass("selStringFunction")) {
+                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.replaceWith(sqlVerineEditor.addStringFunction(tempSelectField));
+                    sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
+                }
             }
             // aktualisiert alle .selColumn <select>
             sqlVerineEditor.updateSelectCodeComponents(sqlVerineEditor);
@@ -1017,6 +1022,28 @@ export class SqlVerineEditor {
         return tempAggregat;
     }
 
+    //function: adds an String Function <span> with inputField/inputFields
+    addStringFunction(tempSelectField) {
+        let classesFromCodeComponent = this.getClassesFromElementAsString(tempSelectField);
+        let tempSqlElement = this.CURRENT_SELECTED_ELEMENT.attr("data-sql-element");
+
+        let tempStringFunction = "";
+        if (this.CURRENT_SELECTED_ELEMENT.hasClass("extended")) {
+            tempStringFunction += "<span class='codeElement_" + this.NR + " " + classesFromCodeComponent + " inputField sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>" + tempSelectField.value + "(";
+        } else {
+            tempStringFunction += "<span class='codeElement_" + this.NR + " " + classesFromCodeComponent + " inputField sqlIdentifier root' data-sql-element='" + tempSqlElement + "'>" + tempSelectField.value + "(";
+        }
+        this.NR++;
+        
+        //String Function: LENGTH
+        if(tempSelectField.value == "LENGTH"){
+            tempStringFunction += this.addInputField(tempSqlElement + "_LENGTH_FUNCTION", "root");
+            tempStringFunction += ")</span>";
+        }
+        
+        return tempStringFunction;
+    }
+
     //function: überprüft den eingegebenen Code und passt diesen ggf. an
     cleanSQLCode() {
         //sucht alle Elemente mit Klasse .createComma und fügt im .komma span ein Komma hinzu
@@ -1363,6 +1390,9 @@ export class SqlVerineEditor {
                 break;
             case ".selAggregate":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selAggregate synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Aggregatsfunktion wählen</option><option value="AVG">AVG ( ___ )</option><option value="COUNT">COUNT ( ___ )</option><option value="MIN">MIN ( ___ )</option><option value="MAX">MAX ( ___ )</option><option value="SUM">SUM ( ___ )</option></select>');
+                break;
+            case ".selStringFunction":
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selStringFunction synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Stringfunktion wählen</option><option value="LENGTH">LENGTH ( ___ )</option></select>');
                 break;
             case ".btnAND":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAND synSQL sqlWhere codeButton">AND</button>');
