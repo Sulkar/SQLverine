@@ -27,8 +27,16 @@ export class VerineDatabase {
 
         this.colorArray = ["coral", "tomato", "palegreen", "orange", "gold", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightoral"];
 
+        this.dataChanged = false;
 
 
+    }
+    
+    setDataChanged(boolean){
+        this.dataChanged = boolean;
+    }
+    getDataChanged(){
+        return this.dataChanged;
     }
     getCurrentPagination() {
         return this.currentPagination;
@@ -135,6 +143,7 @@ export class VerineDatabase {
         });
         try {
             this.database.exec(updateQuery);
+            this.setDataChanged(true);
             return orderOfId + 1;
         } catch (err) {
             console.log(err);
@@ -173,6 +182,7 @@ export class VerineDatabase {
         });
         try {
             this.database.exec(updateQuery);
+            this.setDataChanged(true);
             return true;
         } catch (err) {
             console.log(err);
@@ -245,6 +255,7 @@ export class VerineDatabase {
 
         try {
             this.database.exec(addFormQuery);
+            this.setDataChanged(true);
             this.formArray = this.getForms();
         } catch (err) {
             errorLogArray.push(err);
@@ -266,6 +277,7 @@ export class VerineDatabase {
 
         try {
             this.database.exec(updateQuery);
+            this.setDataChanged(true);
             this.formArray = this.getForms();
             return true;
         } catch (err) {
@@ -408,6 +420,7 @@ export class VerineDatabase {
         let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, aufgabenstellung, informationen, antworten, feedback, geloest) VALUES (' + exerciseValues + ');';
         try {
             this.database.exec(addExerciseQuery);
+            this.setDataChanged(true);
             this.exerciseArray = this.getExercises();
         } catch (err) {
             errorLogArray.push(err);
@@ -433,6 +446,7 @@ export class VerineDatabase {
         });
         try {
             this.database.exec(updateQuery);
+            this.setDataChanged(true);
             this.exerciseArray = this.getExercises();
             return true;
         } catch (err) {
@@ -451,6 +465,7 @@ export class VerineDatabase {
             let alterTable = "ALTER TABLE verine_info ADD 'freie_aufgabenwahl' INTEGER";
             try {
                 this.database.exec(alterTable);
+                this.setDataChanged(true);
             } catch (err) {
                 console.log(err);
             }
@@ -462,6 +477,7 @@ export class VerineDatabase {
 
         try {
             this.database.exec(updateQuery);
+            this.setDataChanged(true);
             return true;
         } catch (err) {
             console.log(err);
@@ -476,6 +492,7 @@ export class VerineDatabase {
         let deleteExerciseQuery = 'DELETE FROM ' + this.exerciseTable + ' WHERE id = ' + exerciseId + ';';
         try {
             this.database.exec(deleteExerciseQuery);
+            this.setDataChanged(true);
             this.exerciseArray = this.getExercises();
         } catch (err) {
             errorLogArray.push(err);
@@ -522,7 +539,10 @@ export class VerineDatabase {
         let errorLogArray = [];
         //update rows
         try {
-            if (this.createUpdateQuery() != undefined) this.database.exec(this.createUpdateQuery());
+            if (this.createUpdateQuery() != undefined){ 
+                this.database.exec(this.createUpdateQuery());
+                this.setDataChanged(true);
+            }
         } catch (err) {
             errorLogArray.push(err);
             console.log(err);
@@ -530,14 +550,20 @@ export class VerineDatabase {
 
         //delete rows
         try {
-            if (this.createDeleteQuery() != undefined) this.database.exec(this.createDeleteQuery());
+            if (this.createDeleteQuery() != undefined){ 
+                this.database.exec(this.createDeleteQuery());
+                this.setDataChanged(true);
+            }
         } catch (err) {
             errorLogArray.push(err);
             console.log(err);
         }
         //insert rows
         try {
-            if (this.createInsertQuery() != undefined) this.database.exec(this.createInsertQuery());
+            if (this.createInsertQuery() != undefined){ 
+                this.database.exec(this.createInsertQuery());
+                this.setDataChanged(true);
+            }
         } catch (err) {
             errorLogArray.push(err);
             console.log(err);

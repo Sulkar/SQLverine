@@ -11,6 +11,7 @@ export class SqlVerineEditor {
         this.NEXT_ELEMENT_NR = 0;
         this.CURRENT_SELECTED_ELEMENT = undefined;
         this.CURRENT_SELECTED_SQL_ELEMENT = "START";
+        this.SQL_ELEMENT_MAP = new Map();
         this.ACTIVE_CODE_VIEW_DATA;
         this.CURRENT_VERINE_DATABASE;
         this.USED_TABLES = [];
@@ -613,6 +614,26 @@ export class SqlVerineEditor {
         return tempElement;
     }
 
+    //function: Sucht alle aktuellen SQL Elemente im aktiven Editor und sammelt diese in einer Map, um feststellen zu können welche Elemente zu oft vorkommen
+    updateSqlElementMap(){        
+        let tempMap = new Map();        
+        //get all Elements inside codeArea by class
+        let elements = this.EDITOR_CONTAINER.querySelectorAll(".codeArea .synSQL");
+        elements.forEach(element => {
+            let tempCounter = 1;
+            let elementType = element.getAttribute("data-sql-element");
+            if(tempMap.has(elementType)){
+                tempCounter = tempMap.get(elementType) + 1;
+                tempMap.set(elementType, tempCounter);
+            }else{
+                tempMap.set(elementType, tempCounter);
+            }        
+        });
+        
+        console.log(tempMap)
+        this.SQL_ELEMENT_MAP = tempMap;
+    }
+
     //function: add new line <span>
     addNewLine() {
         let tempLeerzeichen = "<span class='codeElement_" + this.NR + " newline'><br></span>";
@@ -709,6 +730,7 @@ export class SqlVerineEditor {
 
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = this.CURRENT_VERINE_DATABASE.database.getRowsModified();
+            let tablesChanged = false;
             if (modifiedRows > 0) {
 
                 let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(\w+)/i);
@@ -717,12 +739,15 @@ export class SqlVerineEditor {
 
                 if (insertSQL != null && insertSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
+                    tablesChanged = true;
                     result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2] + tempLimit);
                 } else if (updateSQL != null && updateSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
+                    tablesChanged = true;
                     result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2] + tempLimit);
                 } else if (deleteSQL != null && deleteSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
+                    tablesChanged = true;
                     result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2] + tempLimit);
                 }
             }
@@ -731,7 +756,6 @@ export class SqlVerineEditor {
             let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\w+)/i);
             let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](\w+)['"]/i);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\w+)/i);
-            let tablesChanged = false;
 
             if (dropTableSQL != null && dropTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
@@ -747,6 +771,7 @@ export class SqlVerineEditor {
             //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
             if (tablesChanged) {
                 $(this.SCHEMA_CONTAINER).html(this.CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+                this.CURRENT_VERINE_DATABASE.setDataChanged(true);
             }
 
             //erstellt eine Tabelle mit den Ergebnissen
@@ -1059,7 +1084,7 @@ export class SqlVerineEditor {
     //function: set Selection to an Element
     setSelection(elementNr, removeLastSelectedElement) {
         let element;
-
+        this.updateSqlElementMap();
         //no number is given -> get next unfilled inputField
         if (elementNr == "next") {
             this.CURRENT_SELECTED_ELEMENT.removeClass("unfilled");

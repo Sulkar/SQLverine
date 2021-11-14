@@ -59,12 +59,13 @@ handleUrlParameters();
 ////////////
 // EVENTS //
 
-window.addEventListener('beforeunload', function (e) {
-    // Cancel the event
-    e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-    // Chrome requires returnValue to be set
-    e.returnValue = '';
-  });
+//Wenn etwas geändert wurde, wird beim Verlassen der Website nachgefragt, ob man die Seite wirklich verlassen will.
+window.onbeforeunload = function () {    
+
+    if (CURRENT_VERINE_DATABASE != undefined && CURRENT_VERINE_DATABASE.getDataChanged()) {
+        return "";
+    }
+}
 
 $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
     //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
