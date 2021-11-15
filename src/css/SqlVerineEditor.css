@@ -287,9 +287,9 @@ pre span.codeline span:first {
     /* Firefox */
 }
 
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {
 
-    /* bootstrap md breakpoint */
+    
     pre span.codeline:before {
         counter-increment: line;
         content: counter(line);
@@ -299,7 +299,7 @@ pre span.codeline span:first {
         margin-right: 0.5em;
         color: #888;
     }
-}
+}*/
 
 @media (max-width: 768px) {
 

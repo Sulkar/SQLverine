@@ -70,7 +70,9 @@ window.onbeforeunload = function () {
 $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
     //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".tab-pane .input-check").val())) {
+    const tempInputFieldErgebnisValue = $(".tab-pane #input-check-solution").val();
+    const tempInputFieldAufgabeValue = $(".tab-pane #input-check-exercise").val();
+    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray,tempInputFieldErgebnisValue)||CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray,tempInputFieldAufgabeValue)) {
         CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
         $(".outputInfo").html("");
         updateExercise();
@@ -84,7 +86,8 @@ $(".tab-pane").on("click", ".btnInputCheckExercise", function () {
 $(".exerciseMobileView").on("click", ".btnInputCheckExercise", function () {
     //ist die Eingabe vom Inputfeld im exerciseSolutionArray der Übung?
     let CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_VERINE_DATABASE.getCurrentExerciseId());
-    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, $(".exerciseMobileView .input-check").val())) {
+    const tempInputFieldMobileValue = $(".exerciseMobileView .input-check").val();
+    if (CURRENT_VERINE_DATABASE.isInExerciseSolutionArray(CURRENT_EXERCISE.answerObject.exerciseSolutionArray, tempInputFieldMobileValue)) {
         CURRENT_VERINE_DATABASE.setCurrentExerciseAsSolved();
         $(".outputInfo").html("");
         updateExercise();
@@ -462,8 +465,8 @@ function updateExercise() {
         let exerciseUpdateArray = [];
         exerciseUpdateArray.push([currentExcersiseId, "geloest", 1]);
         CURRENT_VERINE_DATABASE.updateExercise(exerciseUpdateArray);
-    } else if (CURRENT_EXERCISE.answerObject.input) {
-        $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button'>check</button></div></div><div class='text-center outputInfo'></div>");
+    } else if (CURRENT_EXERCISE.answerObject.input) { //input Feld wird unter der Aufgabe angezeigt.
+        $(".exercise-output").html("<div class='text-center'><div class='input-group mb-3 div-check-exercise'><input type='text' class='form-control input-check' id='input-check-exercise' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button'>check</button></div></div><div class='text-center outputInfo'></div>");
     } //next Button zum weiterspringen zur nächsten Übung wird angezeigt = Einleitungsübung, ohne Abfragen..
     else if (CURRENT_EXERCISE.answerObject.next) {
         $(".exercise-output").append("<div class='text-center'><button id='btnExerciseNext' class='btnNextExercise btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Weiter</button></div>");
@@ -491,9 +494,9 @@ function checkAnswer(answerInput, solutionAllArray, solutionRowCounter) {
         $("#resultModal .modal-body").find(".resultArea").append("<div class='text-center'><button id='btnExerciseSuccess' class=' btn btn-outline-success ' data-toggle='tooltip' data-placement='top'>Super, weiter gehts!</button></div>");
         updateExercise();
     }
-    //inputFeld zur direkten Eingabe der Lösung wird angezeigt.
+    //inputFeld zur direkten Eingabe der Lösung wird mit dem Ergebnis angezeigt.
     else if (answerInput) {
-        $("#outputArea").append("<div class='text-center'><div class='input-group mb-3 input-check-exercise'><input type='text' class='form-control input-check' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button'>check</button></div></div><div class='text-center outputInfo'></div>");
+        $("#outputArea").append("<div class='text-center'><div class='input-group mb-3 div-check-exercise'><input type='text' class='form-control input-check' id='input-check-solution' placeholder='Antwort...' aria-label='' aria-describedby=''><button class='btn btn-outline-secondary btnInputCheckExercise' type='button'>check</button></div></div><div class='text-center outputInfo'></div>");
     }
 }
 
