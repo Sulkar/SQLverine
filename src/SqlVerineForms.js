@@ -758,9 +758,9 @@ class FormularData {
         let queryWithParams = this.query;
 
         this.parameters.forEach(param => {
-            queryWithParams = queryWithParams.replace(param.name, param.value);
+            queryWithParams = queryWithParams.replaceAll(param.name, param.value);
         });
-
+        
         return queryWithParams;
     }
 
