@@ -448,10 +448,10 @@ function updateExercise() {
     } else $(".exercise-task").hide();
     //Informationen
     if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
-        $("#accordionExerciseMeta").show();
+        $(".accordionExerciseMeta").show();
         $(".exercise-content .exercise-meta").html(CURRENT_EXERCISE.informationen);
     } else {
-        $("#accordionExerciseMeta").hide();
+        $(".accordionExerciseMeta").hide();
     }
 
     //Antworten werden im Log angezeigt -> fürs Testen
