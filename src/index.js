@@ -448,9 +448,11 @@ function updateExercise() {
     } else $(".exercise-task").hide();
     //Informationen
     if (removeEmptyTags(CURRENT_EXERCISE.informationen) != "") {
-        $(".exercise-meta").show();
+        $("#accordionExerciseMeta").show();
         $(".exercise-content .exercise-meta").html(CURRENT_EXERCISE.informationen);
-    } else $(".exercise-meta").hide();
+    } else {
+        $("#accordionExerciseMeta").hide();
+    }
 
     //Antworten werden im Log angezeigt -> fürs Testen
     $(".exercise-output").html("");

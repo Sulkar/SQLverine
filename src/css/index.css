@@ -376,3 +376,8 @@ div.tab-pane.active {
     margin-left: auto;
     margin-right: auto;
 }
+
+#accordionExerciseMeta{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
