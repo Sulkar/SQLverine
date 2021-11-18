@@ -437,12 +437,14 @@ export class VerineDatabase {
     updateExercise(exerciseUpdateArray) {
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
         exerciseUpdateArray.forEach(updateValue => {
-            if (isNaN(updateValue[2]) || updateValue[2] == "") { //[1, "titel", ""]
+            /*if (isNaN(updateValue[2]) || updateValue[2] == "") { //[1, "titel", ""]
                 //updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
                 updateQuery += "UPDATE " + this.exerciseTable + " SET " + updateValue[1] + " = '" + updateValue[2] + "' WHERE id = " + updateValue[0] + ";";
             } else {
                 updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
-            }
+            }*/
+            updateQuery += "UPDATE " + this.exerciseTable + " SET " + updateValue[1] + " = '" + updateValue[2] + "' WHERE id = " + updateValue[0] + ";";
+
         });
         try {
             this.database.exec(updateQuery);
@@ -576,11 +578,13 @@ export class VerineDatabase {
 
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
         this.updateValues.forEach(updateValue => {
-            if (isNaN(updateValue[2]) || updateValue[2] == "") {
+            /*if (isNaN(updateValue[2]) || updateValue[2] == "") {
                 updateQuery += 'UPDATE ' + this.activeTable + ' SET ' + updateValue[1] + ' = "' + updateValue[2] + '" WHERE id = ' + updateValue[0] + ';';
             } else {
                 updateQuery += 'UPDATE ' + this.activeTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
-            }
+            }*/
+            updateQuery += 'UPDATE ' + this.activeTable + ' SET ' + updateValue[1] + ' = "' + updateValue[2] + '" WHERE id = ' + updateValue[0] + ';';
+
         });
         if (updateQuery != "") return updateQuery;
         else return undefined;
@@ -613,7 +617,8 @@ export class VerineDatabase {
             let valuesString = "";
             valueArray.forEach((value, index) => {
                 if (value != "auto") {
-                    if (isNaN(value) || value == "") value = '"' + value + '"'; //wenn value keine Zahl ist oder leer ist, muss es mit " " umklammert werden
+                    //if (isNaN(value) || value == "") value = '"' + value + '"'; //wenn value keine Zahl ist oder leer ist, muss es mit " " umklammert werden
+                    value = '"' + value + '"';
                     if (valuesString == "") valuesString += '(' + value;
                     else valuesString += ', ' + value;
 

@@ -504,11 +504,12 @@ export class SqlVerineEditor {
             if (sqlVerineEditor.CURRENT_SELECTED_ELEMENT != undefined) {
                 let tempValue = $(self).val();
                 if (tempValue != "") {
-                    if (isNaN(tempValue)) {
+                    /*if (isNaN(tempValue)) {
                         sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
                     } else {
                         sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html(tempValue);
-                    }
+                    }*/
+                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
                 } else {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("___");
                 }
