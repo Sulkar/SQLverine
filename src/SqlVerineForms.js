@@ -204,7 +204,7 @@ export class SqlVerineForms {
         this.formsSqlVerineEditor.setEditorContainer('forms-sqlVerineEditor');
         this.formsSqlVerineEditor.setOutputContainer(this.formsSqlVerineEditorOutput.id);
         this.formsSqlVerineEditor.showCodeButton(false);
-        this.formsSqlVerineEditor.showCodeSwitch(false);
+        this.formsSqlVerineEditor.showCodeSwitch(true);
         this.formsSqlVerineEditor.showRunButton(false);
         this.formsSqlVerineEditor.init();
 
@@ -257,6 +257,7 @@ export class SqlVerineForms {
             let lastEditorId = 1;
             if (this.selectedFormularData.queryHTMLlastId != undefined) lastEditorId = this.selectedFormularData.queryHTMLlastId;
             this.formsSqlVerineEditor.fillCodeAreaWithCode(this.selectedFormularData.queryHTML, lastEditorId);
+            this.formsSqlVerineEditor.fillCodeTextAreaWithCode(this.selectedFormularData.query);
             this.formsSqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT = "START";
             this.formsSqlVerineEditor.updateActiveCodeView();
 
@@ -336,6 +337,7 @@ export class SqlVerineForms {
     }
 
     executeDatabaseQuery() {
+        this.setParameterValues();
         this.verineDatabase.setCurrentPagination(0);
         this.formsSqlVerineEditor.setCurrentSqlQuerry(this.getSelectedFormularData().getQueryWithParams());
         this.formsSqlVerineEditor.execSqlCommand(null, "desktop");
@@ -413,7 +415,7 @@ export class SqlVerineForms {
         parameterCol2.classList.add("col-5");
         parameterBootstrapRow.append(parameterCol2);
         const parameterInput = document.createElement("input");
-        parameterInput.classList.add("form-control", "param-name");
+        parameterInput.classList.add("form-control", "param-name", "param-input");
         parameterInput.id = "form-exec-" + formParameter.name;
         parameterInput.type = "text";
         parameterInput.placeholder = "Wert eingeben";
@@ -584,6 +586,16 @@ export class SqlVerineForms {
         const param = this.selectedFormularData.findParameterByName(paramName);
 
         param.value = input.value;
+    }
+
+    setParameterValues(){
+        var parameterInputs = document.getElementsByClassName("param-input");
+        for (let index = 0; index < parameterInputs.length; index++) {
+            const parameterInput = parameterInputs[index];
+            const paramName = parameterInput.id.replace("form-exec-", "");
+            const param = this.selectedFormularData.findParameterByName(paramName);
+            param.value = parameterInput.value;
+        }
     }
 
     addParameter(event) {

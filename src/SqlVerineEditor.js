@@ -144,10 +144,19 @@ export class SqlVerineEditor {
         this.NR = currentId; //this.URL_CURRENT_ID
     }
 
+    fillCodeTextAreaWithCode(code){
+        $(this.EDITOR_CONTAINER).find("#codeAreaText textarea").val(code);
+    }
+    
     setupEditor() {
         let sqlVerineEditor = this.setupCodeArea() + this.setupMainMenu() + this.setupButtonArea() + this.setupScrollDots() + this.setupCodeModal();
         this.EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
     }
+
+    setCodeSwitch(status){
+        //TODO
+    } 
+ 
 
     setupCodeArea() {
         let codeArea = '<div class="codeAreaWrapper">';
