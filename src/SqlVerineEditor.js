@@ -773,14 +773,19 @@ export class SqlVerineEditor {
             //wurde drop, create, alter table ausgeführt?
             let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\w+)/i);
             let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](\w+)['"]/i);
+            let alterTableRenameTableSQL = tempSqlCommand.match(/(.+)\s(RENAME TO)\s('\w+')/i);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\w+)/i);
-
+            
             if (dropTableSQL != null && dropTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
                 tablesChanged = true;
             } else if (createTableSQL != null && createTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + createTableSQL[2] + " wurde neu erstellt.</h5><br>");
                 tablesChanged = true;
+            } else if (alterTableRenameTableSQL != null && alterTableRenameTableSQL.length > 0) {
+                $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle wurde in: " + alterTableRenameTableSQL[3] + " umbenannt.</h5><br>");
+                tablesChanged = true;
+                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableRenameTableSQL[3] + tempLimit);            
             } else if (alterTableSQL != null && alterTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
                 tablesChanged = true;
@@ -1465,6 +1470,9 @@ export class SqlVerineEditor {
             case ".btnRenameTo":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnRenameTo synSQL sqlDelete">RENAME ___ TO ___</button>');
                 break;
+            case ".btnRenameTable":
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnRenameTable synSQL sqlDelete">RENAME TO ___</button>');
+                break;
             case ".btnAddColumn":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD ___ TYP</button>');
                 break;
@@ -1915,6 +1923,25 @@ export class SqlVerineEditor {
             elementDROP_COLUMN += "</span>";
 
             sqlVerineEditor.CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementDROP_COLUMN);
+            sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
+        });
+
+        // Button: RENAME TO ___ 
+        $(sqlVerineEditor.EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnRenameTable', function () {
+            let self = this;
+            let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
+            let elementRENAME = "";
+            elementRENAME += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='RENAME_TABLE'>";
+            sqlVerineEditor.NR++;
+            elementRENAME += sqlVerineEditor.addLeerzeichen();
+            elementRENAME += "RENAME TO";
+            elementRENAME += sqlVerineEditor.addLeerzeichen();
+            elementRENAME += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='RENAME_TABLE_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
+            sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
+            sqlVerineEditor.NR++;
+            elementRENAME += "</span>";
+
+            sqlVerineEditor.CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementRENAME);
             sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
         });
 

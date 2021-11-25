@@ -1669,6 +1669,10 @@
                 "codeComponentType": "button"
             },
             {
+                "codeComponentClass": ".btnRenameTable",
+                "codeComponentType": "button"
+            },
+            {
                 "codeComponentClass": ".btnRenameTo",
                 "codeComponentType": "button"
             },
@@ -1718,6 +1722,33 @@
             {
                 "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "RENAME_TABLE",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": []
+    },
+    {
+        "selectedSQLElement": "RENAME_TABLE_1",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
             }
         ]
     },
