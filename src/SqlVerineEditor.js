@@ -511,6 +511,9 @@ export class SqlVerineEditor {
         $(sqlVerineEditor.EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('keyup', '.codeInput', function (e) {
             let self = this;
             if (sqlVerineEditor.CURRENT_SELECTED_ELEMENT != undefined) {
+                //entfernt Klassen von .selColumns DropDown
+                sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass("selColumn synColumns");
+
                 let tempValue = $(self).val();
                 if (tempValue != "") {
                     /*if (isNaN(tempValue)) {

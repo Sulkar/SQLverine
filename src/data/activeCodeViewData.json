@@ -317,6 +317,10 @@
                 "codeComponentType": "input"
             },
             {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },    
+            {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
             }
@@ -465,6 +469,10 @@
                 "codeComponentType": "input"
             },
             {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },  
+            {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
             }
@@ -576,6 +584,10 @@
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
             },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },  
             {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
@@ -754,6 +766,10 @@
                 "codeComponentType": "input"
             },
             {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },  
+            {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
             }
@@ -867,6 +883,10 @@
                 "codeComponentType": "input"
             },
             {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },  
+            {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
             }
@@ -979,6 +999,10 @@
                 "codeComponentType": "input"
             },
             {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },  
+            {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
             }
@@ -1090,6 +1114,10 @@
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
             },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            },  
             {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
@@ -1432,6 +1460,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
             },
             {
                 "codeComponentClass": ".btnRightBracket",
