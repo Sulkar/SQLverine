@@ -1156,7 +1156,10 @@
             }
         ],
         "visibleCodeComponents": [
-           
+            {
+                "codeComponentClass": ".btnLimit",
+                "codeComponentType": "button"
+            }
         ]
     },
     {
@@ -1373,6 +1376,10 @@
             {
                 "codeComponentClass": ".btnOrder",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnLimit",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1405,7 +1412,12 @@
                 "codeComponentType": "button"
             }
         ],
-        "visibleCodeComponents": []
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".btnLimit",
+                "codeComponentType": "button"
+            }
+        ]
     },
     {
         "selectedSQLElement": "HAVING_1",
