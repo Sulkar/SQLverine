@@ -955,7 +955,7 @@ export class SqlVerineEditor {
         sqlVerineEditor.USED_TABLES.forEach(element => { //used_tables [schueler, schueler_1, schueler_2]
             if (rootTables) {
                 //element: schueler_1   tableName: schueler schueler_1
-                if (element.split("_")[0] == tableName.split(" ")[0]) counter++;
+                if (element.split(/_[0-9]/)[0] == tableName.split(" ")[0]) counter++; 
             } else {
                 counter++;
             }
