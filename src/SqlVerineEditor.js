@@ -64,10 +64,10 @@ export class SqlVerineEditor {
             this.fillCodeAreaWithCode(unescape(this.URLCODE), this.URL_CURRENT_ID);
         }
     }
-    setCurrentSqlQuerry(currentSqlQuerry){
+    setCurrentSqlQuerry(currentSqlQuerry) {
         this.CURRENT_SQL_QUERRY = currentSqlQuerry;
     }
-    getCurrentSqlQuerry(){
+    getCurrentSqlQuerry() {
         return this.CURRENT_SQL_QUERRY;
     }
     clearOutputContainer() {
@@ -144,19 +144,19 @@ export class SqlVerineEditor {
         this.NR = currentId; //this.URL_CURRENT_ID
     }
 
-    fillCodeTextAreaWithCode(code){
+    fillCodeTextAreaWithCode(code) {
         $(this.EDITOR_CONTAINER).find("#codeAreaText textarea").val(code);
     }
-    
+
     setupEditor() {
         let sqlVerineEditor = this.setupCodeArea() + this.setupMainMenu() + this.setupButtonArea() + this.setupScrollDots() + this.setupCodeModal();
         this.EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
     }
 
-    setCodeSwitch(status){
+    setCodeSwitch(status) {
         //TODO
-    } 
- 
+    }
+
 
     setupCodeArea() {
         let codeArea = '<div class="codeAreaWrapper">';
@@ -633,22 +633,21 @@ export class SqlVerineEditor {
     }
 
     //function: Sucht alle aktuellen SQL Elemente im aktiven Editor und sammelt diese in einer Map, um feststellen zu können welche Elemente zu oft vorkommen
-    updateSqlElementMap(){        
-        let tempMap = new Map();        
+    updateSqlElementMap() {
+        let tempMap = new Map();
         //get all Elements inside codeArea by class
         let elements = this.EDITOR_CONTAINER.querySelectorAll(".codeArea .synSQL");
         elements.forEach(element => {
             let tempCounter = 1;
             let elementType = element.getAttribute("data-sql-element");
-            if(tempMap.has(elementType)){
+            if (tempMap.has(elementType)) {
                 tempCounter = tempMap.get(elementType) + 1;
                 tempMap.set(elementType, tempCounter);
-            }else{
+            } else {
                 tempMap.set(elementType, tempCounter);
-            }        
+            }
         });
-        
-        console.log(tempMap)
+
         this.SQL_ELEMENT_MAP = tempMap;
     }
 
@@ -720,7 +719,7 @@ export class SqlVerineEditor {
         //bereitet den sql Befehl vor
         if (tempSqlCommand == null && this.CURRENT_SQL_QUERRY == undefined) {
             tempSqlCommand = this.getSqlQueryText();
-        }else if (tempSqlCommand == null && this.CURRENT_SQL_QUERRY != undefined){
+        } else if (tempSqlCommand == null && this.CURRENT_SQL_QUERRY != undefined) {
             tempSqlCommand = this.CURRENT_SQL_QUERRY;
         }
 
@@ -728,7 +727,7 @@ export class SqlVerineEditor {
         const maxLimit = this.CURRENT_VERINE_DATABASE.getMaxLimit();
         const currentPagination = this.CURRENT_VERINE_DATABASE.getCurrentPagination();
         let tempLimit = "";
-        if(!tempSqlCommand.toUpperCase().includes("LIMIT")){
+        if (!tempSqlCommand.toUpperCase().includes("LIMIT")) {
             tempLimit = " LIMIT " + (maxLimit + 1) + " OFFSET " + (currentPagination * maxLimit);
         }
 
@@ -775,7 +774,7 @@ export class SqlVerineEditor {
             let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](\w+)['"]/i);
             let alterTableRenameTableSQL = tempSqlCommand.match(/(.+)\s(RENAME TO)\s('\w+')/i);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\w+)/i);
-            
+
             if (dropTableSQL != null && dropTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
                 tablesChanged = true;
@@ -785,7 +784,7 @@ export class SqlVerineEditor {
             } else if (alterTableRenameTableSQL != null && alterTableRenameTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle wurde in: " + alterTableRenameTableSQL[3] + " umbenannt.</h5><br>");
                 tablesChanged = true;
-                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableRenameTableSQL[3] + tempLimit);            
+                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableRenameTableSQL[3] + tempLimit);
             } else if (alterTableSQL != null && alterTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
                 tablesChanged = true;
@@ -926,17 +925,18 @@ export class SqlVerineEditor {
     updateSelectCodeComponents(sqlVerineEditor) {
         //check all used tables in code area
         sqlVerineEditor.updateUsedTables(sqlVerineEditor);
-        //entfernt alle .inputField die ein Feld einer gelöscht Tabelle haben
+        //sucht alle Elemente mit der Klasse ".selColumn"
         $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea.editor .selColumn").each(function () {
             let self = this;
             let isTableActive = false;
             sqlVerineEditor.USED_TABLES.forEach(element => {
                 if ($(self).hasClass(element)) {
                     isTableActive = true;
-                    let updatedFieldNameBasedOnTableCount = $(self).html().replace(element + ".", "");
+                    //Entfernt alle vorangestellten Tabellenname -> schueler.id = id
+                    let updatedFieldNameBasedOnTableCount = $(self).html().split(".").pop();
                     //wenn mehr als zwei Spalten genutzt werden und es sich um kein CREATE_FOREIGN_KEY Element handelt, wird die Tabelle an die Spalte angehängt. Z.B.: schueler.id
                     if (sqlVerineEditor.USED_TABLES.length > 1 && !sqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT.includes("CREATE_FOREIGN_KEY")) {
-                        $(self).html(element + "." + updatedFieldNameBasedOnTableCount);
+                        $(self).html(element + "." + updatedFieldNameBasedOnTableCount);                    
                     } else {
                         $(self).html(updatedFieldNameBasedOnTableCount);
                     }
@@ -946,6 +946,22 @@ export class SqlVerineEditor {
                 sqlVerineEditor.deleteElement($(self));
             }
         });
+    }
+
+    //function: schaut wie oft ein Tabellennanme im Array USED_TABLES vorkommt.
+    getNumberOfDuplicateUsedTables(sqlVerineEditor, tableName, rootTables) {
+        let counter = 0;
+
+        sqlVerineEditor.USED_TABLES.forEach(element => { //used_tables [schueler, schueler_1, schueler_2]
+            if (rootTables) {
+                //element: schueler_1   tableName: schueler schueler_1
+                if (element.split("_")[0] == tableName.split(" ")[0]) counter++;
+            } else {
+                counter++;
+            }
+
+        });
+        return counter;
     }
 
     //function: delete element from code area
@@ -1052,14 +1068,14 @@ export class SqlVerineEditor {
             tempStringFunction += "<span class='codeElement_" + this.NR + " " + classesFromCodeComponent + " inputField sqlIdentifier root' data-sql-element='" + tempSqlElement + "'>" + tempSelectField.value + "(";
         }
         this.NR++;
-        
+
         //String Function: LENGTH (___)
-        if(tempSelectField.value == "LENGTH"){
+        if (tempSelectField.value == "LENGTH") {
             tempStringFunction += this.addInputField(tempSqlElement + "_LENGTH_FUNCTION", "root");
             tempStringFunction += ")</span>";
         }
         //String Function: SUBSTR (___, ___) or (___, ___, ___)
-        else if(tempSelectField.value == "SUBSTR"){
+        else if (tempSelectField.value == "SUBSTR") {
             let tempNextElementNr = 0;
             tempStringFunction += this.addInputField(tempSqlElement + "_SUBSTR_FUNCTION_1", "root");
             tempNextElementNr = this.NEXT_ELEMENT_NR;
@@ -1324,6 +1340,8 @@ export class SqlVerineEditor {
     }
 
     getSqlTableFields(tempTableName) {
+        //entfernt alle _0-9, die bei JOINS auf auf die gleiche Tabelle angefügt wurden
+        tempTableName = tempTableName.replace(/_[0-9]/g, '');
         return this.CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
     }
 
@@ -1345,13 +1363,30 @@ export class SqlVerineEditor {
     //function: get all used db tables in code area
     updateUsedTables(sqlVerineEditor) {
         sqlVerineEditor.USED_TABLES = [];
+        let duplicateTableCounter = 0;
 
         if ($(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {
             //check used tables -> codeArea
             $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
                 let self = this;
-                if (!sqlVerineEditor.USED_TABLES.includes($(self).html())) {
-                    sqlVerineEditor.USED_TABLES.push($(self).html());
+                let sameTableCounter = sqlVerineEditor.getNumberOfDuplicateUsedTables(sqlVerineEditor, $(self).html(), true);
+                //Wenn keine doppelten Tabellennamen vorkommen
+                if (sameTableCounter < 1) {
+                    //fügt Tabellen dem Array hinzu
+                    //bei JOINS: "schueler schueler_1" wird immer der hintere Teil des Strings genommen: "schueler_1"
+                    sqlVerineEditor.USED_TABLES.push($(self).html().split(" ").pop());
+                }
+                //Kommen zwei gleiche Tabellennamen vor, füge _0-9 hinzu. Grund hierfür ist wahrscheinlich ein JOIN
+                else {
+                    //hier wird der eigentliche Tabellenname 
+                    let oldTableName = $(self).html().split(" ")[0];
+                    duplicateTableCounter++;
+                    let newTableName = oldTableName + "_" + duplicateTableCounter;
+                    sqlVerineEditor.USED_TABLES.push(newTableName);
+                    //update JOIN table name -> schueler wird zu schueler_1 ...
+                    if ($(self).attr("data-sql-element") == "JOIN_1") {
+                        $(self).html(oldTableName + " " + newTableName);
+                    }
                 }
             });
         } else {
