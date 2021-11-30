@@ -515,26 +515,19 @@ export class SqlVerineEditor {
                 sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass("selColumn synColumns");
 
                 let tempValue = $(self).val();
-                if (tempValue != "") {
-                    /*if (isNaN(tempValue)) {
-                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
-                    } else {
-                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html(tempValue);
-                    }*/
+                let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
+                sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass("input");
+                if (tempValue != "") {                    
+                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
+                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
-                } else {
+                } else {                    
+                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass("unfilled");
+                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass(classesFromCodeComponent);
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("___");
                 }
-                sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass("input");
+                //ENTER wird gerdrückt
                 if (e.key === 'Enter' || e.keyCode === 13) {
-                    let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
-                    if (tempValue != "") {
-                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
-                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
-                    } else {
-                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass("unfilled");
-                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass(classesFromCodeComponent);
-                    }
                     sqlVerineEditor.setSelection("next", false);
                 }
             }
@@ -936,7 +929,7 @@ export class SqlVerineEditor {
                     let updatedFieldNameBasedOnTableCount = $(self).html().split(".").pop();
                     //wenn mehr als zwei Spalten genutzt werden und es sich um kein CREATE_FOREIGN_KEY Element handelt, wird die Tabelle an die Spalte angehängt. Z.B.: schueler.id
                     if (sqlVerineEditor.USED_TABLES.length > 1 && !sqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT.includes("CREATE_FOREIGN_KEY")) {
-                        $(self).html(element + "." + updatedFieldNameBasedOnTableCount);                    
+                        $(self).html(element + "." + updatedFieldNameBasedOnTableCount);
                     } else {
                         $(self).html(updatedFieldNameBasedOnTableCount);
                     }
@@ -955,7 +948,7 @@ export class SqlVerineEditor {
         sqlVerineEditor.USED_TABLES.forEach(element => { //used_tables [schueler, schueler_1, schueler_2]
             if (rootTables) {
                 //element: schueler_1   tableName: schueler schueler_1
-                if (element.split(/_[0-9]/)[0] == tableName.split(" ")[0]) counter++; 
+                if (element.split(/_[0-9]/)[0] == tableName.split(" ")[0]) counter++;
             } else {
                 counter++;
             }
@@ -968,15 +961,15 @@ export class SqlVerineEditor {
     deleteElement(elementToDelete) {
         // Element parent
         if (elementToDelete.hasClass("parent")) {
-            this.setSelection("parent", true);
+            this.setSelection("findParent", true);
         }
         // Klammern, ... 
         else if (elementToDelete.hasClass("synBrackets") && elementToDelete.hasClass("extended")) {
             this.setSelection("next", true);
         }
-        // ASC, DESC 
-        else if (elementToDelete.hasClass("btnAsc") || elementToDelete.hasClass("btnDesc")) {
-            this.setSelection("next", true);
+        // ASC, DESC, AS ___
+        else if (elementToDelete.hasClass("btnAsc") || elementToDelete.hasClass("btnDesc") || elementToDelete.hasClass("btnAs")) {
+            this.setSelection("parent", true);
         }
         // spezielle Behandlung des inputFields von INSERT_2
         else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("extended") && this.hasCurrentSelectedElementSqlDataString(elementToDelete, "INSERT_2, UPDATE_2, UPDATE_3")) {
@@ -1002,7 +995,7 @@ export class SqlVerineEditor {
         }
         // don´t delete, select parent Element
         else {
-            let elementNr = getElementNr(elementToDelete.parent().attr('class'));
+            let elementNr = this.getElementNr(elementToDelete.parent().attr('class'));
             this.setSelection(elementNr, false);
         }
 
@@ -1153,11 +1146,11 @@ export class SqlVerineEditor {
     }
 
     //function: set Selection to an Element
-    setSelection(elementNr, removeLastSelectedElement) {
+    setSelection(nextSelection, removeLastSelectedElement) {
         let element;
         this.updateSqlElementMap();
         //no number is given -> get next unfilled inputField
-        if (elementNr == "next") {
+        if (nextSelection == "next") {
             this.CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
             //find .parent then find .unfilled
             element = this.CURRENT_SELECTED_ELEMENT.closest(".parent").find(".unfilled").first();
@@ -1171,42 +1164,32 @@ export class SqlVerineEditor {
             }
         }
         //.parent ist selektiert
-        else if (elementNr == "parent2") {
+        else if (nextSelection == "parent") {
             //select next .parent
-            element = this.CURRENT_SELECTED_ELEMENT.next(".parent");
-            if (element.length == 0) {
-                //select prev .parent
-                element = this.CURRENT_SELECTED_ELEMENT.prev(".parent");
-                if (element.length == 0) {
-                    //select last .parent of .codeline before current .codeline
-                    element = this.CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").find(".parent").last();
-                    if (element.length == 0) {
-                        //select last .parent of .codeline after current .codeline
-                        element = this.CURRENT_SELECTED_ELEMENT.parent().next(".codeline").find(".parent").last();
-                    }
-                }
-            }
+            element = this.CURRENT_SELECTED_ELEMENT.parent();
         }
 
         //erstes .parent element in .codeline ist selektiert
-        else if (elementNr == "parent") {
+        else if (nextSelection == "findParent") {
             //erstes .parent der .codeline?
-            if (this.CURRENT_SELECTED_ELEMENT.prev(".parent").length == 0) {
+            let previousParent = this.CURRENT_SELECTED_ELEMENT.prev(".parent");
+            if (previousParent.length == 0) {
                 //erste .codeline in der CodeArea?
                 if (this.CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").length == 0) {
+                    element = undefined;
                     if (removeLastSelectedElement) $(this.EDITOR_CONTAINER).find('.codeArea.editor pre code').html(""); // lösche alles, keine neue 
                 } else { //hat ein prev .codeline                    
                     element = this.CURRENT_SELECTED_ELEMENT.parent().prev(".codeline").find(".parent").last();
                     this.CURRENT_SELECTED_ELEMENT = this.CURRENT_SELECTED_ELEMENT.parent(); //aktuelle Codeline
                 }
             } else { //hat ein prev .parent
-
+                element = previousParent;
             }
         }
 
         //next element is chosen by number
         else {
-            element = $(this.EDITOR_CONTAINER).find(".codeArea.editor pre code .codeElement_" + elementNr);
+            element = $(this.EDITOR_CONTAINER).find(".codeArea.editor pre code .codeElement_" + nextSelection);
         }
 
         this.removeSelection(removeLastSelectedElement);
@@ -1475,6 +1458,9 @@ export class SqlVerineEditor {
             case ".inputValue":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<input type="text" placeholder="Wert" class="inputValue synValue codeInput"> </input>');
                 break;
+            case ".btnAs":
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAs synSQL sqlAs codeButton">AS ___</button>');
+                break;
             case ".btnAsc":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAsc synSQL sqlOrder codeButton">ASC</button>');
                 break;
@@ -1704,6 +1690,24 @@ export class SqlVerineEditor {
             elementORDER += "</span>";
 
             sqlVerineEditor.CURRENT_SELECTED_ELEMENT.closest(".parent").first().after(elementORDER);
+            sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
+        });
+
+        //Button: AS ___
+        $(sqlVerineEditor.EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAs', function () {
+            let self = this;
+            let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
+            let elementAs = "";
+            elementAs += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " sqlIdentifier inputFields' data-sql-element='AS'>";
+            sqlVerineEditor.NR++;
+            elementAs += sqlVerineEditor.addLeerzeichen();
+            elementAs += "AS";
+            elementAs += sqlVerineEditor.addLeerzeichen();
+            elementAs += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='AS_1'>___</span>";
+            sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
+            sqlVerineEditor.NR++;
+            elementAs += "</span>";
+            sqlVerineEditor.CURRENT_SELECTED_ELEMENT.append(elementAs);
             sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
         });
 

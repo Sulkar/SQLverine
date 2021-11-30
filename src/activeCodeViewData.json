@@ -92,6 +92,11 @@
                 "codeComponentClass": ".selStringFunction",
                 "codeComponentType": "select"
             }
+            ,
+            {
+                "codeComponentClass": ".btnAs",
+                "codeComponentType": "button"
+            }
         ]
     },
     {
@@ -1254,6 +1259,35 @@
                 "codeComponentClass": ".btnAdd",
                 "codeComponentType": "button"
             },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "AS",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+           
+        ]
+    },
+    {
+        "selectedSQLElement": "AS_1",
+        "level": 1,
+        "visibleMainControls": [
             {
                 "codeComponentClass": ".btnDelete",
                 "codeComponentType": "button"
