@@ -242,8 +242,8 @@ pre {
     white-space: pre-line;
 }
 
-pre span.codeline .active span span {
-    background-color: lightblue;
+.active {
+    background-color: LightBlue;
 }
 
 pre span.codeline {
