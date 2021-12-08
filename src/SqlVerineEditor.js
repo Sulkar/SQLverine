@@ -1495,7 +1495,7 @@ export class SqlVerineEditor {
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnRenameTable synSQL sqlDelete">RENAME TO ___</button>');
                 break;
             case ".btnAddColumn":
-                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD ___ TYP</button>');
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD COLUMN ___ TYP</button>');
                 break;
             case ".selTyp":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option></select>');
@@ -2009,7 +2009,7 @@ export class SqlVerineEditor {
             sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
         });
 
-        // Button: ADD ___ ___ (TYP) 
+        // Button: ADD COLUMN ___ ___ (TYP) 
         $(sqlVerineEditor.EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAddColumn', function () {
             let self = this;
             let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
@@ -2017,7 +2017,7 @@ export class SqlVerineEditor {
             elementADD_COLUMN += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='ADD_COLUMN'>";
             sqlVerineEditor.NR++;
             elementADD_COLUMN += sqlVerineEditor.addLeerzeichen();
-            elementADD_COLUMN += "ADD";
+            elementADD_COLUMN += "ADD COLUMN";
             elementADD_COLUMN += sqlVerineEditor.addLeerzeichen();
             elementADD_COLUMN += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='ADD_COLUMN_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
             sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
