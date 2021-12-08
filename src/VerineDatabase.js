@@ -250,7 +250,7 @@ export class VerineDatabase {
     addForm(newFormData) {
         const errorLogArray = [];
         this.formTable = this.getFormTable();
-        newFormData = newFormData.replaceAll("'","''");
+        newFormData = this.escapeInput(newFormData);
         const addFormQuery = "INSERT INTO " + this.formTable + " (form_data) VALUES ('" + newFormData + "');";
 
         try {
@@ -271,7 +271,7 @@ export class VerineDatabase {
 
     updateForm(updateFormData, id) {
         const errorLogArray = [];
-        updateFormData = updateFormData.replaceAll("'","''");
+        updateFormData = this.escapeInput(updateFormData);
         let updateQuery = "";
         updateQuery += "UPDATE " + this.formTable + " SET form_data = '" + updateFormData + "' WHERE id = " + id + ";";
 
@@ -437,14 +437,8 @@ export class VerineDatabase {
     updateExercise(exerciseUpdateArray) {
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
         exerciseUpdateArray.forEach(updateValue => {
-            /*if (isNaN(updateValue[2]) || updateValue[2] == "") { //[1, "titel", ""]
-                //updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
-                updateQuery += "UPDATE " + this.exerciseTable + " SET " + updateValue[1] + " = '" + updateValue[2] + "' WHERE id = " + updateValue[0] + ";";
-            } else {
-                updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
-            }*/
-            updateQuery += "UPDATE " + this.exerciseTable + " SET " + updateValue[1] + " = '" + updateValue[2] + "' WHERE id = " + updateValue[0] + ";";
-
+            let value = this.escapeInput(updateValue[2]);
+            updateQuery += "UPDATE " + this.exerciseTable + " SET " + updateValue[1] + " = '" + value + "' WHERE id = " + updateValue[0] + ";";
         });
         try {
             this.database.exec(updateQuery);
@@ -456,9 +450,13 @@ export class VerineDatabase {
         }
     }
 
+    escapeInput(query){
+        query = String(query).replaceAll("'","''");
+        return query;
+    }
+
     updateInfo(infoUpdateArray) {
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
-
 
         let checkFreieAufgabenwahlSpalte = "SELECT freie_aufgabenwahl FROM verine_info";
         try {
@@ -474,7 +472,8 @@ export class VerineDatabase {
         }
 
         infoUpdateArray.forEach(updateValue => {
-            updateQuery += "UPDATE verine_info SET " + updateValue[0] + " = '" + updateValue[1] + "' WHERE id = 1;";
+            let value = this.escapeInput(updateValue[1]);
+            updateQuery += "UPDATE verine_info SET " + updateValue[0] + " = '" + value + "' WHERE id = 1;";
         });
 
         try {
@@ -833,15 +832,15 @@ export class VerineDatabase {
                 let regexForeignKeyColumnSelf = element.match(/FOREIGN KEY(\s\(|\()(.*?)\)/); //sucht nach FOREIGN KEY ( )
                 if (regexForeignKeyColumnSelf != null) {
 
-                    let columnWithForeignKey = regexForeignKeyColumnSelf[2].replaceAll(/"|\s/g, ""); //entfernt alle Anführungszeichen und Leerzeichen 
+                    let columnWithForeignKey = regexForeignKeyColumnSelf[2].replace(/"|\s/g, ""); //entfernt alle Anführungszeichen und Leerzeichen 
                     if (newColumnObject.name == columnWithForeignKey) { //Informationen werden nur ergänzt, wenn es sich um die richtige Spalte handelt
 
                         newColumnObject.columnSelf = columnWithForeignKey;
                         let regexForeignKeyColumnTarget = element.split("REFERENCES")[1].match(/\((.*?)\)/); //sucht nach ( ) 
                         let regexForeignKeyTableTarget = element.split("REFERENCES")[1].match(/^(.*?)\(/); //sucht von vorne bis zur ersten (
                         if (regexForeignKeyColumnTarget != null && regexForeignKeyTableTarget != null) {
-                            newColumnObject.columnTarget = regexForeignKeyColumnTarget[1].replaceAll(/"|\s/g, "");
-                            newColumnObject.tableTarget = regexForeignKeyTableTarget[1].replaceAll(/"|\s/g, "");
+                            newColumnObject.columnTarget = regexForeignKeyColumnTarget[1].replace(/"|\s/g, "");
+                            newColumnObject.tableTarget = regexForeignKeyTableTarget[1].replace(/"|\s/g, "");
                             foreignKeyfound = true;
                         }
                     }
