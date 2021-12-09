@@ -1256,13 +1256,13 @@ export class SqlVerineEditor {
 
                     //wenn ein input Feld angezeigt wird:
                     if (element.codeComponentType == "input") {
-                        $(element.codeComponentClass).focus();
+                        $(element.codeComponentClass).trigger("focus");
                         if (this.CURRENT_SELECTED_ELEMENT != undefined) {
-                            if (this.CURRENT_SELECTED_ELEMENT.hasClass("input")) {
+                            if (this.CURRENT_SELECTED_ELEMENT.hasClass("inputValue")) {
                                 if (this.CURRENT_SELECTED_ELEMENT.text() == "___") {
                                     $(element.codeComponentClass).val("");
                                 } else {
-                                    $(element.codeComponentClass).val(this.CURRENT_SELECTED_ELEMENT.text().replaceAll("'", "")).select();
+                                    $(element.codeComponentClass).val(this.CURRENT_SELECTED_ELEMENT.text().replaceAll("'", "")).trigger("select");
                                 }
                             }
                         }
