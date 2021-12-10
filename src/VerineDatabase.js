@@ -379,6 +379,10 @@ export class VerineDatabase {
         if (exerciseAnswerString.search(/&rows=(\d+)/) != -1) answerObject.rows = parseInt(exerciseAnswerString.match(/&rows=(\d+)/)[1]);
         else answerObject.rows = 0;
 
+        //&cols=
+        if (exerciseAnswerString.search(/&cols=(\d+)/) != -1) answerObject.cols = parseInt(exerciseAnswerString.match(/&cols=(\d+)/)[1]);
+        else answerObject.cols = 0;
+
         exerciseAnswerString.split("|").forEach(solution => {
 
             let exerciseSolution = {};

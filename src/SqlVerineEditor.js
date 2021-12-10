@@ -25,6 +25,7 @@ export class SqlVerineEditor {
         this.URL_CURRENT_ID = undefined;
         this.SOLUTION_ALL_ARRAY = [];
         this.SOLUTION_ROW_COUNTER = 0;
+        this.SOLUTION_COL_COUNTER = 0;
         this.ACTIVATE_EXERCISES = false;
         this.SHOW_CODE_BTN = true;
         this.SHOW_RUN_BTN = true;
@@ -108,6 +109,9 @@ export class SqlVerineEditor {
     }
     getSolutionRowCounter() {
         return this.SOLUTION_ROW_COUNTER;
+    }
+    getSolutionColCounter() {
+        return this.SOLUTION_COL_COUNTER;
     }
     activateExercises(activate) {
         this.ACTIVATE_EXERCISES = activate;
@@ -812,11 +816,13 @@ export class SqlVerineEditor {
 
         this.SOLUTION_ALL_ARRAY = [];
         this.SOLUTION_ROW_COUNTER = 0;
+        this.SOLUTION_COL_COUNTER = 0;
 
         let newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
         newTable += "<thead>";
         columns.forEach((column) => {
             newTable += "<th scope='col'>" + column + "</th>";
+            this.SOLUTION_COL_COUNTER++;
         });
         newTable += "</thead>";
 
@@ -842,7 +848,7 @@ export class SqlVerineEditor {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {
                     newTable += "<td style=''>" + element + "</td>";
-                }
+                }                
             });
             newTable += "</tr>";
         });
@@ -850,7 +856,6 @@ export class SqlVerineEditor {
         newTable += "</table></div>"
 
         //Pagination Schaltflächen
-
         let disabledNext = "";
         let disabledPrevious = "";
         if (!paginationRight) {
