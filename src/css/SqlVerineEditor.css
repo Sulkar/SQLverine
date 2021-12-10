@@ -60,11 +60,11 @@ div.col.centerMenu {
     display: none;
 }
 
-.buttonArea select:invalid,
+/*.buttonArea select:invalid,
 .buttonArea select.sqlSelect:invalid,
 .buttonArea select.sqlWhere:invalid {
     color: gray;
-}
+}*/
 
 .buttonArea select:hover,
 .buttonArea button:hover {
@@ -79,7 +79,7 @@ div.col.centerMenu {
 
 /* Unterstreichung der Befehle */
 
-.buttonArea .sqlSelect,
+/*.buttonArea .sqlSelect,
 .buttonArea .sqlGroup,
 .buttonArea .sqlJoin,
 .buttonArea .sqlOrder,
@@ -96,8 +96,8 @@ div.col.centerMenu {
 .buttonArea button.sqlOrder,
 .buttonArea button.sqlWhere,
 .buttonArea button.sqlDelete,
-.buttonArea button.sqlUpdate,
-.buttonArea button.sqlInsert {
+.buttonArea button.sqlUpdate,*/
+.buttonArea .synSQL {
     border-bottom: 0.15em solid steelblue;
 }
 
