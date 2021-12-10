@@ -383,8 +383,8 @@ export class VerineDatabase {
 
             let exerciseSolution = {};
             //loesungString = String vor () und &
-            exerciseSolution.loesungString = solution.match(/([\d\wöäüÄÖÜß \-]+)(\(+|&+|$)/);
-            if (exerciseSolution.loesungString != null) exerciseSolution.loesungString = exerciseSolution.loesungString[1];
+            const loesungString = solution.match(/([\d\wöäüÄÖÜß., \-]+)(\(+|&+|$)/);
+            if (loesungString != null) exerciseSolution.loesungString = loesungString[1]; //[0] ist ganz, [1] ist erste Klammer, [2]...
 
             //Werte in Klammern (table.column)
             var tableColumn = solution.match(/\((.+)\)/);

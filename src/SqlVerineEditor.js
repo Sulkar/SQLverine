@@ -1132,13 +1132,6 @@ export class SqlVerineEditor {
         return elementClasses.split(" ")[0].split("_")[1];
     }
 
-    //function: add Leerzeichen <span>
-    addLeerzeichen() {
-        let tempLeerzeichen = "<span class='codeElement_" + this.NR + " leerzeichen' data-goto-element='parent'>&nbsp;</span>";
-        this.NR++;
-        return tempLeerzeichen;
-    }
-
     //function: liefert alle Klassen eines Elements als String zurück, außer der letzten Kontrollklasse (codeButton, codeSelect, codeInput)
     getClassesFromElementAsString(element) {
         let codeComponentClassesAsString = $(element).attr("class").replace(/[\W]*\S+[\W]*$/, '');
@@ -1611,7 +1604,6 @@ export class SqlVerineEditor {
             let elementWhereAND = "";
             elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='AND'>";
             sqlVerineEditor.NR++;
-            //elementWhereAND += addLeerzeichen();
             elementWhereAND += " AND";
             elementWhereAND += sqlVerineEditor.addLeerzeichen();
             elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
@@ -1637,7 +1629,6 @@ export class SqlVerineEditor {
             let elementWhereOR = "";
             elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OR'>";
             sqlVerineEditor.NR++;
-            //elementWhereOR += addLeerzeichen();
             elementWhereOR += " OR";
             elementWhereOR += sqlVerineEditor.addLeerzeichen();
             elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
