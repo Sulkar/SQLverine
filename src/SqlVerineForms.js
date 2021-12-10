@@ -406,7 +406,6 @@ export class SqlVerineForms {
         const parameterLabel = document.createElement("label");
         parameterLabel.for = "form-exec-" + formParameter.name;
         parameterLabel.id = "label-exec-" + formParameter.name;
-        //parameterLabel.classList.add("col-form-label", "form-param");
         parameterLabel.innerHTML = formParameter.label;
         parameterCol1.append(parameterLabel);
 
@@ -419,6 +418,9 @@ export class SqlVerineForms {
         parameterInput.id = "form-exec-" + formParameter.name;
         parameterInput.type = "text";
         parameterInput.placeholder = "Wert eingeben";
+        //Inputfeld nur anzeigen, wenn der Parameter nicht leer ist:
+        if(formParameter.label == "")
+            parameterListitem.style.display = 'none';
 
         parameterInput.addEventListener('focusout', this.setParameterValue.bind(this));
 
