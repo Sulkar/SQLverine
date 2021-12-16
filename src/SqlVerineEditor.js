@@ -977,7 +977,7 @@ export class SqlVerineEditor {
             this.setSelection("parent", true);
         }
         // spezielle Behandlung des inputFields von INSERT_2
-        else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("extended") && this.hasCurrentSelectedElementSqlDataString(elementToDelete, "INSERT_2, UPDATE_2, UPDATE_3")) {
+        else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("extended") && this.hasCurrentSelectedElementSqlDataString(elementToDelete, "INSERT_2, INSERT_3, UPDATE_2, UPDATE_3")) {
             let elementGroup = elementToDelete.attr("data-element-group");
             if (elementGroup != undefined) {
                 let idsToDelete = elementGroup.toString().split(",");
