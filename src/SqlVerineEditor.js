@@ -349,8 +349,8 @@ export class SqlVerineEditor {
                     let inputFieldDataChange = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
                     if (currentSqlCommand == "WHERE") inputFieldDataChange.attr('data-sql-element', 'WHERE_3');
                     else if (currentSqlCommand == "JOIN") inputFieldDataChange.attr('data-sql-element', 'JOIN_4');
-                    else if (currentSqlCommand == "AND") inputFieldDataChange.attr('data-sql-element', 'WHERE_AND_3');
-                    else if (currentSqlCommand == "OR") inputFieldDataChange.attr('data-sql-element', 'WHERE_OR_3');
+                    else if (currentSqlCommand == "AND") inputFieldDataChange.attr('data-sql-element', 'AND_3');
+                    else if (currentSqlCommand == "OR") inputFieldDataChange.attr('data-sql-element', 'OR_3');
                     //...
 
 
@@ -1611,14 +1611,14 @@ export class SqlVerineEditor {
             sqlVerineEditor.NR++;
             elementWhereAND += " AND";
             elementWhereAND += sqlVerineEditor.addLeerzeichen();
-            elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
+            elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='AND_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
             sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
             sqlVerineEditor.NR++;
             elementWhereAND += sqlVerineEditor.addLeerzeichen();
-            elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
+            elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='AND_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
             sqlVerineEditor.NR++;
             elementWhereAND += sqlVerineEditor.addLeerzeichen();
-            elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_3' data-next-element='" + (sqlVerineEditor.NR - 4) + "'>___</span>";
+            elementWhereAND += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='AND_3' data-next-element='" + (sqlVerineEditor.NR - 4) + "'>___</span>";
             sqlVerineEditor.NR++;
             elementWhereAND += "</span>";
 
@@ -1636,14 +1636,14 @@ export class SqlVerineEditor {
             sqlVerineEditor.NR++;
             elementWhereOR += " OR";
             elementWhereOR += sqlVerineEditor.addLeerzeichen();
-            elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
+            elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='OR_1' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
             sqlVerineEditor.NEXT_ELEMENT_NR = sqlVerineEditor.NR;
             sqlVerineEditor.NR++;
             elementWhereOR += sqlVerineEditor.addLeerzeichen();
-            elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
+            elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='OR_2' data-next-element='" + (sqlVerineEditor.NR + 2) + "'>___</span>";
             sqlVerineEditor.NR++;
             elementWhereOR += sqlVerineEditor.addLeerzeichen();
-            elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_3' data-next-element='" + (sqlVerineEditor.NR - 4) + "'>___</span>";
+            elementWhereOR += "<span class='codeElement_" + sqlVerineEditor.NR + " inputField unfilled root sqlIdentifier' data-sql-element='OR_3' data-next-element='" + (sqlVerineEditor.NR - 4) + "'>___</span>";
             sqlVerineEditor.NR++;
             elementWhereOR += "</span>";
 
