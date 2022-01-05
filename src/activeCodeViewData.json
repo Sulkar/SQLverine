@@ -163,6 +163,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -287,6 +291,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -327,6 +335,10 @@
             {
                 "codeComponentClass": ".btnRightBracket",
                 "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -347,6 +359,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -363,6 +379,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -439,6 +459,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -478,6 +502,10 @@
             },
             {
                 "codeComponentClass": ".btnRightBracket",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
                 "codeComponentType": "button"
             }
         ]
@@ -619,6 +647,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -658,6 +690,10 @@
             },
             {
                 "codeComponentClass": ".btnRightBracket",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
                 "codeComponentType": "button"
             }
         ]
@@ -801,6 +837,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -828,6 +868,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -886,6 +930,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -917,6 +965,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1040,6 +1092,10 @@
             },
             {
                 "codeComponentClass": ".btnRightBracket",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
                 "codeComponentType": "button"
             }
         ]
@@ -1310,6 +1366,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1353,6 +1413,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1380,6 +1444,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1464,6 +1532,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1537,6 +1609,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1569,6 +1645,10 @@
             {
                 "codeComponentClass": ".inputValue",
                 "codeComponentType": "input"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
+                "codeComponentType": "button"
             }
         ]
     },
@@ -1612,6 +1692,10 @@
             },
             {
                 "codeComponentClass": ".btnCreateForeignKey",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnQuotationMark",
                 "codeComponentType": "button"
             }
         ]

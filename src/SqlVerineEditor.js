@@ -33,6 +33,7 @@ export class SqlVerineEditor {
         this.SHOW_EXERCISE_TABLE = false;
         this.FORMULAR_DATA;
         this.CURRENT_SQL_QUERRY = undefined;
+        this.QUOTATION_MARKS = false;
     }
 
     //Initialisierung des SqlVerineEditors
@@ -491,8 +492,8 @@ export class SqlVerineEditor {
 
                 } else {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.after(sqlVerineEditor.addInputField(dataSqlElement, "extendedComma"));
-                }
-                sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
+                }                
+                sqlVerineEditor.setSelection("next", false);
             }
 
             // UPDATE: fügt ", ___ = ___" hinzu
@@ -524,7 +525,12 @@ export class SqlVerineEditor {
                 if (tempValue != "") {                    
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
-                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
+                    if (isNaN(tempValue) || sqlVerineEditor.QUOTATION_MARKS) {
+                        sqlVerineEditor.QUOTATION_MARKS = true;
+                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
+                    } else {
+                        sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html(tempValue);
+                    }
                 } else {                    
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass("unfilled");
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass(classesFromCodeComponent);
@@ -1445,10 +1451,13 @@ export class SqlVerineEditor {
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnOR synSQL sqlWhere codeButton">OR</button>');
                 break;
             case ".btnLeftBracket":
-                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnLeftBracket synBrackets sqlWhere codeButton">(</button>');
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnLeftBracket synSQL synBrackets sqlWhere codeButton">(</button>');
                 break;
             case ".btnRightBracket":
-                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnRightBracket synBrackets sqlWhere codeButton">)</button>');
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnRightBracket synSQL synBrackets sqlWhere codeButton">)</button>');
+                break;
+            case ".btnQuotationMark":
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnQuotationMark synSQL codeButton">&#039; &#039;</button>');
                 break;
             case ".selOperators":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selOperators synOperators sqlWhere codeSelect"><option value="" disabled selected hidden>Operator wählen</option><option value="=">=</option><option value="&gt;">&gt;</option><option value="&lt;">&lt;</option><option value="&gt;=">&gt;=</option><option value="&lt;=">&lt;=</option><option value="&lt;&gt;">&lt;&gt;</option><option value="BETWEEN">BETWEEN ___ AND ___</option><option value="LIKE">LIKE</option><option value="IN">IN (___)</option></select>');
@@ -1667,6 +1676,19 @@ export class SqlVerineEditor {
             if (sqlVerineEditor.CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
                 sqlVerineEditor.CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + sqlVerineEditor.NR + "  " + classesFromCodeComponent + " sqlIdentifier extended' data-sql-element='RIGHTBRACKET'> ) </span>");
                 sqlVerineEditor.NR++;
+            }
+        });
+
+        
+        //Button: QuotationMark
+        $(sqlVerineEditor.EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnQuotationMark', function () {
+            sqlVerineEditor.QUOTATION_MARKS = !sqlVerineEditor.QUOTATION_MARKS;
+            if(sqlVerineEditor.QUOTATION_MARKS){
+                const tempValue = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html();
+                sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
+            }else{
+                const tempValue = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html().replaceAll("'","");
+                sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html(tempValue);
             }
         });
 
