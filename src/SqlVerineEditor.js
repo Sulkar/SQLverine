@@ -44,13 +44,11 @@ export class SqlVerineEditor {
         this.CURRENT_SELECTED_SQL_ELEMENT = "START";
         this.USED_TABLES = [];
         //
-        this.loadActiveCodeViewData();
-        this.setupEditor();
-        //
-        this.initEvents(this);
-        this.initCodeComponentsButtons(this);
-        //
-
+        this.loadActiveCodeViewData().then(()=>{
+            this.setupEditor();
+            this.initEvents(this);
+            this.initCodeComponentsButtons(this);
+        });
     }
     //Initialisierung des SqlVerineEditors
     reinit() {
@@ -133,15 +131,12 @@ export class SqlVerineEditor {
         this.SHOW_EXERCISE_TABLE = false;
     }
 
-    loadActiveCodeViewData() {
-        //load json synchronously
-        var request = new XMLHttpRequest();
-        request.open('GET', "data/activeCodeViewData.json", false);
-        request.send(null);
-
-        if (request.status === 200) {
-            this.ACTIVE_CODE_VIEW_DATA = JSON.parse(request.responseText);
-        }
+    async loadActiveCodeViewData() {       
+        fetch("data/activeCodeViewData.json")
+        .then(response => response.json())
+        .then(data => {
+            this.ACTIVE_CODE_VIEW_DATA = data;
+        } );
     }
 
     fillCodeAreaWithCode(code, currentId) {
