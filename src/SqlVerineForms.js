@@ -42,8 +42,8 @@ export class SqlVerineForms {
 
         this.deleteFormModalAcceptButton = document.getElementById("formDeleteModalAcceptBtn");
         this.deleteFormModalAcceptButton.addEventListener("click", this.deleteForm.bind(this));
-        
-        this.formDeleteModalFormName = document.getElementById("formDeleteModalFormName");        
+
+        this.formDeleteModalFormName = document.getElementById("formDeleteModalFormName");
 
         this.downloadFormButton = document.getElementById("btnFormDownload");
         this.uploadFormButton = document.getElementById("uploadForm");
@@ -65,12 +65,12 @@ export class SqlVerineForms {
 
     }
 
-    showDeleteFormModal(){
-        if (this.selectedFormularData != undefined){
+    showDeleteFormModal() {
+        if (this.selectedFormularData != undefined) {
             this.formDeleteModalFormName.innerHTML = this.selectedFormularData.title;
             this.deleteFormModal.show();
         }
-            
+
     }
 
     deleteForm() {
@@ -182,7 +182,6 @@ export class SqlVerineForms {
         this.formsExecution.style.display = 'none';
         this.formsSqlVerineEditorContainer.style.display = 'block';
         this.formsSqlVerineEditorOutput.style.display = 'none';
-
         const switchLabel = this.modeSwitch.nextElementSibling;
         switchLabel.innerHTML = this.modeSwitch.status;
     }
@@ -194,7 +193,6 @@ export class SqlVerineForms {
         this.formsExecution.style.display = 'block';
         this.formsSqlVerineEditorContainer.style.display = 'none';
         this.formsSqlVerineEditorOutput.style.display = 'block';
-
         const switchLabel = this.modeSwitch.nextElementSibling;
         switchLabel.innerHTML = this.modeSwitch.status;
     }
@@ -339,8 +337,12 @@ export class SqlVerineForms {
     executeDatabaseQuery() {
         this.setParameterValues();
         this.verineDatabase.setCurrentPagination(0);
+        this.formsSqlVerineEditor.hideOutputContainer();
         this.formsSqlVerineEditor.setCurrentSqlQuerry(this.getSelectedFormularData().getQueryWithParams());
         this.formsSqlVerineEditor.execSqlCommand(null, "desktop");
+        this.formsSqlVerineEditor.displayLoader().then(() => {
+            this.formsSqlVerineEditor.showOutputContainer();
+        });
     }
 
 
@@ -419,7 +421,7 @@ export class SqlVerineForms {
         parameterInput.type = "text";
         parameterInput.placeholder = "Wert eingeben";
         //Inputfeld nur anzeigen, wenn der Parameter nicht leer ist:
-        if(formParameter.label == "")
+        if (formParameter.label == "")
             parameterListitem.style.display = 'none';
 
         parameterInput.addEventListener('focusout', this.setParameterValue.bind(this));
@@ -590,7 +592,7 @@ export class SqlVerineForms {
         param.value = input.value;
     }
 
-    setParameterValues(){
+    setParameterValues() {
         var parameterInputs = document.getElementsByClassName("param-input");
         for (let index = 0; index < parameterInputs.length; index++) {
             const parameterInput = parameterInputs[index];
@@ -774,7 +776,7 @@ class FormularData {
         this.parameters.forEach(param => {
             queryWithParams = queryWithParams.replaceAll(param.name, param.value);
         });
-        
+
         return queryWithParams;
     }
 

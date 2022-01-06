@@ -44,7 +44,7 @@ export class SqlVerineEditor {
         this.CURRENT_SELECTED_SQL_ELEMENT = "START";
         this.USED_TABLES = [];
         //
-        this.loadActiveCodeViewData().then(()=>{
+        this.loadActiveCodeViewData().then(() => {
             this.setupEditor();
             this.initEvents(this);
             this.initCodeComponentsButtons(this);
@@ -67,8 +67,19 @@ export class SqlVerineEditor {
     setCurrentSqlQuerry(currentSqlQuerry) {
         this.CURRENT_SQL_QUERRY = currentSqlQuerry;
     }
+
+    async displayLoader() {
+        return new Promise(resolve => setTimeout(resolve, 250));
+    }
+
     getCurrentSqlQuerry() {
         return this.CURRENT_SQL_QUERRY;
+    }
+    hideOutputContainer(){
+        this.OUTPUT_CONTAINER.style.display = "none";
+    }
+    showOutputContainer(){
+        this.OUTPUT_CONTAINER.style.display = "block";
     }
     clearOutputContainer() {
         $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
@@ -131,12 +142,12 @@ export class SqlVerineEditor {
         this.SHOW_EXERCISE_TABLE = false;
     }
 
-    async loadActiveCodeViewData() {       
+    async loadActiveCodeViewData() {
         fetch("data/activeCodeViewData.json")
-        .then(response => response.json())
-        .then(data => {
-            this.ACTIVE_CODE_VIEW_DATA = data;
-        } );
+            .then(response => response.json())
+            .then(data => {
+                this.ACTIVE_CODE_VIEW_DATA = data;
+            });
     }
 
     fillCodeAreaWithCode(code, currentId) {
@@ -207,7 +218,7 @@ export class SqlVerineEditor {
         mainMenu += '<div class="col rightMenu d-none d-md-inline-block">';
         if (this.SHOW_RUN_BTN) {
             mainMenu += '<button class="btnRun">';
-            mainMenu += ' <svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16"><path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" /> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" /></svg>';
+            mainMenu += '<div><svg xmlns="http://www.w3.org/2000/svg" width="1.4em" height="1.4em" fill="currentColor" class="bi bi-play-btn" viewBox="0 0 16 16"><path d="M6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" /> <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" /></svg></div>';
             mainMenu += '</button>';
         }
         mainMenu += '</div>';
@@ -424,12 +435,20 @@ export class SqlVerineEditor {
 
         // Button: run sql command - desktop
         $(sqlVerineEditor.EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
+            //hide output until everthing is loaded
+            sqlVerineEditor.hideOutputContainer();
+
             sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(0);
             sqlVerineEditor.setCurrentSqlQuerry(undefined);
             sqlVerineEditor.execSqlCommand(null, "desktop");
             sqlVerineEditor.RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                 runFunction();
             });
+            //show loader        
+            sqlVerineEditor.displayLoader().then(() => {
+                sqlVerineEditor.showOutputContainer();
+            });
+
         });
         // Button: run sql command - mobile 
         $(sqlVerineEditor.EDITOR_CONTAINER).on('click', '.btnRunMobile', function (event) {
@@ -487,7 +506,7 @@ export class SqlVerineEditor {
 
                 } else {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.after(sqlVerineEditor.addInputField(dataSqlElement, "extendedComma"));
-                }                
+                }
                 sqlVerineEditor.setSelection("next", false);
             }
 
@@ -517,7 +536,7 @@ export class SqlVerineEditor {
                 let tempValue = $(self).val();
                 let classesFromCodeComponent = sqlVerineEditor.getClassesFromElementAsString(self);
                 sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass("input");
-                if (tempValue != "") {                    
+                if (tempValue != "") {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass(classesFromCodeComponent);
                     if (isNaN(tempValue) || sqlVerineEditor.QUOTATION_MARKS) {
@@ -526,7 +545,7 @@ export class SqlVerineEditor {
                     } else {
                         sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html(tempValue);
                     }
-                } else {                    
+                } else {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.addClass("unfilled");
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.removeClass(classesFromCodeComponent);
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("___");
@@ -849,7 +868,7 @@ export class SqlVerineEditor {
                     newTable += "<td style='min-width: 200px;'>" + element + "</td>";
                 } else {
                     newTable += "<td style=''>" + element + "</td>";
-                }                
+                }
             });
             newTable += "</tr>";
         });
@@ -1674,15 +1693,15 @@ export class SqlVerineEditor {
             }
         });
 
-        
+
         //Button: QuotationMark
         $(sqlVerineEditor.EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnQuotationMark', function () {
             sqlVerineEditor.QUOTATION_MARKS = !sqlVerineEditor.QUOTATION_MARKS;
-            if(sqlVerineEditor.QUOTATION_MARKS){
+            if (sqlVerineEditor.QUOTATION_MARKS) {
                 const tempValue = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html();
                 sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html("'" + tempValue + "'");
-            }else{
-                const tempValue = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html().replaceAll("'","");
+            } else {
+                const tempValue = sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html().replaceAll("'", "");
                 sqlVerineEditor.CURRENT_SELECTED_ELEMENT.html(tempValue);
             }
         });
