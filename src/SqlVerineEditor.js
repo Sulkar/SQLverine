@@ -1337,7 +1337,13 @@ export class SqlVerineEditor {
 
     //SQLite functions:
     getSqlTables() {
-        return this.CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
+        let usedTables = this.CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0];
+        if(usedTables == undefined){
+            usedTables = [];
+        }else{
+            usedTables = usedTables.values;
+        }
+        return usedTables;
     }
 
     getSqlTableFields(tempTableName) {
