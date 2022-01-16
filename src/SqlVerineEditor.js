@@ -759,6 +759,9 @@ export class SqlVerineEditor {
                 result = this.CURRENT_VERINE_DATABASE.database.exec(tempSqlCommand);
             }
 
+            //add custom Limit bei C(R)UD Abfragen
+            let cudLimit = " LIMIT 2000";
+
             //löscht alte Ausgabe
             this.clearOutputContainer();
 
@@ -774,15 +777,15 @@ export class SqlVerineEditor {
                 if (insertSQL != null && insertSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
                     tablesChanged = true;
-                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2] + tempLimit);
+                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2] + cudLimit);
                 } else if (updateSQL != null && updateSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
                     tablesChanged = true;
-                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2] + tempLimit);
+                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2] + cudLimit);
                 } else if (deleteSQL != null && deleteSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
                     tablesChanged = true;
-                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2] + tempLimit);
+                    result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2] + cudLimit);
                 }
             }
 
@@ -801,11 +804,11 @@ export class SqlVerineEditor {
             } else if (alterTableRenameTableSQL != null && alterTableRenameTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle wurde in: " + alterTableRenameTableSQL[3] + " umbenannt.</h5><br>");
                 tablesChanged = true;
-                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableRenameTableSQL[3] + tempLimit);
+                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableRenameTableSQL[3] + cudLimit);
             } else if (alterTableSQL != null && alterTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + alterTableSQL[2] + " wurde verändert.</h5><br>");
                 tablesChanged = true;
-                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2] + tempLimit);
+                result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + alterTableSQL[2] + cudLimit);
             }
             //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
             if (tablesChanged) {
@@ -1525,10 +1528,10 @@ export class SqlVerineEditor {
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAddColumn synSQL sqlDelete">ADD COLUMN ___ TYP</button>');
                 break;
             case ".selTyp":
-                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option></select>');
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selTyp synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="INTEGER">INTEGER</option><option value="TEXT">TEXT</option><option value="REAL">REAL</option><option value="BLOB">BLOB</option><option value="COLLATE">COLLATE</option></select>');
                 break;
             case ".selConstraint":
-                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selConstraint synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="UNIQUE">UNIQUE</option><option value="PRIMARY KEY">PRIMARY KEY</option><option value="NOTT NULL">NOT NULL</option></select>');
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selConstraint synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="UNIQUE">UNIQUE</option><option value="PRIMARY KEY">PRIMARY KEY</option><option value="NOTT NULL">NOT NULL</option><option value="COLLATE">COLLATE</option><option value="NOCASE">NOCASE</option></select>');
                 break;
             case ".btnCreateTable":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnCreateTable synSQL sqlDelete">CREATE TABLE ___ ( )</button>');
