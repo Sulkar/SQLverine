@@ -50,6 +50,11 @@ export class VerineDatabase {
     setMaxLimit(maxLimit) {
         this.maxLimit = maxLimit;
     }
+
+    vacuum(){
+        this.database.exec("VACUUM;");
+    }
+    
     hasExercises() {
         if (this.exerciseArray.length > 0) return true;
         else return false;
