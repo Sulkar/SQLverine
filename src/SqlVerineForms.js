@@ -105,7 +105,6 @@ export class SqlVerineForms {
         this.setSelectedFormularData(undefined);
         const formsDB = this.verineDatabase.getForms();
         formsDB.forEach(form => {
-
             const newFormObjectData = JSON.parse(form[1]);
             const newFormData = new FormularData(newFormObjectData.title);
             newFormObjectData.id = form[0]; //sql ID
@@ -119,9 +118,11 @@ export class SqlVerineForms {
 
     saveAllFormsToDB() {
         if (this.selectedFormularData != undefined) {
-            this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText();
+            this.selectedFormularData.queryTextarea = this.formsSqlVerineEditor.getSqlQueryTextarea();
+            this.selectedFormularData.query = this.formsSqlVerineEditor.getSqlQueryText(); //holt Text in Abhängigkeit, welcher Editor sichtbar ist
             this.selectedFormularData.queryHTML = this.formsSqlVerineEditor.getSqlQueryHtml();
             this.selectedFormularData.queryHTMLlastId = this.formsSqlVerineEditor.NR;
+            this.selectedFormularData.isCodeSwitched = this.formsSqlVerineEditor.isCodeSwitched();
         }
         this.findFormsTable();
 
@@ -203,8 +204,9 @@ export class SqlVerineForms {
         this.formsSqlVerineEditor.setOutputContainer(this.formsSqlVerineEditorOutput.id);
         this.formsSqlVerineEditor.showCodeButton(false);
         this.formsSqlVerineEditor.showCodeSwitch(true);
-        this.formsSqlVerineEditor.showRunButton(false);
+        this.formsSqlVerineEditor.showRunButton(false);        
         this.formsSqlVerineEditor.init();
+        
 
     }
     updateSqlVerineEditorDatabase(currenDatabase) {
@@ -225,8 +227,8 @@ export class SqlVerineForms {
 
         const formsEditorRow = document.createElement("div");
         formsEditorRow.classList.add("row");
+        
         if (this.selectedFormularData !== undefined) {
-
             this.deleteFormButton.style.display = "block";
 
             this.modeSwitch.style.display = "block";
@@ -255,7 +257,8 @@ export class SqlVerineForms {
             let lastEditorId = 1;
             if (this.selectedFormularData.queryHTMLlastId != undefined) lastEditorId = this.selectedFormularData.queryHTMLlastId;
             this.formsSqlVerineEditor.fillCodeAreaWithCode(this.selectedFormularData.queryHTML, lastEditorId);
-            this.formsSqlVerineEditor.fillCodeTextAreaWithCode(this.selectedFormularData.query);
+            this.formsSqlVerineEditor.fillCodeTextAreaWithCode(this.selectedFormularData.queryTextarea);
+            this.formsSqlVerineEditor.setCodeSwitch(this.selectedFormularData.isCodeSwitched);
             this.formsSqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT = "START";
             this.formsSqlVerineEditor.updateActiveCodeView();
 
@@ -564,8 +567,6 @@ export class SqlVerineForms {
     }
 
     changeTitle(event) {
-
-
         const input = event.target || event.srcElement;
         if (input.value.trim().length > 0) {
             this.selectedFormularData.title = input.value;
@@ -685,13 +686,15 @@ export class SqlVerineForms {
 
 class FormularData {
 
-    constructor(title, query, queryHTML, description) {
+    constructor(title, query, queryTextarea, queryHTML, description) {
         this.title = title;
         this.id = undefined;
         this.parameters = [];
         this.query = query;
+        this.queryTextarea = queryTextarea;
         this.queryHTML = queryHTML;
         this.queryHTMLlastId = undefined;
+        this.isCodeSwitched = false;
         this.description = description;
     }
 
@@ -700,8 +703,10 @@ class FormularData {
         this.id = formularObjectData.id;
         this.parameters = formularObjectData.parameters;
         this.query = formularObjectData.query;
+        this.queryTextarea = formularObjectData.queryTextarea;
         this.queryHTML = formularObjectData.queryHTML;
         this.queryHTMLlastId = formularObjectData.queryHTMLlastId;
+        this.isCodeSwitched = formularObjectData.isCodeSwitched;
         this.description = formularObjectData.description;
     }
 

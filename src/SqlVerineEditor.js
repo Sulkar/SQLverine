@@ -164,8 +164,25 @@ export class SqlVerineEditor {
         this.EDITOR_CONTAINER.innerHTML = sqlVerineEditor;
     }
 
-    setCodeSwitch(status) {
-        //TODO
+    toggleCodeSwitch() {
+        let codeSwitch = $(this.EDITOR_CONTAINER).find('#sqlVerineSwitch');
+        if(codeSwitch.prop('checked')){
+            codeSwitch.prop('checked', true);
+        }else{
+            codeSwitch.prop('checked', false);
+        }
+        this.toggleCodeArea(this);
+    }
+    setCodeSwitch(checked){
+        let codeSwitch = $(this.EDITOR_CONTAINER).find('#sqlVerineSwitch');        
+        if(!codeSwitch.prop('checked') == checked)    {
+            this.toggleCodeArea(this);
+            codeSwitch.prop('checked', checked);    
+        }
+    }
+    isCodeSwitched(){
+        let codeSwitch = $(this.EDITOR_CONTAINER).find('#sqlVerineSwitch');
+        return codeSwitch.prop('checked');
     }
 
 
@@ -271,14 +288,17 @@ export class SqlVerineEditor {
         return scrollDots;
     }
 
+    toggleCodeArea(sqlVerineEditor){
+        $(sqlVerineEditor.EDITOR_CONTAINER).find("#codeAreaText").toggle();
+        $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea").toggle();
+    }
     //////////
     //EVENTS//
     initEvents(sqlVerineEditor) {
 
         //Switch codeAreaText -> Codearea
         $(sqlVerineEditor.EDITOR_CONTAINER).find('#sqlVerineSwitchForm').on('change', '#sqlVerineSwitch', function (event) {
-            $(sqlVerineEditor.EDITOR_CONTAINER).find("#codeAreaText").toggle();
-            $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea").toggle();
+            sqlVerineEditor.toggleCodeArea(sqlVerineEditor);
         });
 
         //codeAreaText: strg + enter führt sql Code aus
@@ -716,6 +736,13 @@ export class SqlVerineEditor {
     getSqlQueryHtml() {
         return $(this.EDITOR_CONTAINER).find(".codeArea.editor pre code").html().replaceAll("active", "");
     }
+    getSqlQueryTextarea() {
+        let sqlQueryTextarea;
+        sqlQueryTextarea = $(this.EDITOR_CONTAINER).find("#codeAreaText textarea");
+        sqlQueryTextarea = sqlQueryTextarea.val().trim();
+        return sqlQueryTextarea;
+    }
+  
     getSqlQueryText() {
         let tempSqlCommand;
         const re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
