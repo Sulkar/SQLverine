@@ -787,7 +787,7 @@ export class SqlVerineEditor {
             }
 
             //add custom Limit bei C(R)UD Abfragen
-            let cudLimit = " LIMIT 2000";
+            let cudLimit = " LIMIT 200";
 
             //löscht alte Ausgabe
             this.clearOutputContainer();
