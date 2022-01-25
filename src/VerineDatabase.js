@@ -31,6 +31,12 @@ export class VerineDatabase {
 
 
     }
+
+    resetCrudValues(){
+        this.updateValues = []; 
+        this.insertValues = []; 
+        this.deleteValues = []; 
+    }
     
     setDataChanged(boolean){
         this.dataChanged = boolean;
@@ -578,6 +584,7 @@ export class VerineDatabase {
             errorLogArray.push(err);
             console.log(err);
         }
+        this.resetCrudValues();
         return errorLogArray;
 
     }
