@@ -581,7 +581,13 @@ export class SqlVerineEditor {
         $(sqlVerineEditor.EDITOR_CONTAINER).find("#btnCreateUrl").on("click", function () {
             let sqlVerineUrl = location.protocol + '//' + location.host + location.pathname;
             let urlDatabase = sqlVerineEditor.CURRENT_VERINE_DATABASE.name;
-            let URLCODE = escape($(".codeArea pre code").html().replaceAll("active", ""));
+            //encode Code
+            let codeLines = document.getElementsByClassName("codeline");
+            let URLCODE = "";
+            Array.from(codeLines).forEach((line) => {
+                URLCODE += line.textContent.replace(/\u00a0/g, " ") + "\n";
+            });                    
+            URLCODE = encodeURI(URLCODE);         
             let urlParameterString = sqlVerineUrl + "?db=" + urlDatabase + "&maxElementNr=" + sqlVerineEditor.NR + "&code=" + URLCODE;
             let modal = new Modal(document.getElementById('universal-modal'));
             modal.toggle();
