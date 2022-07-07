@@ -657,7 +657,6 @@ export class SqlVerineEditor {
         let sqlVerineUrl = location.protocol + "//" + location.host + location.pathname;
         let urlDatabase = sqlVerineEditor.CURRENT_VERINE_DATABASE.name;
         let databaseFolder = sqlVerineEditor.CURRENT_VERINE_DATABASE.getDatabaseFolder();
-        console.log("folder " + databaseFolder);
         //encode Code
         let codeLines = document.getElementsByClassName("codeline");
         let URLCODE = "";

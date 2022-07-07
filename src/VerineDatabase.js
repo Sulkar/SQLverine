@@ -51,11 +51,9 @@ export class VerineDatabase {
     this.deleteValues = [];
   }
   setDatabaseFolder(folder) {
-    console.log(folder);
     this.folder = folder;
   }
   getDatabaseFolder() {
-    console.log(this.folder);
     if (this.folder != undefined) {
       return this.folder;
     } else {
