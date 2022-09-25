@@ -1081,18 +1081,38 @@ export class SqlVerineEditor {
             isTableActive = true;
             //Entfernt alle vorangestellten Tabellenname -> schueler.id = id
             let updatedFieldNameBasedOnTableCount = $(self).html().split(".").pop();
-            //wenn mehr als zwei Spalten genutzt werden und es sich um kein CREATE_FOREIGN_KEY Element handelt, wird die Tabelle an die Spalte angehängt. Z.B.: schueler.id
-            if (sqlVerineEditor.USED_TABLES.length > 1 && !sqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT.includes("CREATE_FOREIGN_KEY")) {
+
+            //wenn mehr als zwei Spalten genutzt werden und das Element ein TablePrefix benötigt, wird die Tabelle an die Spalte angehängt. Z.B.: schueler.id
+            if (sqlVerineEditor.USED_TABLES.length > 1 && sqlVerineEditor.needsTablePrefix(sqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT)) {
               $(self).html(element + "." + updatedFieldNameBasedOnTableCount);
             } else {
               $(self).html(updatedFieldNameBasedOnTableCount);
             }
           }
         });
-        if (!isTableActive) {
+        if (!isTableActive && !sqlVerineEditor.isSpecialInputElement($(self))) {
+          //wenn Table nicht mehr vorhanden ist, entferne die Columns der Table vom Editor
           sqlVerineEditor.deleteElement($(self));
         }
       });
+  }
+
+  isSpecialInputElement(element) {
+    const specialDataSqlArray = ["CREATE_FOREIGN_KEY_1"];
+    if (specialDataSqlArray.includes(element.attr("data-sql-element"))) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  needsTablePrefix(currentSelectedSqlElement) {
+    const dontAddTablePrefixArray = ["CREATE_FOREIGN_KEY", "CREATE_FOREIGN_KEY_1", "CREATE_FOREIGN_KEY_3", "CREATE_COLUMN", "CREATE_COLUMN_1", "CREATE_COLUMN_2", "CREATE_COLUMN_3"];
+    if (dontAddTablePrefixArray.includes(currentSelectedSqlElement)) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   //function: schaut wie oft ein Tabellennanme im Array USED_TABLES vorkommt.
