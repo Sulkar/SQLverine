@@ -1499,12 +1499,12 @@ export class SqlVerineEditor {
   //function: befüllt .selTable mit allen Tabellen der Datenbank
   fillSelectionTables() {
     this.clearSelectionOptions(".buttonArea .selTable");
-    let databaseTables = this.getSqlTables();
-    for (let i = 0; i < databaseTables.length; i++) {
-      if ((databaseTables[i] != "verine_exercises" && databaseTables[i] != "verine_info" && databaseTables[i] != "verine_forms") || this.SHOW_EXERCISE_TABLE) {
-        $(this.EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
+    let databaseTables = this.CURRENT_VERINE_DATABASE.getTables();
+    databaseTables.forEach((table) => {
+      if ((table != "verine_exercises" && table != "verine_info" && table != "verine_forms") || this.SHOW_EXERCISE_TABLE) {
+        $(this.EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(table, table));
       }
-    }
+    });
   }
 
   //function: befüllt die .selColumn Element mit Feldern der genutzten Datenbanken
@@ -1536,19 +1536,13 @@ export class SqlVerineEditor {
   }
 
   //SQLite functions:
-  getSqlTables() {
-    let usedTables = this.CURRENT_VERINE_DATABASE.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0];
-    if (usedTables == undefined) {
-      usedTables = [];
-    } else {
-      usedTables = usedTables.values;
-    }
-    return usedTables;
-  }
-
   getSqlTableFields(tempTableName) {
-    //entfernt alle _0-9, die bei JOINS auf auf die gleiche Tabelle angefügt wurden
-    tempTableName = tempTableName.replace(/_[0-9]/g, "");
+    //wenn table name "_0-9" dann teste, ob dieser real existiert oder durch einen JOIN Befehl entstanden ist
+    if (!this.CURRENT_VERINE_DATABASE.getTables().includes(tempTableName)) {
+      //entfernt alle _0-9, die bei JOINS auf auf die gleiche Tabelle angefügt wurden
+      tempTableName = tempTableName.replace(/_[0-9]/g, "");
+    }
+
     return this.CURRENT_VERINE_DATABASE.database.exec("PRAGMA table_info(" + tempTableName + ")")[0].values;
   }
 
@@ -1608,12 +1602,12 @@ export class SqlVerineEditor {
         });
     } else {
       //check used tables -> codeAreaText
-      let databaseTables = sqlVerineEditor.getSqlTables();
+      let databaseTables = sqlVerineEditor.CURRENT_VERINE_DATABASE.getTables();
       let codeAreaTextValue = $(sqlVerineEditor.EDITOR_CONTAINER).find("#codeAreaText textarea").val();
       databaseTables.forEach((table) => {
-        if (codeAreaTextValue.includes(table.toString())) {
-          if (!sqlVerineEditor.USED_TABLES.includes(table.toString())) {
-            sqlVerineEditor.USED_TABLES.push(table.toString());
+        if (codeAreaTextValue.includes(table)) {
+          if (!sqlVerineEditor.USED_TABLES.includes(table)) {
+            sqlVerineEditor.USED_TABLES.push(table);
           }
         }
       });
@@ -2577,6 +2571,4 @@ export class SqlVerineEditor {
       });
   }
 
-  // returns Editor Object
-  //return sqlVerineEditor;
 }

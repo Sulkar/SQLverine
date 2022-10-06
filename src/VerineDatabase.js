@@ -808,7 +808,7 @@ export class VerineDatabase {
                   tableForeignKeyInformationArray.forEach((column) => {
                     if (column.name == element && column.tableTarget == null) {
                       column.columnSelf = element;
-                      column.tableSelf = table[0];
+                      column.tableSelf = table;
                       column.columnTarget = foundForeignKeyReference.toString().replace("_", "");
                       column.tableTarget = element.toString().replace(/\_id|\_ID/g, "");
                     }
@@ -853,7 +853,8 @@ export class VerineDatabase {
   }
 
   getTables() {
-    return this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
+    let tempTables = this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
+    return tempTables.flat();
   }
 
   //function: parst anhand des SQL CREATE Befehls die Foreign Keys
