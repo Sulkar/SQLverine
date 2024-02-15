@@ -1752,7 +1752,7 @@ export class SqlVerineEditor {
         $(this.EDITOR_CONTAINER)
           .find(".buttonArea.codeComponents")
           .append(
-            '<select class="selConstraint synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="UNIQUE">UNIQUE</option><option value="PRIMARY KEY">PRIMARY KEY</option><option value="NOTT NULL">NOT NULL</option><option value="COLLATE">COLLATE</option><option value="NOCASE">NOCASE</option></select>'
+            '<select class="selConstraint synTyp codeSelect"><option value="" disabled selected hidden>Typ wählen</option><option value="UNIQUE">UNIQUE</option><option value="PRIMARY KEY">PRIMARY KEY</option><option value="NOT NULL">NOT NULL</option><option value="COLLATE">COLLATE</option><option value="NOCASE">NOCASE</option></select>'
           );
         break;
       case ".btnCreateTable":
